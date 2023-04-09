@@ -1,8 +1,161 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class Hex
+namespace Hexgrid
 {
-    
+    /// <summary>
+    /// Axial coordinate system implementation for
+    /// a "pointy" hexagonal grid coordinate.
+    /// </summary>
+    public struct Hex
+    {
+        public int q, r;
+
+        public Hex(int q, int r)
+        {
+            this.q = q;
+            this.r = r;
+        }
+
+        #region Operators
+
+        public static Hex operator +(Hex lhs, Hex rhs)
+            => new(lhs.q + rhs.q, lhs.r + rhs.r);
+
+        public static Hex operator -(Hex hex)
+            => new(-hex.q, -hex.r);
+
+        public static Hex operator -(Hex lhs, Hex rhs)
+            => lhs + (-rhs);
+
+
+        public static Hex operator *(Hex lhs, int rhs)
+            => new(lhs.q * rhs, lhs.r * rhs);
+
+        public static Hex operator /(Hex lhs, int rhs)
+            => new(lhs.q / rhs, lhs.r / rhs);
+
+
+        public static bool operator ==(Hex lhs, Hex rhs)
+            => (lhs.q == rhs.q) && (lhs.r == rhs.r);
+
+        public static bool operator !=(Hex lhs, Hex rhs)
+            => !(lhs == rhs);
+
+        public override bool Equals(object obj)
+        {
+            return obj is Hex hex &&
+                   q == hex.q &&
+                   r == hex.r;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(q, r);
+        }
+
+        #endregion
+
+        #region Neighbours
+
+        private static readonly Hex[] direction_vectors = new Hex[6]
+        {
+            new(+1, 0), new(+1, -1), new(0, +1),
+            new(-1, 0), new(-1, +1), new(0, -1),
+        };
+
+        public static Hex GetNeighbourVector(Direction direction)
+            => direction_vectors[(int)direction];
+
+        public static Hex GetNeighbouHex(Hex from, Direction direction)
+            => from + GetNeighbourVector(direction);
+        
+        public enum Direction { R = 0, UR = 1, UL = 2, L = 3, DL = 4, DR = 5 };
+
+        
+        private static readonly Hex[] diagonal_vectors = new Hex[6]
+        {
+            new(+2, -1), new(-1, +2), new(+1, +1),
+            new(-2, +1), new(+1, -2), new(-1, -1),
+        };
+
+        public static Hex GetDiagonalVector(Diagonal diagonal)
+            => diagonal_vectors[(int)diagonal];
+
+        public static Hex GetDiagonalHex(Hex from, Diagonal diagonal)
+            => from + GetDiagonalVector(diagonal);
+
+        public enum Diagonal { UR = 0, U = 1, UL = 2, DL = 3, D = 4, DR = 5 };
+
+        #endregion
+
+        #region Helper Methods
+
+        private static readonly float root3 = Mathf.Sqrt(3);
+
+        public static int Distance(Hex from, Hex to)
+        {
+            Hex difference = from - to;
+            return Mathf.Max(
+                Mathf.Abs(difference.q),
+                Mathf.Abs(difference.q + difference.r),
+                Mathf.Abs(difference.r)) >> 1;
+        }
+
+        public Vector2 HexToPixel(Hex hex, float size)
+        {
+            return new Vector2(
+                size * (root3 * hex.q + root3 / 2 * hex.r),
+                size * (                 3.0f / 2 * hex.r)
+            );
+        }
+
+        public Hex PixelToHex(Vector2 pixel, float size)
+        {
+            float x =  pixel.x / size / root3;
+            float y = -pixel.y / size / root3;
+            // Algorithm from Charles Chambers
+            // with modifications and comments by Chris Cox 2023
+            // <https://gitlab.com/chriscox/hex-coordinates>
+            float t = root3 * y + 1;          // scaled y, plus phase
+            float temp1 = Mathf.Floor(t + x); // (y+x) diagonal, this calc needs floor
+            float temp2 = (t - x);           // (y-x) diagonal, no floor needed
+            float temp3 = (2 * x + 1);       // scaled horizontal, no floor needed, needs +1 to get correct phase
+            float qf = (temp1 + temp3) / 3.0f;  // pseudo x with fraction
+            float rf = (temp1 + temp2) / 3.0f;  // pseudo y with fraction
+            // pseudo x/y, quantized and thus requires floor:
+            return new(Mathf.FloorToInt(qf), -Mathf.FloorToInt(rf));
+        }
+
+        [Obsolete("Use the PixelToHex method.", true)]
+        public Hex Round(Vector2 fraction)
+        {
+            float unroundedS = -fraction.x - fraction.y;
+            
+            int q = Mathf.RoundToInt(fraction.x);
+            int r = Mathf.RoundToInt(fraction.y);
+            int s = Mathf.RoundToInt(unroundedS);
+
+            float qDifference = Mathf.Abs(fraction.x - q);
+            float rDifference = Mathf.Abs(fraction.y - r);
+            float sDifference = Mathf.Abs(unroundedS - s);
+
+            if (qDifference > rDifference && qDifference > sDifference)
+                q = -r - s;
+            else if (rDifference > sDifference)
+                r = -q - s;
+            //else
+            //    s = -q - r;
+
+            return new(q, r);
+        }
+
+        #endregion
+
+#warning Incomplete implementation. Continue from: https://www.redblobgames.com/grids/hexagons/#:~:text=draw%20a%20line-,from%20one,-hex%20to%20another
+
+    }
 }
