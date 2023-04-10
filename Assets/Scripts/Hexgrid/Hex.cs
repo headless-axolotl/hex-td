@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+
+#warning Incomplete implementation. https://www.redblobgames.com/grids/hexagons/
 
 namespace Hexgrid
 {
@@ -57,6 +58,11 @@ namespace Hexgrid
             return HashCode.Combine(q, r);
         }
 
+        public override string ToString()
+        {
+            return $"Hex(q:{q}, r:{r}, s:{-q - r})";
+        }
+
         #endregion
 
         #region Neighbours
@@ -95,17 +101,17 @@ namespace Hexgrid
         #region Helper Methods
 
         private static readonly float root3 = Mathf.Sqrt(3);
+        private const float epsilon = 1e-5f;
 
         public static int Distance(Hex from, Hex to)
         {
             Hex difference = from - to;
-            return Mathf.Max(
-                Mathf.Abs(difference.q),
-                Mathf.Abs(difference.q + difference.r),
-                Mathf.Abs(difference.r)) >> 1;
+            return (Mathf.Abs(difference.q)
+                + Mathf.Abs(difference.q + difference.r)
+                + Mathf.Abs(difference.r)) >> 1;
         }
 
-        public Vector2 HexToPixel(Hex hex, float size)
+        public static Vector2 HexToPixel(Hex hex, float size)
         {
             return new Vector2(
                 size * (root3 * hex.q + root3 / 2 * hex.r),
@@ -113,7 +119,7 @@ namespace Hexgrid
             );
         }
 
-        public Hex PixelToHex(Vector2 pixel, float size)
+        public static Hex PixelToHex(Vector2 pixel, float size)
         {
             float x =  pixel.x / size / root3;
             float y = -pixel.y / size / root3;
@@ -131,16 +137,16 @@ namespace Hexgrid
         }
 
         [Obsolete("Use the PixelToHex method.", true)]
-        public Hex Round(Vector2 fraction)
+        public static Hex Round(Vector2 fractionHex)
         {
-            float unroundedS = -fraction.x - fraction.y;
+            float unroundedS = -fractionHex.x - fractionHex.y;
             
-            int q = Mathf.RoundToInt(fraction.x);
-            int r = Mathf.RoundToInt(fraction.y);
+            int q = Mathf.RoundToInt(fractionHex.x);
+            int r = Mathf.RoundToInt(fractionHex.y);
             int s = Mathf.RoundToInt(unroundedS);
 
-            float qDifference = Mathf.Abs(fraction.x - q);
-            float rDifference = Mathf.Abs(fraction.y - r);
+            float qDifference = Mathf.Abs(fractionHex.x - q);
+            float rDifference = Mathf.Abs(fractionHex.y - r);
             float sDifference = Mathf.Abs(unroundedS - s);
 
             if (qDifference > rDifference && qDifference > sDifference)
@@ -153,9 +159,32 @@ namespace Hexgrid
             return new(q, r);
         }
 
+        public static List<Hex> LinearPath(Vector2 pixelFrom, Vector2 pixelTo, float size)
+        {
+            List<Hex> hexes = new();
+
+            Hex from = PixelToHex(pixelFrom, size),
+                to = PixelToHex(pixelTo, size);
+
+            Vector2 offset = new(epsilon, 2 * epsilon);
+            pixelFrom = HexToPixel(from, size) + offset;
+            pixelTo   = HexToPixel(to, size);
+
+            int hexCount = Distance(from, to);
+            float step = 1.0f / hexCount + epsilon, t = 0.0f;
+
+            Vector2 lerped;
+
+            for (int i = 0; i <= hexCount; i++)
+            {
+                lerped = Vector2.Lerp(pixelFrom, pixelTo, t);
+                hexes.Add(PixelToHex(lerped, size));
+                t += step;
+            }
+
+            return hexes;
+        }
+
         #endregion
-
-#warning Incomplete implementation. Continue from: https://www.redblobgames.com/grids/hexagons/#:~:text=draw%20a%20line-,from%20one,-hex%20to%20another
-
     }
 }
