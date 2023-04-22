@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace StateMachine
+namespace Lotl.StateMachine
 {
     public abstract class State : ScriptableObject
     {

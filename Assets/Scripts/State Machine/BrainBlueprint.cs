@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace StateMachine
+namespace Lotl.StateMachine
 {
-    [CreateAssetMenu(menuName = "StateMachine/BrainBlueprint")]
+    [CreateAssetMenu(menuName = "State Machine/BrainBlueprint")]
     public class BrainBlueprint : ScriptableObject
     {
         [SerializeField] private List<Transition> anyTransitions = new();

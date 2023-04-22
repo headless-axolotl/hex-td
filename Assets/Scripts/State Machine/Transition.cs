@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace StateMachine
+namespace Lotl.StateMachine
 {
-    [CreateAssetMenu(menuName = "StateMachine/Transition")]
     public abstract class Transition : ScriptableObject
     {
         [SerializeField] private State to;

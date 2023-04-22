@@ -5,7 +5,7 @@ using UnityEngine;
 
 #warning Incomplete implementation. https://www.redblobgames.com/grids/hexagons/
 
-namespace Hexgrid
+namespace Lotl.Hexgrid
 {
     /// <summary>
     /// Axial coordinate system implementation for
