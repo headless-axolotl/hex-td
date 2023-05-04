@@ -26,26 +26,20 @@ namespace Lotl.AssetManagement
 
         private void UpdatePrefabs()
         {
-            RemoveInvalidPrefabs();
+            ResetInvalidPrefabs();
             prefabs.ResetDuplicates();
             prefabs.ShiftNonNull();
             UpdatePrefabIdentities();
         }
 
-        private void RemoveInvalidPrefabs()
+        private void ResetInvalidPrefabs()
         {
-            List<GameObject> prefabsToRemove = new();
             for (int i = 0; i < prefabs.Count; i++)
             {
                 if (prefabs[i] == null)
                     continue;
                 if (prefabs[i].GetComponent<PrefabIdentity>() == null)
-                    prefabsToRemove.Add(prefabs[i]);
-            }
-
-            foreach (GameObject prefab in prefabsToRemove)
-            {
-                prefabs.Remove(prefab);
+                    prefabs[i] = null;
             }
         }
 
