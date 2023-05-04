@@ -14,7 +14,7 @@ namespace Lotl.StateMachine
         private List<Transition> currentTransitions = new();
         private List<Transition> anyTransitions = new();
 
-        private static List<Transition> EmptyTransitions = new();
+        private static readonly List<Transition> EmptyTransitions = new();
 
         private void Awake()
         {
@@ -28,6 +28,8 @@ namespace Lotl.StateMachine
 
         private void BuildBrain()
         {
+            if (blueprint == null) return;
+
             foreach(var anyTransition in blueprint.AnyTransitions)
                 anyTransitions.Add(anyTransition);
 

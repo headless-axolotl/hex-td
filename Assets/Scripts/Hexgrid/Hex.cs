@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-#warning Incomplete implementation. https://www.redblobgames.com/grids/hexagons/
+#warning Incomplete implementation.
 
 namespace Lotl.Hexgrid
 {
     /// <summary>
     /// Axial coordinate system implementation for
     /// a "pointy" hexagonal grid coordinate.
+    /// https://www.redblobgames.com/grids/hexagons/
     /// </summary>
     public struct Hex
     {

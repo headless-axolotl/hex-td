@@ -33,23 +33,24 @@ namespace Lotl.AssetManagement
             return book.Prefabs[prefabIndex];
         }
 
-        public virtual bool IsValidPrefab() => true;
+        protected virtual bool IsValidPrefab() => true;
 
         private void Validate()
         {
-            if (library == null ||
-                bookIndex < -1 ||
-                bookIndex >= library.Books.Count)
+            if (library == null
+                || bookIndex < -1
+                || bookIndex >= library.Books.Count)
             {
                 bookIndex = -1;
                 prefabIndex = -1;
                 return;
             }
 
-            if (bookIndex == -1 ||
-                library.Books[BookIndex] == null ||
-                prefabIndex < -1 ||
-                prefabIndex >= library.Books[bookIndex].Prefabs.Count)
+            if (bookIndex == -1
+                || library.Books[BookIndex] == null
+                || prefabIndex < -1
+                || prefabIndex >= library.Books[bookIndex].Prefabs.Count
+                || !IsValidPrefab())
             {
                 prefabIndex = -1;
             }
