@@ -10,6 +10,13 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+/Assets/TextMesh Pro/
+/Assets/Packages/
+/Assets/Materials/
+/Assets/Scenes/
+/Assets/Scriptable Objects/
+
+
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
@@ -59,3 +66,8 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+/Assets/TextMesh Pro.meta
+/Assets/Packages.meta
+/Assets/Materials.meta
+/Assets/Scenes.meta
+/Assets/Scriptable Objects.meta

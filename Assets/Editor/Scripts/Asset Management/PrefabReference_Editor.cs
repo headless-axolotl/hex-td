@@ -6,14 +6,14 @@ using UnityEditor;
 
 using Lotl.AssetManagement;
 
-[CustomEditor(typeof(PrefabReference))]
-public class PrefabReference_Inspector : Editor
+[CustomEditor(typeof(PrefabReference), true)]
+public class PrefabReference_Editor : Editor
 {
     SerializedProperty library;
     SerializedProperty bookIndex;
     SerializedProperty prefabIndex;
 
-    private void OnEnable()
+    protected void OnEnable()
     {
         library = serializedObject.FindProperty("library");
         bookIndex = serializedObject.FindProperty("bookIndex");
@@ -29,26 +29,33 @@ public class PrefabReference_Inspector : Editor
         
         EditorGUILayout.PropertyField(library);
 
-        #region Serialize Book Index
+        bool serializedBookIndex = SerializeBookIndex(info, serializedObject.ApplyModifiedProperties());
+        if (!serializedBookIndex) return;
 
-        // Applying the change to the library
+        bool serializedPrefabIndex = SerializePrefabIndex(info, serializedObject.ApplyModifiedProperties());
+        if (!serializedPrefabIndex) return;
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    protected virtual bool SerializeBookIndex(PrefabReference info, bool libraryChanged)
+    {
         int popupIndex = bookIndex.intValue + 1;
-        if (serializedObject.ApplyModifiedProperties())
-            popupIndex = 0;
-        
+        if (libraryChanged) popupIndex = 0;
+
         if (info.Library == null)
         {
             bookIndex.intValue = -1;
             prefabIndex.intValue = -1;
             serializedObject.ApplyModifiedProperties();
-            return;
+            return false;
         }
-        
+
         List<string> bookNames = info.Library.Books
             .Select((book, index) => book != null ? book.name : $"<Null-{index}>")
             .ToList();
         bookNames.Insert(0, "<None>");
-            
+
         bookIndex.intValue =
             EditorGUILayout.Popup(
                 "Book",
@@ -56,20 +63,19 @@ public class PrefabReference_Inspector : Editor
                 bookNames.ToArray())
             - 1;
 
-        #endregion
+        return true;
+    }
 
-        #region Serialize Prefab Index
+    protected virtual bool SerializePrefabIndex(PrefabReference info, bool bookChanged)
+    {
+        int popupIndex = prefabIndex.intValue + 1;
+        if (bookChanged) popupIndex = 0;
 
-        // Applying the change to the bookIndex.
-        popupIndex = prefabIndex.intValue + 1;
-        if(serializedObject.ApplyModifiedProperties())
-            popupIndex = 0;
-        
         if (bookIndex.intValue < 0 || info.Library.Books[bookIndex.intValue] == null)
         {
             prefabIndex.intValue = -1;
             serializedObject.ApplyModifiedProperties();
-            return;
+            return false;
         }
         PrefabBook infoBook = info.Library.Books[bookIndex.intValue];
 
@@ -85,8 +91,7 @@ public class PrefabReference_Inspector : Editor
                 prefabNames.ToArray())
             - 1;
 
-        #endregion
-
-        serializedObject.ApplyModifiedProperties();
+        return true;
     }
+
 }

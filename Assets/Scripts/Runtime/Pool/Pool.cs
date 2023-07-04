@@ -8,6 +8,7 @@ using System;
 
 namespace Lotl.Runtime
 {
+    [CreateAssetMenu(fileName = "Pool", menuName = "Runtime/Pool")]
     public class Pool : ScriptableObject
     {
         [SerializeField] private PoolMemberPrefabReference prefabReference;
@@ -26,7 +27,7 @@ namespace Lotl.Runtime
             SetPoolParent(poolParent);
         }
 
-        public void SetPoolParent(Transform poolParent) 
+        public void SetPoolParent(Transform poolParent)
             => this.poolParent = poolParent;
 
         public void ResetPool()
