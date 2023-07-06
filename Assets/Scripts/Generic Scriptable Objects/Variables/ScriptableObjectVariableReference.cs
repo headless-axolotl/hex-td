@@ -4,19 +4,19 @@ using UnityEngine;
 
 namespace Lotl.Generic.Variables
 {
-    public abstract class ScriptableObjectReferenceBase { }
+    public abstract class ScriptableObjectVariableReferenceBase { }
 
-    public abstract class ScriptableObjectReference<T, TVariable> : ScriptableObjectReferenceBase
+    public abstract class ScriptableObjectVariableReference<T, TVariable> : ScriptableObjectVariableReferenceBase
         where TVariable : ScriptableObjectVariable<T>
     {
         [SerializeField] private bool useConstant = true;
         [SerializeField] private T constantValue;
         [SerializeField] private TVariable variable;
 
-        public ScriptableObjectReference()
+        public ScriptableObjectVariableReference()
         { }
 
-        public ScriptableObjectReference(T value)
+        public ScriptableObjectVariableReference(T value)
         {
             useConstant = true;
             constantValue = value;
@@ -27,7 +27,7 @@ namespace Lotl.Generic.Variables
             get { return useConstant ? constantValue : variable.Value; }
         }
 
-        public static implicit operator T(ScriptableObjectReference<T, TVariable> reference)
+        public static implicit operator T(ScriptableObjectVariableReference<T, TVariable> reference)
             => reference.Value;
     }
 }

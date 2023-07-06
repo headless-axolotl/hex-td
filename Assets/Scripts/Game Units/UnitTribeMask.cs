@@ -7,10 +7,9 @@ namespace Lotl.Units
     [CreateAssetMenu(fileName = "TribeMask", menuName = "Units/Unit Tribe Mask")]
     public class UnitTribeMask : ScriptableObject
     {
-        [SerializeField] private bool invert;
         [SerializeField] private List<UnitTribe> tribes;
 
-        public bool Contains(UnitTribe tribe)
+        public bool Contains(UnitTribe tribe, bool invert = false)
         {
             if(tribe == null)
             {

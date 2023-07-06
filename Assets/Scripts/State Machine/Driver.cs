@@ -10,7 +10,7 @@ namespace Lotl.StateMachine
         [SerializeField] private BrainBlueprint blueprint;
         [SerializeField] private State currentState;
 
-        private Dictionary<Type, List<Transition>> transitions = new();
+        private Dictionary<State, List<Transition>> transitions = new();
         private List<Transition> currentTransitions = new();
         private List<Transition> anyTransitions = new();
 
@@ -35,11 +35,10 @@ namespace Lotl.StateMachine
 
             foreach(var fromTransition in blueprint.FromTransitions)
             {
-                Type fromType = fromTransition.From.GetType();
-                if (!transitions.TryGetValue(fromType, out var _transitions))
+                if (!transitions.TryGetValue(fromTransition.From, out var _transitions))
                 {
                     _transitions = new List<Transition>();
-                    transitions[fromType] = _transitions;
+                    transitions[fromTransition.From] = _transitions;
                 }
                 _transitions.Add(fromTransition.Transition);
             }
@@ -49,7 +48,7 @@ namespace Lotl.StateMachine
         {
             var transition = GetTransition();
             if(transition != null)
-                SetState(transition.To);
+                SetState(transition.StateTo);
             if(currentState != null)
                 currentState.Tick(this);
         }
@@ -62,7 +61,7 @@ namespace Lotl.StateMachine
                 currentState.OnExit(this);
             currentState = state;
 
-            transitions.TryGetValue(currentState.GetType(), out currentTransitions);
+            transitions.TryGetValue(currentState, out currentTransitions);
 
             currentTransitions ??= EmptyTransitions;
 
@@ -72,11 +71,11 @@ namespace Lotl.StateMachine
         private Transition GetTransition()
         {
             foreach (var transition in anyTransitions)
-                if (transition.Check(this))
+                if (transition.Condition.IsMet(this))
                     return transition;
 
             foreach (var transition in currentTransitions)
-                if (transition.Check(this))
+                if (transition.Condition.IsMet(this))
                     return transition;
 
             return null;

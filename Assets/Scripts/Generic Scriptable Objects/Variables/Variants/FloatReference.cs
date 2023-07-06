@@ -5,6 +5,6 @@ using UnityEngine;
 namespace Lotl.Generic.Variables
 {
     [System.Serializable]
-    public class FloatReference : ScriptableObjectReference<float, FloatVariable> { }
+    public class FloatReference : ScriptableObjectVariableReference<float, FloatVariable> { }
 }
 

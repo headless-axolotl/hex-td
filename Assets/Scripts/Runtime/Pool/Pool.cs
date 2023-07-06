@@ -1,54 +1,60 @@
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.AssetManagement;
-using System;
 
 namespace Lotl.Runtime
 {
     [CreateAssetMenu(fileName = "Pool", menuName = "Runtime/Pool")]
     public class Pool : ScriptableObject
     {
+        #region Properties
+
         [SerializeField] private PoolMemberPrefabReference prefabReference;
 
         private HashSet<GameObject> activeItems = new();
-        public IReadOnlyCollection<GameObject> ActiveItems => activeItems;
-
         private HashSet<GameObject> inactiveItems = new();
-        public IReadOnlyCollection<GameObject> InactiveItems => inactiveItems;
 
         private Transform poolParent;
+        
+        public IReadOnlyCollection<GameObject> ActiveItems => activeItems;
+        public IReadOnlyCollection<GameObject> InactiveItems => inactiveItems;
 
-        public void Initialize(Transform poolParent)
+        #endregion
+
+        /// <summary>
+        /// Clears the pool, but DOES NOT DESTROY the objects it has created.
+        /// </summary>
+        public void Clear()
         {
-            ResetPool();
-            SetPoolParent(poolParent);
+            poolParent = null;
+
+            activeItems.Clear();
+            inactiveItems.Clear();
         }
 
-        public void SetPoolParent(Transform poolParent)
-            => this.poolParent = poolParent;
-
-        public void ResetPool()
+        /// <summary>
+        /// Clears the pool, deletes the parent of the objects it has created and creates a new parent.
+        /// </summary>
+        public void Initialize()
         {
-            foreach(GameObject item in activeItems)
-                Destroy(item);
-            activeItems.Clear();
+            if (poolParent != null)
+                Destroy(poolParent.gameObject);
 
-            foreach (GameObject item in inactiveItems)
-                Destroy(item);
-            inactiveItems.Clear();
+            Clear();
+
+            poolParent = new GameObject($"Pool [{name}] Object Parent").transform;
+            poolParent.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
         }
 
         public GameObject GetObject()
         {
-            if(poolParent == null)
-            {
-                Debug.LogError($"Pool [{name}] is missing a parent Transform! A Pool must be initialized before usage!");
-                return null;
-            }
-
+            if (poolParent == null)
+                Initialize();
+            
             GameObject item = null;
             
             if(inactiveItems.Count != 0)
@@ -63,10 +69,12 @@ namespace Lotl.Runtime
             
             if(!item.TryGetComponent<PoolMember>(out var poolMember))
             {
-                Debug.LogError($"Pool [{name}] PrefabReference prefab is missing PoolMembe component!");
+                Debug.LogError($"Pool [{name}] PrefabReference prefab is missing PoolMember component!");
                 Destroy(item);
                 return null;
             }
+
+            item.SetActive(false);
 
             poolMember.OnDeactivate += HandleItemDeactivation;
             poolMember.IsBeingDestroyed += HandleItemDestruction;
@@ -80,7 +88,8 @@ namespace Lotl.Runtime
         {
             if(sender is not PoolMember poolMember)
             {
-                Debug.LogError($"Pool [{name}] received a deactivation event with an incorrect sender!");
+                Debug.LogError($"Pool [{name}] received a deactivation event with an incorrect sender!" +
+                    $"Sender was: {sender}.");
                 return;
             }
 
@@ -92,7 +101,8 @@ namespace Lotl.Runtime
         {
             if (sender is not PoolMember poolMember)
             {
-                Debug.LogError($"Pool [{name}] received a destruction event with an incorrect sender!");
+                Debug.LogError($"Pool [{name}] received a destruction event with an incorrect sender!" +
+                    $"Sender was: {sender}.");
                 return;
             }
 

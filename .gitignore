@@ -15,7 +15,8 @@
 /Assets/Materials/
 /Assets/Scenes/
 /Assets/Scriptable Objects/
-
+/Assets/Prefabs/
+/Assets/Scripts/Unautomated Testing/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -71,3 +72,5 @@ crashlytics-build.properties
 /Assets/Materials.meta
 /Assets/Scenes.meta
 /Assets/Scriptable Objects.meta
+/Assets/Prefabs.meta
+/Assets/Scripts/Unautomated Testing.meta

@@ -17,6 +17,7 @@ namespace Lotl.Units
             List<TComponent> filtered = new();
             foreach (Collider collider in colliders)
             {
+                if (collider == null) break;
                 if (collider.TryGetComponent<TComponent>(out var component))
                     filtered.Add(component);
             }

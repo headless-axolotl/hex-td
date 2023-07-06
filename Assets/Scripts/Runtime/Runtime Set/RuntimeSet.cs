@@ -4,22 +4,27 @@ using UnityEngine;
 
 namespace Lotl.Runtime
 {
-    public abstract class RuntimeSet<T> : ScriptableObject
+    public abstract class RuntimeSetBase: ScriptableObject
     {
-        private HashSet<T> items = new();
+        public abstract void Clear();
+    }
+
+    public abstract class RuntimeSet<T> : RuntimeSetBase
+    {
+        protected HashSet<T> items = new();
         public IReadOnlyCollection<T> Items => items;
 
-        public virtual void Initialize()
+        public override void Clear()
         {
             items.Clear();
         }
 
-        public void Add(T item)
+        public virtual void Add(T item)
         {
             items.Add(item);
         }
 
-        public void Remove(T item)
+        public virtual void Remove(T item)
         {
             items.Remove(item);
         }
