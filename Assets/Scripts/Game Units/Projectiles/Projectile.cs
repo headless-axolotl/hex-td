@@ -2,19 +2,60 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Lotl.Runtime.Generic;
 using Lotl.Generic.Variables;
 using System.Linq;
+using System;
 
 namespace Lotl.Units.Projectiles
 {
+    [RequireComponent(typeof(Timer))]
     public class Projectile : MonoBehaviour
     {
+        #region Properties
+
+        [Header("Data")]
         [SerializeField] protected FloatReference damage;
         [SerializeField] protected FloatReference speed;
         [SerializeField] protected FloatReference hitRadius;
-        
+        [SerializeField] protected FloatReference lifetime;
+
         [SerializeField] protected LayerMask scanLayer;
         [SerializeField] protected UnitTribeMask unitMask;
+
+        [Header("Runtime")]
+        [SerializeField] protected Timer timer;
+
+        #endregion
+
+        #region Methods
+
+        private void Awake()
+        {
+            timer = GetComponent<Timer>();
+            timer.Done += LifetimeEnded;
+        }
+
+        protected virtual void FixedUpdate()
+        {
+            Move();
+            HitCheck();
+        }
+
+        private void OnEnable()
+        {
+            timer.Trigger(lifetime);
+        }
+
+        private void OnDisable()
+        {
+            timer.Stop();
+        }
+
+        private void LifetimeEnded(object _, EventArgs __)
+        {
+            gameObject.SetActive(false);
+        }
 
         public virtual void Initialize(ProjectileInfo projetileInfo)
         {
@@ -43,11 +84,12 @@ namespace Lotl.Units.Projectiles
             gameObject.SetActive(false);
         }
 
-        protected virtual void FixedUpdate()
+        protected virtual void OnDrawGizmosSelected()
         {
-            Move();
-            HitCheck();
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, hitRadius);
         }
-    }
 
+        #endregion
+    }
 }

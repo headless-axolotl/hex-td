@@ -9,8 +9,16 @@ namespace Lotl.Units
 {
     public class Unit : MonoBehaviour
     {
+        #region Events
+
+        public event EventHandler WasDamaged;
+        public event EventHandler WasHealed;
+        public event EventHandler Died;
+
+        #endregion
+
         #region Properties
-        
+
         [SerializeField] private FloatReference maxHealth;
         [SerializeField] private float health;
         [SerializeField] private UnitTribe tribe;
@@ -25,14 +33,6 @@ namespace Lotl.Units
                 return tribe;
             }
         }
-
-        #endregion
-
-        #region Events
-
-        public event EventHandler WasDamaged;
-        public event EventHandler WasHealed;
-        public event EventHandler Died;
 
         #endregion
 

@@ -14,6 +14,11 @@ namespace Lotl.Units.Towers
 
         private void Awake()
         {
+            if (runtimeSet == null)
+            {
+                Debug.LogError($"Tower [{name}] is missing a runtime set reference!");
+                return;
+            }
             runtimeSet.Add(this);
         }
     }

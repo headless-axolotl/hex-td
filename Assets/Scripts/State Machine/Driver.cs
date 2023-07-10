@@ -16,12 +16,12 @@ namespace Lotl.StateMachine
 
         private static readonly List<Transition> EmptyTransitions = new();
 
-        private void Awake()
+        protected virtual void Awake()
         {
             BuildBrain();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             Tick();
         }
@@ -30,10 +30,10 @@ namespace Lotl.StateMachine
         {
             if (blueprint == null) return;
 
-            foreach(var anyTransition in blueprint.AnyTransitions)
+            foreach (var anyTransition in blueprint.AnyTransitions)
                 anyTransitions.Add(anyTransition);
 
-            foreach(var fromTransition in blueprint.FromTransitions)
+            foreach (var fromTransition in blueprint.FromTransitions)
             {
                 if (!transitions.TryGetValue(fromTransition.From, out var _transitions))
                 {
@@ -42,6 +42,8 @@ namespace Lotl.StateMachine
                 }
                 _transitions.Add(fromTransition.Transition);
             }
+
+            SetState(blueprint.EntryPoint);
         }
 
         private void Tick()
