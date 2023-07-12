@@ -7,15 +7,17 @@ namespace Lotl.AssetManagement
     [CreateAssetMenu(fileName = "Reference", menuName = "Asset Management/Prefab/References/Basic Reference")]
     public class PrefabReference : ScriptableObject
     {
+        #region Properties
+
         [SerializeField] private PrefabLibrary library;
-        public PrefabLibrary Library => library;
-
-
         [SerializeField] private int bookIndex = -1;
-        public int BookIndex => bookIndex;
-        
         [SerializeField] private int prefabIndex = -1;
+        
+        public PrefabLibrary Library => library;
+        public int BookIndex => bookIndex;
         public int PrefabIndex => prefabIndex;
+
+        #endregion
 
         public PrefabBook GetBook()
         {
@@ -54,6 +56,15 @@ namespace Lotl.AssetManagement
             {
                 prefabIndex = -1;
             }
+        }
+
+        public static GameObject Evaluate(PrefabLibrary library, int bookIndex, int prefabIndex)
+        {
+            if (library == null) return null;
+            if (bookIndex < 0 || bookIndex >= library.Books.Count) return null;
+            PrefabBook book = library.Books[bookIndex];
+            if (prefabIndex < 0 || prefabIndex >= book.Prefabs.Count) return null;
+            return book.Prefabs[prefabIndex];
         }
 
 #if UNITY_EDITOR

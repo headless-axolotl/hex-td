@@ -12,6 +12,7 @@ namespace Lotl.Hexgrid
     /// a "pointy" hexagonal grid coordinate.
     /// https://www.redblobgames.com/grids/hexagons/
     /// </summary>
+    [Serializable]
     public struct Hex
     {
         public int q, r;

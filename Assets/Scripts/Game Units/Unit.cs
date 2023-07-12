@@ -61,6 +61,11 @@ namespace Lotl.Units
             WasHealed?.Invoke(this, null);
         }
 
+        public void SetCurrentHealth(float value)
+        {
+            health = Mathf.Clamp(value, 0, maxHealth);
+        }
+
         #endregion
     }
 }

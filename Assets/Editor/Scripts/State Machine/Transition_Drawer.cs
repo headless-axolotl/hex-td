@@ -37,6 +37,7 @@ public class Transition_Drawer : PropertyDrawer
         int indent = EditorGUI.indentLevel;
         EditorGUI.indentLevel = 0;
 
+        // Draw properties.
         EditorGUI.LabelField(conditionLabelRect, "Check");
         EditorGUI.PropertyField(conditionRect, condition, GUIContent.none);
         EditorGUI.LabelField(stateToLabelRect, "To");
