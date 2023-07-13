@@ -6,7 +6,7 @@ using Lotl.StateMachine;
 
 namespace Lotl.Units.Generic.StateMachine
 {
-    [CreateAssetMenu(fileName = "AlwaysTrue", menuName = "Units/Generic/Conditions/Always True")]
+    [CreateAssetMenu(fileName = "AlwaysTrue", menuName = "Lotl/Units/Generic/Conditions/Always True")]
     public class AlwaysTrue : Condition
     {
         public override bool IsMet(Driver driver) => true;

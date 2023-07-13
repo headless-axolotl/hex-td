@@ -8,7 +8,7 @@ using Lotl.Units.Towers;
 namespace Lotl.DataManagement
 {
     [System.Serializable]
-    public class RunInfo : MonoBehaviour
+    public class RunInfo
     {
         [SerializeField] private int resourceAmount = 0;
         [SerializeField] private List<TowerInfo> towersData;

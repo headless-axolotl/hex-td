@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace Lotl.Runtime
 {
-    [CreateAssetMenu(fileName = "GORuntimeSet", menuName = "Runtime/Sets/GO Runtime Set")]
+    [CreateAssetMenu(fileName = "GameObjectRuntimeSet", menuName = "Lotl/Runtime/Sets/Game Object Runtime Set")]
     public class GameObjectRuntimeSet : RuntimeSet<GameObject> { }
 }

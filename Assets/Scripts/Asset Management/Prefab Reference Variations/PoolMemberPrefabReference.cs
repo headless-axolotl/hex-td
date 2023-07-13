@@ -8,6 +8,6 @@ namespace Lotl.AssetManagement
 {
     [CreateAssetMenu(
         fileName = "PoolMemberReference",
-        menuName = "Asset Management/Prefab/References/Pool Member Reference")]
+        menuName = "Lotl/Asset Management/Prefab/References/Pool Member Reference")]
     public class PoolMemberPrefabReference : BehaviourConstrainedPrefabReference<PoolMember> { }
 }

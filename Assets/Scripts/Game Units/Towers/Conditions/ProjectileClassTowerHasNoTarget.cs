@@ -6,7 +6,7 @@ using Lotl.StateMachine;
 
 namespace Lotl.Units.Towers.Conditions
 {
-    [CreateAssetMenu(fileName = "HasNoTarget", menuName = "Units/Towers/Projectile Class/Conditions/Has No Target")]
+    [CreateAssetMenu(fileName = "HasNoTarget", menuName = "Lotl/Units/Towers/Projectile Class/Conditions/Has No Target")]
     public class ProjectileClassTowerHasNoTarget : Condition
     {
         public override bool IsMet(Driver driver)

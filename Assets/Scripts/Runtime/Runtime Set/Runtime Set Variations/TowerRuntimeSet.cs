@@ -6,6 +6,6 @@ using Lotl.Units.Towers;
 
 namespace Lotl.Runtime
 {
-    [CreateAssetMenu(fileName = "TowerRuntimeSet", menuName = "Runtime/Sets/Tower Runtime Set")]
+    [CreateAssetMenu(fileName = "TowerRuntimeSet", menuName = "Lotl/Runtime/Sets/Tower Runtime Set")]
     public class TowerRuntimeSet : AutomaticallyClearedRuntimeSet<Tower> { }
 }

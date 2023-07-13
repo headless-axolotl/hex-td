@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lotl.Units
 {
-    [CreateAssetMenu(fileName = "TribeMask", menuName = "Units/Unit Tribe Mask")]
+    [CreateAssetMenu(fileName = "TribeMask", menuName = "Lotl/Units/Unit Tribe Mask")]
     public class UnitTribeMask : ScriptableObject
     {
         [SerializeField] private List<UnitTribe> tribes;

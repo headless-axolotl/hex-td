@@ -6,7 +6,7 @@ using Lotl.StateMachine;
 
 namespace Lotl.Units.Towers.States
 {
-    [CreateAssetMenu(fileName = "SeekClosestTarget", menuName = "Units/Towers/Projectile Class/States/Seek Closest Target")]
+    [CreateAssetMenu(fileName = "SeekClosestTarget", menuName = "Lotl/Units/Towers/Projectile Class/States/Seek Closest Target")]
     public class SeekClosestTarget : State
     {
         public override void OnEnter(Driver driver)

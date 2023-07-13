@@ -4,6 +4,6 @@ using UnityEngine;
 
 namespace Lotl.Generic.Variables
 {
-    [CreateAssetMenu(fileName = "Float", menuName = "Generic/Float Variable")]
+    [CreateAssetMenu(fileName = "Float", menuName = "Lotl/Generic/Float Variable")]
     public class FloatVariable : ScriptableObjectVariable<float> { }
 }

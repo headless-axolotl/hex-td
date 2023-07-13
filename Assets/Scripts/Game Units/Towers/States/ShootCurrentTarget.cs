@@ -7,7 +7,7 @@ using Lotl.Units.Projectiles;
 
 namespace Lotl.Units.Towers.States
 {
-    [CreateAssetMenu(fileName = "ShootCurrentTarget", menuName = "Units/Towers/Projectile Class/States/Shoot Current Target")]
+    [CreateAssetMenu(fileName = "ShootCurrentTarget", menuName = "Lotl/Units/Towers/Projectile Class/States/Shoot Current Target")]
     public class ShootCurrentTarget : State
     {
         public override void OnEnter(Driver driver)

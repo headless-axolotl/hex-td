@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lotl.AssetManagement
 {
-    [CreateAssetMenu(fileName = "Reference", menuName = "Asset Management/Prefab/References/Basic Reference")]
+    [CreateAssetMenu(fileName = "Reference", menuName = "Lotl/Asset Management/Prefab/References/Basic Reference")]
     public class PrefabReference : ScriptableObject
     {
         #region Properties

@@ -7,7 +7,7 @@ using Lotl.Extensions;
 
 namespace Lotl.AssetManagement
 {
-    [CreateAssetMenu(fileName = "Library", menuName = "Asset Management/Prefab/Library")]
+    [CreateAssetMenu(fileName = "Library", menuName = "Lotl/Asset Management/Prefab/Library")]
     public class PrefabLibrary : ScriptableObject
     {
         [SerializeField] private List<PrefabBook> books = new();

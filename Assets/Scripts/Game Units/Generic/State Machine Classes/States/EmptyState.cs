@@ -6,7 +6,7 @@ using Lotl.StateMachine;
 
 namespace Lotl.Units.Generic.StateMachine
 {
-    [CreateAssetMenu(fileName = "EmptyState", menuName = "Units/Generic/States/Empty")]
+    [CreateAssetMenu(fileName = "EmptyState", menuName = "Lotl/Units/Generic/States/Empty")]
     public class EmptyState : State
     {
         public override void OnEnter(Driver driver) { }

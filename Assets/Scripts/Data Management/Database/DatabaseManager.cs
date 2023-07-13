@@ -4,31 +4,84 @@ using UnityEngine;
 
 using System;
 using System.IO;
+using System.Data.SQLite;
 
 namespace Lotl.DataManagement
 {
-    [CreateAssetMenu(fileName = "DatabaseManager", menuName = "Database/Manager")]
+    [CreateAssetMenu(fileName = "DatabaseManager", menuName = "Lotl/Data/Database Manager")]
     public class DatabaseManager : ScriptableObject
     {
-        private string path => "URI=file:" + Application.persistentDataPath + SAVE_FILE_PATH;
+        #region Constants
 
-        public void InitializeDatabase()
+        private const string SAVE_FILE = "storage.data";
+        private readonly string FILE_PATH = Application.persistentDataPath + SAVE_FILE;
+        private readonly string CONNECTION_STRING
+            = "URI=file:" + Application.persistentDataPath + SAVE_FILE;
+
+        #endregion
+
+        #region Properties
+
+        private bool isInitialized = false;
+
+        [SerializeField] private List<TableManager> tableManagers = new();
+        private Dictionary<Type, TableManager> hashedTables = new();
+        private SQLiteConnection connection = null;
+
+        public IReadOnlyDictionary<Type, TableManager> Tables => hashedTables;
+
+        #endregion
+
+        #region Methods
+
+        public void Initialize()
         {
-            Directory.CreateDirectory(Application.persistentDataPath + DIRECTORY_PATH);
+            if (isInitialized) return;
+
+            isInitialized = true;
+            InitializeDatabase();
+            HashTableManagers();
+
+            Application.quitting += () => {
+                connection?.Dispose();
+            };
+        }
+        private void InitializeDatabase()
+        {
+            if (File.Exists(FILE_PATH))
+            {
+                EstablishConnection();
+                return;
+            }
+
+            SQLiteConnection.CreateFile(FILE_PATH);
+            
+            EstablishConnection();
+
+            foreach(TableManager tableManager in tableManagers)
+                tableManager.CreateTable(connection);
+        }
+        private void EstablishConnection()
+        {
+            connection?.Dispose();
+            connection = new SQLiteConnection(CONNECTION_STRING);
+        }
+        private void HashTableManagers()
+        {
+            foreach (TableManager tableManager in tableManagers)
+            {
+                Type tableType = tableManagers.GetType();
+                if (hashedTables.ContainsKey(tableType))
+                {
+                    Debug.LogWarning("Skipping duplicate TableManager type in " +
+                        "tableManagers list of DatabaseManager!");
+                    continue;
+                }
+                hashedTables.Add(tableType, tableManager);
+            }
         }
 
-        // create tables
-
-        // make new run entry
-
-        // read new run entry
-
-        // check if a run entry exists
-
-        // update run entry
-
-        private const string DIRECTORY_PATH = "/Data";
-        private const string SAVE_FILE_PATH = "/Data/storage.data";
+        #endregion
     }
 }
 

@@ -8,7 +8,7 @@ using Lotl.AssetManagement;
 
 namespace Lotl.Runtime
 {
-    [CreateAssetMenu(fileName = "Pool", menuName = "Runtime/Pool")]
+    [CreateAssetMenu(fileName = "Pool", menuName = "Lotl/Runtime/Pool")]
     public class Pool : ScriptableObject
     {
         #region Properties

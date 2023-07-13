@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lotl.StateMachine
 {
-    [CreateAssetMenu(menuName = "State Machine/BrainBlueprint")]
+    [CreateAssetMenu(fileName = "BrainBlueprint", menuName = "Lotl/State Machine/Brain Blueprint")]
     public class BrainBlueprint : ScriptableObject
     {
         [SerializeField] private State entryPoint;
