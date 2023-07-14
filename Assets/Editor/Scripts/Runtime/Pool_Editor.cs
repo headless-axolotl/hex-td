@@ -25,7 +25,7 @@ public class Pool_Editor : Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        if (GUILayout.Button("State"))
+        if (GUILayout.Button("State") && targetPool != null)
         {
             Debug.Log($"Inspected pool has {targetPool.ActiveItems.Count} active items and " +
                 $"{targetPool.InactiveItems.Count} inactive items.");

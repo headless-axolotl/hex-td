@@ -7,6 +7,7 @@ namespace Lotl.StateMachine
 {
     public class Driver : MonoBehaviour
     {
+        [Header("Driver")]
         [SerializeField] private BrainBlueprint blueprint;
         [SerializeField] private State currentState;
 

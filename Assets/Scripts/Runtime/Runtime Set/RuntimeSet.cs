@@ -7,6 +7,7 @@ namespace Lotl.Runtime
     public abstract class RuntimeSetBase: ScriptableObject
     {
         public abstract void Clear();
+        public abstract int Count();
     }
 
     public abstract class RuntimeSet<T> : RuntimeSetBase
@@ -33,5 +34,7 @@ namespace Lotl.Runtime
         {
             return items.Contains(item);
         }
+
+        public override int Count() => items.Count;
     }
 }

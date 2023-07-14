@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using UnityEngine;
 
 namespace Lotl.DataManagement
@@ -13,9 +12,9 @@ namespace Lotl.DataManagement
 
         #endregion
 
-        public override void CreateTable(SQLiteConnection connection)
-        {
-            // using SQLiteCommand command = connection.CreateCommand();
-        }
+        //public override void CreateTable(SqliteConnection connection)
+        //{
+        //    // using SQLiteCommand command = connection.CreateCommand();
+        //}
     }
 }

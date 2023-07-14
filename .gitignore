@@ -11,11 +11,11 @@
 /[Mm]emoryCaptures/
 
 /Assets/TextMesh Pro/
-/Assets/Packages/
 /Assets/Materials/
 /Assets/Scenes/
 /Assets/Scriptable Objects/
 /Assets/Prefabs/
+/Assets/Plugins/
 /Assets/Scripts/Unautomated Testing/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
@@ -68,9 +68,9 @@ sysinfo.txt
 crashlytics-build.properties
 
 /Assets/TextMesh Pro.meta
-/Assets/Packages.meta
 /Assets/Materials.meta
 /Assets/Scenes.meta
 /Assets/Scriptable Objects.meta
 /Assets/Prefabs.meta
+/Assets/Plugins.meta
 /Assets/Scripts/Unautomated Testing.meta

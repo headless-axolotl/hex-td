@@ -51,7 +51,7 @@ namespace Lotl.AssetManagement
                 {
                     PrefabIdentity identity = prefabs[i].GetComponent<PrefabIdentity>();
                     identity.Id = i;
-                    identity.PrefabBook = this;
+                    identity.BookId = Id;
                 }
             }
         }

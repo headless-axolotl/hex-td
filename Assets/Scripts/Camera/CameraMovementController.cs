@@ -17,7 +17,7 @@ namespace Lotl.Camera
 
         private void Awake()
         {
-            shouldMove = true;
+            shouldMove = false;
             CalcultaeVectorBase();
         }
 

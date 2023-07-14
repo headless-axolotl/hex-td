@@ -33,7 +33,7 @@ namespace Lotl.DataManagement
 
             info = new()
             {
-                BookIndex = prefabIdentity.PrefabBook.Id,
+                BookIndex = prefabIdentity.BookId,
                 PrefabIndex = prefabIdentity.Id,
                 CurrentHealth = unit.Health,
                 Position = hexTransform.Position,
