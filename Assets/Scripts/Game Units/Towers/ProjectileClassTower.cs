@@ -17,7 +17,8 @@ namespace Lotl.Units.Towers
         [Header("Data")]
         [SerializeField] private Pool projectilePool;
         [SerializeField] private FloatReference range;
-        [SerializeField] private UnitTribeMask tribeMask;
+        [SerializeField] private UnitTribeMask scanTribeMask;
+        [SerializeField] private UnitTribeMask hitTribeMask;
         [SerializeField] private LayerMask scanMask;
         [SerializeField] private Timer timer;
         [SerializeField] private Transform projectileSource;
@@ -27,7 +28,8 @@ namespace Lotl.Units.Towers
         
         public Pool ProjectilePool => projectilePool;
         public float Range => range;
-        public UnitTribeMask TribeMask => tribeMask;
+        public UnitTribeMask ScanTribeMask => scanTribeMask;
+        public UnitTribeMask HitTribeMask => hitTribeMask;
         public LayerMask ScanMask => scanMask;
         public Timer Timer => timer;
         public Transform ProjectileSource => projectileSource;

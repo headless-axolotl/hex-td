@@ -7,7 +7,7 @@ using Lotl.Units;
 using Lotl.Units.Towers;
 using Lotl.AssetManagement;
 
-namespace Lotl.DataManagement
+namespace Lotl.Data.Runs
 {
     [System.Serializable]
     public class TowerInfo
@@ -40,6 +40,11 @@ namespace Lotl.DataManagement
             };
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            return $"TowerInfo{{Book: {BookIndex}, Prefab: {PrefabIndex}, CurrentHealth: {CurrentHealth}, Position: {Position}}}";
         }
     }
 }

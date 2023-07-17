@@ -56,7 +56,7 @@ namespace Lotl.Units.Towers.States
             return new(
                 tower.ProjectileSource.position,
                 tower.CurrentTarget.transform.position,
-                tower.TribeMask);
+                tower.HitTribeMask);
         }
 
         public override void OnExit(Driver driver) { }

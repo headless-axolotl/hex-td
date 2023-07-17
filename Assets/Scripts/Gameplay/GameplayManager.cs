@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.StateMachine;
-using Lotl.DataManagement;
+using Lotl.Data;
+using Lotl.Data.Runs;
+using Lotl.Generic.Variables;
 
 namespace Lotl.Gameplay
 {
     [RequireComponent(typeof(TowerBuilder))]
-    public class GameManager : Driver
+    public class GameplayManager : Driver
     {
         #region Properties
 
         [Header("Data")]
         [SerializeField] private RunState runState = new();
-        [SerializeField] private RunDataManager runData;
-        [SerializeField] private RunTableManager runTableManager;
-        [SerializeField] private DatabaseManager databaseManager;
+        [SerializeField] private RunDataObject runData;
+        [SerializeField] private RunTable runTableManager;
 
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
 
         public RunState RunState => runState;
-        public RunDataManager RunData => runData;
-        public RunTableManager RunTableManager => runTableManager;
-        public DatabaseManager DatabaseManager => databaseManager;
+        public RunDataObject RunData => runData;
+        public RunTable RunTableManager => runTableManager;
 
         [SerializeField] private bool readyFlag;
         public bool ReadyFlag { get => readyFlag; set => readyFlag = value; }
@@ -53,7 +53,9 @@ namespace Lotl.Gameplay
         public void SaveState()
         {
             runState.Save(runData.RunInfo);
-            // TODO: runTableManager.Save(runState.runId, runState.Serialize());
+            runTableManager.Set(
+                runData.RunId,
+                runData.Serialize());
         }
 
         #endregion

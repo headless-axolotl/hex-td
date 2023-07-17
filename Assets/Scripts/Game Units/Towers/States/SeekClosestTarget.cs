@@ -28,7 +28,7 @@ namespace Lotl.Units.Towers.States
                 tower.transform.position,
                 tower.Range,
                 tower.ScanMask,
-                tower.TribeMask);
+                tower.ScanTribeMask);
 
             Unit targetToSet = null;
             float minDistance = float.MaxValue, distance;
