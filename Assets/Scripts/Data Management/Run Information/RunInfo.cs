@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using UnityEngine;
 
 using Lotl.Runtime;
 using Lotl.Units.Towers;
+using Unity.VisualScripting;
 
 namespace Lotl.Data.Runs
 {
@@ -23,13 +25,18 @@ namespace Lotl.Data.Runs
             towersData = new();
         }
 
-        public void ExtractTowerInfo(TowerRuntimeSet towerRuntimeSet)
+        public RunInfo(IEnumerable<TowerInfo> towersData)
         {
-            towersData.Clear();
+            this.towersData = towersData.ToList();
+        }
+
+        public static void ExtractTowerInfo(RunInfo into, TowerRuntimeSet towerRuntimeSet)
+        {
+            into.towersData.Clear();
             foreach (Tower tower in towerRuntimeSet.Items)
             {
                 if (TowerInfo.TryExtractInfo(tower.gameObject, out var towerInfo))
-                    towersData.Add(towerInfo);
+                    into.towersData.Add(towerInfo);
             }
         }
 

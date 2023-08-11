@@ -9,7 +9,7 @@ namespace Lotl.Data.Towerset
     [CreateAssetMenu(fileName = "TowerTokenLibrary", menuName = "Lotl/Data/Towerset/Tower Token Library")]
     public class TowerTokenLibrary : ScriptableObject
     {
-        private List<TowerToken> towerTokens = new();
+        [SerializeField] private List<TowerToken> towerTokens = new();
 
         public IReadOnlyList<TowerToken> TowerTokens => towerTokens;
 

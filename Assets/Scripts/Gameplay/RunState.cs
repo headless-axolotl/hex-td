@@ -21,7 +21,7 @@ namespace Lotl.Gameplay
         {
             if (!IsValid()) return;
             into.Resources = resources.Value;
-            into.ExtractTowerInfo(towers);
+            RunInfo.ExtractTowerInfo(into, towers);
         }
 
         public void Load(RunInfo from, TowerBuilder builder)

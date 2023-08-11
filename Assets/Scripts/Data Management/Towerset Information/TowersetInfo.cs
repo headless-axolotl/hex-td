@@ -6,15 +6,21 @@ using UnityEngine;
 
 namespace Lotl.Data.Towerset
 {
+    [System.Serializable]
     public class TowersetInfo
     {
-        private List<TowerToken> towerTokens;
+        [SerializeField] private List<TowerToken> towerTokens;
 
         public IReadOnlyList<TowerToken> TowerTokens => towerTokens;
 
         public TowersetInfo()
         {
             towerTokens = new();
+        }
+
+        public TowersetInfo(List<TowerToken> towerTokens)
+        {
+            this.towerTokens = towerTokens;
         }
 
         public static TowersetInfo Deserialize(byte[] data, TowerTokenLibrary library)

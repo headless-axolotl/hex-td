@@ -39,7 +39,7 @@ namespace Lotl.Data
             using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
             command.CommandText = $"insert into {TowersetsTable} values(@{Id}, @{Validity}, @{Data})";
             command.Parameters.Add($"@{Id}", DbType.String).Value = towersetId;
-            command.Parameters.Add($"@{Validity}", DbType.Int32).Value = (validity ? 0 : 1);
+            command.Parameters.Add($"@{Validity}", DbType.Int32).Value = (validity ? 1 : 0);
             command.Parameters.Add($"@{Data}", DbType.Binary).Value = data;
 
             command.ExecuteNonQuery();
@@ -83,14 +83,14 @@ namespace Lotl.Data
             return result;
         }
 
-        public void Delete(string runId)
+        public void Delete(string towersetId)
         {
             using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
             connection.Open();
 
             using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
             command.CommandText = $"delete from {TowersetsTable} where {Id} = @{Id};";
-            command.Parameters.Add($"@{Id}", DbType.String).Value = runId;
+            command.Parameters.Add($"@{Id}", DbType.String).Value = towersetId;
 
             command.ExecuteNonQuery();
 
@@ -100,11 +100,11 @@ namespace Lotl.Data
         public struct Entry
         {
             public string id;
-            public bool validity;
+            public bool isValid;
             public Entry(string id, bool validity)
             {
                 this.id = id;
-                this.validity = validity;
+                this.isValid = validity;
             }
         }
     }
