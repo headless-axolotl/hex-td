@@ -4,19 +4,19 @@ using UnityEngine;
 
 using Lotl.StateMachine;
 
-namespace Lotl.Units.Towers.Conditions
+namespace Lotl.Units.Generic.StateMachine
 {
-    [CreateAssetMenu(fileName = "HasTarget", menuName = "Lotl/Units/Towers/Projectile Class/Conditions/Has Target")]
-    public class ProjectileClassTowerHasTarget : Condition
+    [CreateAssetMenu(fileName = "HasNoTarget", menuName = "Lotl/Units/Generic/Conditions/Target/Has No Target")]
+    public class HasNoTarget : Condition
     {
         public override bool IsMet(Driver driver)
         {
-            if (driver is not ProjectileClassTower tower)
+            if (driver is not IContainsTarget containsTarget)
             {
                 Debug.LogError($"Driver [{driver.name}] used incpomatible Condition [{name}]!");
                 return false;
             }
-            return tower.CurrentTarget != null;
+            return containsTarget.CurrentTarget == null;
         }
     }
 }

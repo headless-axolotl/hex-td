@@ -87,5 +87,10 @@ namespace Lotl.Data.Menu
         #endregion
 
         #endregion
+
+        public void _ChangeScene()
+        {
+            GetComponent<TestingBehaviour_SceneLoader>().LoadScene("Gameplay");
+        }
     }
 }

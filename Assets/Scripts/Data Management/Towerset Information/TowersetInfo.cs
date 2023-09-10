@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -47,6 +48,11 @@ namespace Lotl.Data.Towerset
                 writer.Write((byte)token.IndexInLibrary);
             }
             return stream.ToArray();
+        }
+
+        internal List<object> Select()
+        {
+            throw new NotImplementedException();
         }
     }
 }

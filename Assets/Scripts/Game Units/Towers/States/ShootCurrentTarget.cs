@@ -26,7 +26,18 @@ namespace Lotl.Units.Towers.States
             if (!IsCurrentTargetValid(tower)) return;
 
             if (tower.Timer.IsTicking) return;
-            tower.Timer.Trigger();
+            if (tower.State == ProjectileClassTower.ActionState.Cooldown)
+            {
+                tower.Timer.Trigger(tower.ActionDelay);
+                tower.State = ProjectileClassTower.ActionState.Delay;
+                tower.TriggerShootAction();
+                return;
+            }
+            else
+            {
+                tower.Timer.Trigger(tower.ActionCooldown);
+                tower.State = ProjectileClassTower.ActionState.Cooldown;
+            }
 
             if (!tower.ProjectilePool.GetObject().TryGetComponent<Projectile>(out var projectile))
             {
@@ -42,8 +53,9 @@ namespace Lotl.Units.Towers.States
         private bool IsCurrentTargetValid(ProjectileClassTower tower)
         {
             if (tower.CurrentTarget == null) return false;
-            float distance = (tower.transform.position - tower.CurrentTarget.transform.position).magnitude;
-            if (distance > tower.Range)
+            float sqrDistance = (tower.transform.position - tower.CurrentTarget.transform.position).sqrMagnitude;
+            float range = tower.SeekRange;
+            if (sqrDistance > range * range)
             {
                 tower.CurrentTarget = null;
                 return false;

@@ -84,12 +84,16 @@ namespace Lotl.Units.Projectiles
             gameObject.SetActive(false);
         }
 
+        #endregion
+
+#if UNITY_EDITOR
+
         protected virtual void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, hitRadius);
         }
 
-        #endregion
+#endif
     }
 }

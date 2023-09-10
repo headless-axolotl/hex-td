@@ -21,6 +21,7 @@ namespace Lotl.Data.Menu
         [SerializeField] private DataView createdRunTowersetPreview;
         [SerializeField] private DataView creationSubmenuTowersetPreview;
 
+        [SerializeField] private Button openSubmenuButton;
         [SerializeField] private Button createButton;
         [SerializeField] private Button playButton;
         [SerializeField] private Button deleteButton;
@@ -119,6 +120,8 @@ namespace Lotl.Data.Menu
                 towersetDropdown.options.Add(new(entry.id));
             }
             towersetDropdown.value = 1; towersetDropdown.value = 0;
+
+            openSubmenuButton.interactable = towersetDropdown.options.Count != 0;
         }
 
         public void ValidateName()
@@ -209,7 +212,9 @@ namespace Lotl.Data.Menu
                 return;
             
             dataManager.CrossSceneRunData.Data = GetRunData(selectedRun);
-            // change the scene
+            
+            #warning testing purposes only!
+            dataManager._ChangeScene();
         }
 
         public void Delete()

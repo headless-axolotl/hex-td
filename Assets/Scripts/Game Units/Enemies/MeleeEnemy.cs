@@ -3,23 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.Runtime;
-using Lotl.Runtime.Generic;
 using Lotl.StateMachine;
 using Lotl.Generic.Variables;
+using Lotl.Runtime.Generic;
 using Lotl.Units.Generic.StateMachine;
 
-namespace Lotl.Units.Towers
+namespace Lotl.Units.Enemies
 {
-    [RequireComponent(typeof(Tower), typeof(Timer))]
-    public class ProjectileClassTower : Driver, ISeeker
+    [RequireComponent(typeof(Timer), typeof(EnemyLocomotion))]
+    public class MeleeEnemy : Driver, ISeeker
     {
         #region Events
 
-        public event EventHandler OnShootAction;
+        public event EventHandler OnAttackAction;
 
-        public void TriggerShootAction()
-            => OnShootAction?.Invoke(this, null);
+        public void TriggerAttackAction()
+            => OnAttackAction?.Invoke(this, null);
 
         #endregion
 
@@ -31,27 +30,28 @@ namespace Lotl.Units.Towers
         [SerializeField] private LayerMask scanMask;
         
         [Header("Action Data")]
-        [SerializeField] private UnitTribeMask hitTribeMask;
-        [SerializeField] private Pool projectilePool;
-        [SerializeField] private Transform projectileSource;
+        [SerializeField] private FloatReference meleeRange;
+        [SerializeField] private FloatReference attackPower;
+        [SerializeField] private EnemyLocomotion locomotion;
 
         [Header("Timing")]
         [SerializeField] private Timer timer;
         [SerializeField] private FloatReference actionCooldown;
         [SerializeField] private FloatReference actionDelay;
-        [SerializeField] private ActionState state = ActionState.Cooldown;
+        [SerializeField] private ActionState state;
+
         public enum ActionState { Cooldown, Delay }
 
         [Header("Runtime")]
         [SerializeField] private Unit currentTarget;
-        
+
         public float SeekRange => seekRange;
         public UnitTribeMask ScanTribeMask => scanTribeMask;
         public LayerMask ScanMask => scanMask;
         
-        public UnitTribeMask HitTribeMask => hitTribeMask;
-        public Pool ProjectilePool => projectilePool;
-        public Transform ProjectileSource => projectileSource;
+        public float MeleeRange => meleeRange;
+        public float AttackPower => attackPower;
+        public EnemyLocomotion Locomotion => locomotion;
         
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;
@@ -72,12 +72,8 @@ namespace Lotl.Units.Towers
 
         protected override void Awake()
         {
-            if (projectilePool == null)
-                Debug.LogError($"ProjectileClassTower [{name}] is missing a projectile pool!");
-            if (projectileSource == null)
-                Debug.LogError($"ProjectileClassTower [{name}] is missing a projectile source!");
             timer = GetComponent<Timer>();
-            
+
             base.Awake();
         }
 
@@ -85,8 +81,10 @@ namespace Lotl.Units.Towers
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, SeekRange);
+            Gizmos.color = Color.black;
+            Gizmos.DrawSphere(transform.position + MeleeRange * transform.forward, 0.2f);
         }
 
 #endif

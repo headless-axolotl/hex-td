@@ -15,15 +15,14 @@ namespace Lotl.Gameplay
         #region Properties
 
         [Header("Data")]
-        [SerializeField] private RunState runState = new();
-        [SerializeField] private RunDataObject runDataObject;
+        [SerializeField] private RunState runState;
+        [SerializeField] private RunDataObject crossSceneData;
         [SerializeField] private RunTable runTableManager;
 
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
 
         public RunState RunState => runState;
-        public RunDataObject RunDataObject => runDataObject;
         public RunTable RunTableManager => runTableManager;
 
         [SerializeField] private bool readyFlag;
@@ -47,15 +46,15 @@ namespace Lotl.Gameplay
 
         public void LoadState()
         {
-            runState.Load(runDataObject.Data.RunInfo, towerBuilder);
+            runState.Load(crossSceneData.Data.RunInfo, towerBuilder);
         }
 
         public void SaveState()
         {
-            runState.Save(runDataObject.Data.RunInfo);
+            runState.Save(crossSceneData.Data.RunInfo);
             runTableManager.Set(
-                runDataObject.Data.RunId,
-                RunData.Serialize(runDataObject.Data));
+                crossSceneData.Data.RunId,
+                RunData.Serialize(crossSceneData.Data));
         }
 
         #endregion

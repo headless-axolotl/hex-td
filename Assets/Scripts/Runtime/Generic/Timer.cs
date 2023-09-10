@@ -11,7 +11,7 @@ namespace Lotl.Runtime.Generic
     {
         public event EventHandler Done;
         
-        [SerializeField] private FloatReference duration;
+        [SerializeField] private FloatReference defaultDuration;
         private bool isTicking;
         private Coroutine currentCoroutine;
 
@@ -27,7 +27,7 @@ namespace Lotl.Runtime.Generic
             if (isTicking) return;
             isTicking = true;
             currentCoroutine = StartCoroutine(
-                Tick(duration == 0f ? this.duration : duration));
+                Tick(duration == 0f ? this.defaultDuration : duration));
         }
 
         public void Stop()
