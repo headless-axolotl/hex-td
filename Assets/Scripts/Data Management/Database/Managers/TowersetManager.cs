@@ -1,10 +1,10 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.Data.Towerset;
-using System.Linq;
 
 namespace Lotl.Data
 {

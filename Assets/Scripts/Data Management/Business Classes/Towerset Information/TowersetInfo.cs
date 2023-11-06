@@ -24,6 +24,17 @@ namespace Lotl.Data.Towerset
             this.towerTokens = towerTokens;
         }
 
+        public static byte[] Serialize(TowersetInfo towersetInfo)
+        {
+            using MemoryStream stream = new();
+            using BinaryWriter writer = new(stream);
+            foreach (TowerToken token in towersetInfo.towerTokens)
+            {
+                writer.Write((byte)token.IndexInLibrary);
+            }
+            return stream.ToArray();
+        }
+
         public static TowersetInfo Deserialize(byte[] data, TowerTokenLibrary library)
         {
             TowersetInfo towersetInfo = new();
@@ -37,17 +48,6 @@ namespace Lotl.Data.Towerset
                 .OrderBy(token => token.IndexInLibrary).ToList();
 
             return towersetInfo;
-        }
-
-        public static byte[] Serialize(TowersetInfo towersetInfo)
-        {
-            using MemoryStream stream = new();
-            using BinaryWriter writer = new(stream);
-            foreach(TowerToken token in towersetInfo.towerTokens)
-            {
-                writer.Write((byte)token.IndexInLibrary);
-            }
-            return stream.ToArray();
         }
     }
 }

@@ -74,7 +74,7 @@ namespace Lotl.Data
             string passwordHash = await reader.GetFieldValueAsync<string>(PasswordHash);
             byte[] data         = await reader.GetFieldValueAsync<byte[]>(Data);
 
-            DataEntry dataEntry = new(key, passwordHash, data);
+            DataEntry dataEntry = new(passwordHash, data);
 
             await reader.CloseAsync();
             await connection.CloseAsync();
@@ -125,13 +125,11 @@ namespace Lotl.Data
 
         public struct DataEntry
         {
-            public string id;
             public string passwordHash;
             public byte[] data;
 
-            public DataEntry(string id, string passwordHash, byte[] data)
+            public DataEntry(string passwordHash, byte[] data)
             {
-                this.id = id;
                 this.passwordHash = passwordHash;
                 this.data = data;
             }
