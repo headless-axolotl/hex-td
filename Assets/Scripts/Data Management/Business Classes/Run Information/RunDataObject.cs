@@ -56,11 +56,12 @@ namespace Lotl.Data.Runs
             int towersetInfoDataLength = reader.ReadInt32();
             byte[] towersetInfoData = reader.ReadBytes(towersetInfoDataLength);
 
-            RunData runData = new();
+            RunData runData = new()
+            {
+                RunInfo = RunInfo.Deserialize(runInfoData),
+                TowersetInfo = TowersetInfo.Deserialize(towersetInfoData, tokenLibrary)
+            };
 
-            runData.RunInfo = RunInfo.Deserialize(runInfoData);
-            runData.TowersetInfo = TowersetInfo.Deserialize(towersetInfoData, tokenLibrary);
-            
             return runData;
         }
     }

@@ -239,6 +239,7 @@ namespace Lotl.Data.Menu
                 runData = cachedRunDatas[id] = RunData.Deserialize(
                     dataManager.RunTable.ReadData(id),
                     dataManager.TowerTokenLibrary);
+                runData.RunId = id;
             }
 
             return runData;

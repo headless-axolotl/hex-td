@@ -49,10 +49,5 @@ namespace Lotl.Data.Towerset
             }
             return stream.ToArray();
         }
-
-        internal List<object> Select()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

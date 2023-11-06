@@ -196,7 +196,7 @@ namespace Lotl.Data.Menu
         {
             var selectedEntry = towersInCurrentTowersetView.SelectedEntry;
             
-            if (towersInCurrentTowersetView.SelectedEntry == null)
+            if (selectedEntry == null)
                 return;
             
             towersInCurrentTowerset.Remove(selectedEntry.EntryName);

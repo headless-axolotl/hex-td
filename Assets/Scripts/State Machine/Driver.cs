@@ -9,7 +9,7 @@ namespace Lotl.StateMachine
     {
         [Header("Driver")]
         [SerializeField] private BrainBlueprint blueprint;
-        [SerializeField] private State currentState;
+        private State currentState = null;
 
         private Dictionary<State, List<Transition>> transitions = new();
         private List<Transition> currentTransitions = new();
