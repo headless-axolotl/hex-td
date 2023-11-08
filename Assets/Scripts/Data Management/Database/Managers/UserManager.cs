@@ -132,7 +132,7 @@ namespace Lotl.Data
 
         public void GetUserData(string userId, Action<UserData, bool> onComplete)
         {
-            if (!CheckInitialization(onComplete)) return;
+            if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedUserDatas.TryGetValue(userId, out var data))
             {

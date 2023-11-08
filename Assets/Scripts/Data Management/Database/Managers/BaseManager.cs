@@ -19,7 +19,7 @@ namespace Lotl.Data
             return true;
         }
 
-        protected bool CheckInitialization<T>(Action<T, bool> callback)
+        protected bool ProperlyInitialized<T>(Action<T, bool> callback)
         {
             if (!IsInitialized)
             {

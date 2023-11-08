@@ -81,7 +81,7 @@ namespace Lotl.Data
 
         public void GetRunData(RunIdentity identity, Action<RunData, bool> onComplete)
         {
-            if (!CheckInitialization(onComplete)) return;
+            if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedRunData.TryGetValue(identity, out var runData))
             {

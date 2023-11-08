@@ -83,7 +83,7 @@ namespace Lotl.Data
 
         public void GetTowersetInfo(TowersetIdentity identity, Action<TowersetInfo, bool> onComplete)
         {
-            if (!CheckInitialization(onComplete)) return;
+            if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedTowersetInfos.TryGetValue(identity, out var info))
             {
