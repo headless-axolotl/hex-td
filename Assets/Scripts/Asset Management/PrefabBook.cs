@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-using Lotl.Extensions;
+using Lotl.Utility;
 
 namespace Lotl.AssetManagement
 {

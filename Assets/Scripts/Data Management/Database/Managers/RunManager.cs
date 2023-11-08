@@ -1,15 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
+using Lotl.Utility;
 using Lotl.Data.Runs;
 
 namespace Lotl.Data
 {
     using RunIdentity = RunContext.Identity;
 
-    public class RunManager
+    public class RunManager : BaseManager
     {
         private readonly RunContext context;
         private readonly DatabaseManager databaseManager;
@@ -23,61 +25,87 @@ namespace Lotl.Data
         public RunManager(
             RunContext context,
             DatabaseManager databaseManager,
-            AsyncTaskHandler asyncHandler,
-            Action onComplete)
+            AsyncTaskHandler asyncHandler)
         {
             this.context = context;
             this.databaseManager = databaseManager;
             this.asyncHandler = asyncHandler;
 
+            trackedRuns = null;
             cachedRunData = new();
-            
-            Initialize(onComplete);
         }
 
-        private void Initialize(Action onComplete)
+        public void Initialize(Action<bool> onComplete)
         {
-            asyncHandler.HandleTask(context.ReadAll(), (entries) =>
+            if (!ProperlyInitialized(onComplete)) return;
+
+            var readAll = context.ReadAll();
+
+            asyncHandler.HandleTask(readAll, (entries, isSuccessful) =>
             {
+                if(!isSuccessful)
+                {
+                    onComplete?.Invoke(false);
+                    return;
+                }
+
                 trackedRuns = new(entries);
-                onComplete?.Invoke();
+
+                Initialize();
+                
+                onComplete?.Invoke(true);
             });
         }
 
         public bool RunExists(RunIdentity identity)
-            => trackedRuns.Contains(identity);
-
-        public void Create(RunIdentity identity, RunData runData, Action onComplete)
         {
+            if (!ProperlyInitialized(null)) return false;
+            return trackedRuns.Contains(identity);
+        }
+
+        public void Create(RunIdentity identity, RunData runData, Action<bool> onComplete)
+        {
+            if (!ProperlyInitialized(onComplete)) return;
+
             if (RunExists(identity)) return;
 
             byte[] data = RunData.Serialize(runData);
 
             trackedRuns.Add(identity);
             cachedRunData[identity] = runData;
-            
-            asyncHandler.HandleTask(context.Set(identity, data), onComplete);
+
+            Task set = context.Set(identity, data);
+
+            asyncHandler.HandleTask(set, onComplete);
         }
 
-        public void GetRunData(RunIdentity identity, Action<RunData> onComplete)
+        public void GetRunData(RunIdentity identity, Action<RunData, bool> onComplete)
         {
+            if (!CheckInitialization(onComplete)) return;
+
             if (cachedRunData.TryGetValue(identity, out var runData))
             {
-                onComplete?.Invoke(runData);
+                onComplete?.Invoke(runData, true);
                 return;
             }
 
-            asyncHandler.HandleTask(context.ReadData(identity), (data) =>
+            var readData = context.ReadData(identity);
+
+            asyncHandler.HandleTask(readData, (data, isSuccessful) =>
             {
                 RunData runData = RunData.Deserialize(data, databaseManager.TowerTokenLibrary);
                 cachedRunData[identity] = runData;
-                onComplete?.Invoke(runData);
+                onComplete?.Invoke(runData, true);
             });
         }
 
-        public void Delete(RunIdentity identity, Action onComplete)
+        public void Delete(RunIdentity identity, Action<bool> onComplete)
         {
-            asyncHandler.HandleTask(context.Delete(identity), onComplete);
+            if (!ProperlyInitialized(onComplete)) return;
+
+            Task delete = context.Delete(identity);
+
+            asyncHandler.HandleTask(delete, onComplete);
         }
     }
 }
