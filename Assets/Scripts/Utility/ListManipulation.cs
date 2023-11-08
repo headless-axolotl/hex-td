@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Lotl.Extensions
+namespace Lotl.Utility
 {
     public static class ListManipulation
     {

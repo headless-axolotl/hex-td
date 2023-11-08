@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.Extensions;
+using Lotl.Utility;
 using Lotl.Generic.Variables;
 
 namespace Lotl.Hexgrid

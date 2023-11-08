@@ -8,7 +8,7 @@ using TMPro;
 
 using Lotl.UI;
 using Lotl.Data.Towerset;
-using Lotl.Extensions;
+using Lotl.Utility;
 
 namespace Lotl.Data.Menu
 {
