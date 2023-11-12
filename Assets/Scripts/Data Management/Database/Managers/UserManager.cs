@@ -139,7 +139,7 @@ namespace Lotl.Data
 
             if (!Validate(userId, password))
             {
-                onComplete?.Invoke(new Result(false, incorrec));
+                onComplete?.Invoke(new Result(false, IncorrectOldPassword));
                 return;
             }
 
