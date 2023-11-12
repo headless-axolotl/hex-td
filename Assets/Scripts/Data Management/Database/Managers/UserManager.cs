@@ -139,7 +139,7 @@ namespace Lotl.Data
 
             if (!Validate(userId, password))
             {
-                onComplete?.Invoke(new Result(false, IncorrectOldPassword));
+                onComplete?.Invoke(new Result(false, incorrec));
                 return;
             }
 
@@ -167,8 +167,6 @@ namespace Lotl.Data
             }
 
             var readData = context.ReadData(userId);
-
-            asyncHandler.HandleTask(readData, onComplete, null);
 
             asyncHandler.HandleTask(readData, onComplete, onSuccess: (entry) =>
             {
