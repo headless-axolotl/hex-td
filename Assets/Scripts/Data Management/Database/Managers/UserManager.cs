@@ -5,14 +5,24 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using Lotl.Utility;
+using Lotl.Utility.Async;
 using Lotl.Data.Users;
 using BCrypter = BCrypt.Net.BCrypt;
 
 namespace Lotl.Data
 {
+    using Result = AsyncTaskResult;
+
     public class UserManager : BaseManager
     {
+        #region Error Messages
+
+        private const string UserAlreadyExists = "user already exists";
+
+        private const string IncorrectOldPassword = "incorrect old password";
+
+        #endregion
+
         private readonly UserContext context;
         private readonly DatabaseManager databaseManager;
         private readonly AsyncTaskHandler asyncHandler;
@@ -35,25 +45,23 @@ namespace Lotl.Data
             cachedUserDatas = new();
         }
 
-        public void Initialize(Action<bool> onComplete)
+        public void Initialize(Action<Result> onComplete)
         {
+            if (IsInitialized)
+            {
+                onComplete?.Invoke(Result.OK);
+                return;
+            }
+
             var readAll = context.ReadAll();
 
-            asyncHandler.HandleTask(readAll, (entries, isSuccessful) =>
+            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
             {
-                if(!isSuccessful)
-                {
-                    onComplete?.Invoke(false);
-                    return;
-                }
-
                 trackedUsers = new(entries.ToDictionary(
                     entry => entry.id,
                     entry => entry.passwordHash));
 
                 Initialize();
-
-                onComplete?.Invoke(true);
             });
         }
 
@@ -67,13 +75,17 @@ namespace Lotl.Data
             return BCrypter.EnhancedVerify(password, passwordHash);
         }
 
-        public void TryCreateUser(string userId, string password, UserData baseData, Action<bool> onComplete)
+        public void CreateUser(
+            string userId,
+            string password,
+            UserData baseData,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (trackedUsers.ContainsKey(userId))
             {
-                onComplete?.Invoke(false);
+                onComplete?.Invoke(new Result(false, UserAlreadyExists));
                 return;
             }
 
@@ -82,16 +94,24 @@ namespace Lotl.Data
 
             Task set = context.Set(userId, new(passwordHash, data));
 
-            asyncHandler.HandleTask(set, onComplete);
+            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            {
+                trackedUsers[userId] = passwordHash;
+                cachedUserDatas[userId] = baseData;
+            });
         }
 
-        public void TryUpdatePassword(string userId, string oldPassword, string newPassword, Action<bool> onComplete)
+        public void UpdatePassword(
+            string userId,
+            string oldPassword,
+            string newPassword,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (!Validate(userId, oldPassword))
             {
-                onComplete?.Invoke(false);
+                onComplete?.Invoke(new Result(false, IncorrectOldPassword));
                 return;
             }
 
@@ -99,26 +119,27 @@ namespace Lotl.Data
 
             var readData = context.ReadData(userId);
 
-            asyncHandler.HandleTask(readData, (dataEntry, isSuccessful) =>
+            asyncHandler.HandleTask(readData, null, onSuccess: (dataEntry) =>
             {
-                if(!isSuccessful)
-                {
-                    onComplete?.Invoke(false);
-                    return;
-                }
-
                 Task set = context.Set(userId, new(newPasswordHash, dataEntry.data));
-                asyncHandler.HandleTask(set, onComplete);
+                asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+                {
+                    trackedUsers[userId] = newPasswordHash;
+                });
             });
         }
 
-        public void TryUpdateUserData(string userId, string password, UserData userData, Action<bool> onComplete)
+        public void UpdateUserData(
+            string userId,
+            string password,
+            UserData userData,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (!Validate(userId, password))
             {
-                onComplete?.Invoke(false);
+                onComplete?.Invoke(new Result(false, IncorrectOldPassword));
                 return;
             }
 
@@ -127,37 +148,50 @@ namespace Lotl.Data
 
             Task set = context.Set(userId, new(passwordHash, data));
 
-            asyncHandler.HandleTask(set, onComplete);
+            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            {
+                cachedUserDatas[userId] = userData;
+            });
         }
 
-        public void GetUserData(string userId, Action<UserData, bool> onComplete)
+        public void GetUserData(
+            string userId,
+            Action<Result, UserData> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedUserDatas.TryGetValue(userId, out var data))
             {
-                onComplete?.Invoke(data, true);
+                onComplete?.Invoke(Result.OK, data);
                 return;
             }
 
             var readData = context.ReadData(userId);
 
-            asyncHandler.HandleTask(readData, (entry, isSuccessful) =>
+            asyncHandler.HandleTask(readData, onComplete, null);
+
+            asyncHandler.HandleTask(readData, onComplete, onSuccess: (entry) =>
             {
                 UserData userData = UserData.Deserialize(entry.data,
                     databaseManager.TowerTokenLibrary);
+                
                 cachedUserDatas[userId] = userData;
-                onComplete?.Invoke(userData, true);
+                
+                return userData;
             });
         }
 
-        public void TryDelete(string userId, Action<bool> onComplete)
+        public void Delete(string userId, Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             Task delete = context.Delete(userId);
 
-            asyncHandler.HandleTask(delete, onComplete);
+            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            {
+                trackedUsers.Remove(userId);
+                cachedUserDatas.Remove(userId);
+            });
         }
     }
 }

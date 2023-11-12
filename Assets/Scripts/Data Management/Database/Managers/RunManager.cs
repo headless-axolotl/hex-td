@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using Lotl.Utility;
+using Lotl.Utility.Async;
 using Lotl.Data.Runs;
 
 namespace Lotl.Data
 {
     using RunIdentity = RunContext.Identity;
+    using Result = AsyncTaskResult;
 
     public class RunManager : BaseManager
     {
@@ -35,77 +36,93 @@ namespace Lotl.Data
             cachedRunData = new();
         }
 
-        public void Initialize(Action<bool> onComplete)
+        public void Initialize(Action<Result> onComplete)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if(IsInitialized)
+            {
+                onComplete?.Invoke(Result.OK);
+                return;
+            }
 
             var readAll = context.ReadAll();
 
-            asyncHandler.HandleTask(readAll, (entries, isSuccessful) =>
+            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
             {
-                if(!isSuccessful)
-                {
-                    onComplete?.Invoke(false);
-                    return;
-                }
-
                 trackedRuns = new(entries);
-
                 Initialize();
-                
-                onComplete?.Invoke(true);
             });
         }
 
         public bool RunExists(RunIdentity identity)
         {
             if (!ProperlyInitialized(null)) return false;
+            
             return trackedRuns.Contains(identity);
         }
 
-        public void Create(RunIdentity identity, RunData runData, Action<bool> onComplete)
+        public void Create(
+            RunIdentity identity,
+            RunData runData,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
-            if (RunExists(identity)) return;
+            if (RunExists(identity))
+            {
+                onComplete?.Invoke(Result.OK);
+                return;
+            }
 
             byte[] data = RunData.Serialize(runData);
 
-            trackedRuns.Add(identity);
-            cachedRunData[identity] = runData;
-
             Task set = context.Set(identity, data);
 
-            asyncHandler.HandleTask(set, onComplete);
+            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            {
+                trackedRuns.Add(identity);
+                cachedRunData[identity] = runData;
+            });
         }
 
-        public void GetRunData(RunIdentity identity, Action<RunData, bool> onComplete)
+        public void GetRunData(
+            RunIdentity identity,
+            Action<Result, RunData> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedRunData.TryGetValue(identity, out var runData))
             {
-                onComplete?.Invoke(runData, true);
+                onComplete?.Invoke(Result.OK, runData);
                 return;
             }
 
             var readData = context.ReadData(identity);
 
-            asyncHandler.HandleTask(readData, (data, isSuccessful) =>
+            asyncHandler.HandleTask(readData, onComplete, onSuccess: (data) =>
             {
-                RunData runData = RunData.Deserialize(data, databaseManager.TowerTokenLibrary);
+                RunData runData = RunData.Deserialize(
+                    data,
+                    databaseManager.TowerTokenLibrary);
+                
                 cachedRunData[identity] = runData;
-                onComplete?.Invoke(runData, true);
+
+                return runData;
             });
         }
 
-        public void Delete(RunIdentity identity, Action<bool> onComplete)
+        public void Delete(
+            RunIdentity identity,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             Task delete = context.Delete(identity);
 
-            asyncHandler.HandleTask(delete, onComplete);
+            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            {
+                trackedRuns.Remove(identity);
+                cachedRunData.Remove(identity);
+            });
         }
     }
 }

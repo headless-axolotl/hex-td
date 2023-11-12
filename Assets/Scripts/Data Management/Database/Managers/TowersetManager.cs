@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-using Lotl.Utility;
+using Lotl.Utility.Async;
 using Lotl.Data.Towerset;
 
 namespace Lotl.Data
 {
     using TowersetIdentity = TowersetContext.Identity;
+    using Result = AsyncTaskResult;
 
     public class TowersetManager : BaseManager
     {
@@ -36,78 +37,91 @@ namespace Lotl.Data
             cachedTowersetInfos = new();
         }
 
-        public void Initialize(Action<bool> onComplete)
+        public void Initialize(Action<Result> onComplete)
         {
-            if(!ProperlyInitialized(onComplete)) return;
+            if(IsInitialized)
+            {
+                onComplete?.Invoke(Result.OK);
+                return;
+            }
 
             var readAll = context.ReadAll();
-            
-            asyncHandler.HandleTask(readAll, (entries, isSuccessful) => 
-            {
-                if(!isSuccessful)
-                {
-                    onComplete?.Invoke(false);
-                    return;
-                }
 
+            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
+            {
                 trackedTowersets = new(entries.ToDictionary(
-                    entry => entry.identity,
-                    entry => entry.isValid));
-                
+                        entry => entry.identity,
+                        entry => entry.isValid));
+
                 Initialize();
-                
-                onComplete?.Invoke(true);
             });
         }
 
         public bool TowersetExists(TowersetIdentity identity)
         {
             if (!ProperlyInitialized(null)) return false;
+            
             return trackedTowersets.ContainsKey(identity);
         }
-            
 
-        public void Set(TowersetIdentity identity, TowersetInfo info, bool validity, Action<bool> onComplete)
+        public void Set(
+            TowersetIdentity identity,
+            TowersetInfo info,
+            bool validity,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
-
-            trackedTowersets[identity] = validity;
-            cachedTowersetInfos[identity] = info;
 
             byte[] data = TowersetInfo.Serialize(info);
 
             Task set = context.Set(identity, new(validity, data));
 
-            asyncHandler.HandleTask(set, onComplete);
+            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>   
+            {
+                trackedTowersets[identity] = validity;
+                cachedTowersetInfos[identity] = info;
+            });
         }
 
-        public void GetTowersetInfo(TowersetIdentity identity, Action<TowersetInfo, bool> onComplete)
+        public void GetTowersetInfo(
+            TowersetIdentity identity,
+            Action<Result, TowersetInfo> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             if (cachedTowersetInfos.TryGetValue(identity, out var info))
             {
-                onComplete?.Invoke(info, true);
+                onComplete?.Invoke(Result.OK, info);
                 return;
             }
 
             var readData = context.ReadData(identity);
 
-            asyncHandler.HandleTask(readData, (entry, isSuccessful) =>
+            asyncHandler.HandleTask(readData, onComplete, onSuccess: (entry) =>
             {
-                TowersetInfo info = TowersetInfo.Deserialize(entry.data, databaseManager.TowerTokenLibrary);
+                TowersetInfo info = TowersetInfo.Deserialize(
+                    entry.data,
+                    databaseManager.TowerTokenLibrary);
+
                 cachedTowersetInfos[identity] = info;
-                onComplete?.Invoke(info, true);
+
+                return info;
             });
         }
 
-        public void Delete(TowersetIdentity identity, Action<bool> onComplete)
+        public void Delete(
+            TowersetIdentity identity,
+            Action<Result> onComplete)
         {
             if (!ProperlyInitialized(onComplete)) return;
 
             Task delete = context.Delete(identity);
 
-            asyncHandler.HandleTask(delete, onComplete);
+            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            {
+                trackedTowersets.Remove(identity);
+                cachedTowersetInfos.Remove(identity);
+            });
         }
     }
 }

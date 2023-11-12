@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.Utility;
+using Lotl.Utility.Async;
 using Lotl.Data.Towerset;
 
 namespace Lotl.Data
