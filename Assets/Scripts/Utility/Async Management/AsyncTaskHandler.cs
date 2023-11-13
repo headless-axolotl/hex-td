@@ -42,7 +42,7 @@ namespace Lotl.Utility.Async
                 onSuccess?.Invoke();
                 onComplete?.Invoke(Result.OK);
             }
-            else onComplete?.Invoke(new(true, task.Exception?.Message));
+            else onComplete?.Invoke(new(false, task.Exception?.Message));
         }
 
         private IEnumerator TaskToCoroutine<TResult>(
@@ -57,7 +57,7 @@ namespace Lotl.Utility.Async
                 onSuccess?.Invoke(task.Result);
                 onComplete?.Invoke(Result.OK);
             }
-            else onComplete?.Invoke(new(true, task.Exception?.Message));
+            else onComplete?.Invoke(new(false, task.Exception?.Message));
         }
 
         private IEnumerator TaskToCoroutine<TResult, TOutput>(
@@ -72,7 +72,7 @@ namespace Lotl.Utility.Async
                 TOutput output = onSuccess(task.Result);
                 onComplete?.Invoke(Result.OK, output);
             }
-            else onComplete?.Invoke(new(true, task.Exception?.Message), default);
+            else onComplete?.Invoke(new(false, task.Exception?.Message), default);
         }
     }
 }

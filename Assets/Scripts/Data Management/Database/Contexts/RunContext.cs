@@ -1,13 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using UnityEngine;
 using SQLDatabase.Net.SQLDatabaseClient;
 
 namespace Lotl.Data
 {
+    using Parameter = SqlDatabaseParameter;
+
     public class RunContext :
         IContext<byte[],  RunContext.Identity, RunContext.Identity>
     {
@@ -20,106 +20,115 @@ namespace Lotl.Data
 
         #endregion
 
+        private readonly DatabaseContext databaseContext;
+
+        public RunContext(DatabaseContext databaseContext)
+        {
+            this.databaseContext = databaseContext;
+        }
+
         public async Task CreateTable()
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
-
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText =
-            $@"create table if not exists {Table}(
-                {Name} text not null,
-                {RunUserId} text not null,
-                {Data} blob not null,
-                primary key ({Name}, {RunUserId}) on conflict replace,
-                foreign key ({RunUserId}) references {DatabaseSettings.UserTable} ({DatabaseSettings.UserId})
-                on delete cascade on update no action
-            );";
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+            try
+            {
+                string query = $@"create table if not exists {Table}(
+                    {Name} text not null,
+                    {RunUserId} text not null,
+                    {Data} blob not null,
+                    primary key ({Name}, {RunUserId}) on conflict replace,
+                    foreign key ({RunUserId}) references {DatabaseSettings.UserTable} ({DatabaseSettings.UserId})
+                    on delete cascade on update no action
+                );";
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery();
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task Set(Identity key, byte[] data)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                string query = $@"insert into {Table} values(
+                    @{Name}, @{RunUserId}, @{Data});";
 
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"insert into {Table} values(
-                @{Name}, @{RunUserId}, @{Data});";
+                Parameter name      = new($"@{Name}",      DbType.String) { Value = key.name };
+                Parameter runUserId = new($"@{RunUserId}", DbType.String) { Value = key.userId };
+                Parameter _data     = new($"@{Data}",      DbType.Binary) { Value = data };
 
-            command.Parameters.Add($"@{Name}",      DbType.String).Value = key.name;
-            command.Parameters.Add($"@{RunUserId}", DbType.String).Value = key.userId;
-            command.Parameters.Add($"@{Data}",      DbType.Binary).Value = data;
-
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery(name, runUserId, _data);
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task<byte[]> ReadData(Identity key)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                string query = $@"select {Data} from {Table} where {Name} = @{Name} and {RunUserId} = @{RunUserId};";
 
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"select {Data} from {Table} where {Name} = @{Name} and {RunUserId} = @{RunUserId};";
-            command.Parameters.Add($"@{Name}",      DbType.String).Value = key.name;
-            command.Parameters.Add($"@{RunUserId}", DbType.String).Value = key.userId;
+                Parameter name      = new($"@{Name}",      DbType.String) { Value = key.name };
+                Parameter runUserId = new($"@{RunUserId}", DbType.String) { Value = key.userId };
 
-            using SqlDatabaseDataReader reader = await command.ExecuteReaderAsync() as SqlDatabaseDataReader;
-            await reader.ReadAsync();
+                databaseContext.CreateCommand(query);
 
-            byte[] data =   await reader.GetFieldValueAsync<byte[]>(Data);
-            
-            await reader.CloseAsync();
-            await connection.CloseAsync();
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader(name, runUserId);
+                await reader.ReadAsync();
 
-            return data;
+                byte[] data = await reader.GetFieldValueAsync<byte[]>(Data);
+                await reader.CloseAsync();
+                return data;
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task<List<Identity>> ReadAll()
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
-
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"select {Name}, {RunUserId} from {Table};";
-            
-            using SqlDatabaseDataReader reader = await command.ExecuteReaderAsync() as SqlDatabaseDataReader;
-
-            List<Identity> descriptiveEntries = new();
-
-            while (await reader.ReadAsync())
+            try
             {
-                string name   = await reader.GetFieldValueAsync<string>(Name);
-                string userId = await reader.GetFieldValueAsync<string>(RunUserId);
+                string query = $@"select {Name}, {RunUserId} from {Table};";
 
-                Identity currentDescriptiveEntry = new(name, userId);
+                databaseContext.CreateCommand(query);
 
-                descriptiveEntries.Add(currentDescriptiveEntry);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader();
+
+                List<Identity> descriptiveEntries = new();
+
+                while (await reader.ReadAsync())
+                {
+                    string name = await reader.GetFieldValueAsync<string>(Name);
+                    string userId = await reader.GetFieldValueAsync<string>(RunUserId);
+
+                    Identity currentDescriptiveEntry = new(name, userId);
+
+                    descriptiveEntries.Add(currentDescriptiveEntry);
+                }
+
+                await reader.CloseAsync();
+                return descriptiveEntries;
             }
-
-            await reader.CloseAsync();
-            await connection.CloseAsync();
-
-            return descriptiveEntries;
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task Delete(Identity key)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                string query = $@"delete from {Table} where {Name} = @{Name} and {RunUserId} = @{RunUserId};";
 
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"delete from {Table} where {Name} = @{Name} and {RunUserId} = @{RunUserId};";
-            command.Parameters.Add($"@{Name}",      DbType.String).Value = key.name;
-            command.Parameters.Add($"@{RunUserId}", DbType.String).Value = key.userId;
+                Parameter name      = new($"@{Name}",      DbType.String) { Value = key.name };
+                Parameter runUserId = new($"@{RunUserId}", DbType.String) { Value = key.userId };
 
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery(name, runUserId);
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public struct Identity : IEquatable<Identity>

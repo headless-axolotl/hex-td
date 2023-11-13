@@ -1,12 +1,13 @@
-using SQLDatabase.Net.SQLDatabaseClient;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using UnityEngine;
+using SQLDatabase.Net.SQLDatabaseClient;
 
 namespace Lotl.Data
 {
+    using Parameter = SqlDatabaseParameter;
+
     public class UserContext
         : IContext<UserContext.DataEntry, UserContext.DescriptiveEntry, string>
     {
@@ -19,108 +20,114 @@ namespace Lotl.Data
 
         #endregion
 
+        private readonly DatabaseContext databaseContext;
+
+        public UserContext(DatabaseContext databaseContext)
+        {
+            this.databaseContext = databaseContext;
+        }
+
         public async Task CreateTable()
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                string query = $@"create table if not exists {Table}(
+                    {Id} text not null,
+                    {PasswordHash} text not null,
+                    {Data} blob not null,
+                    primary key({Id}) on conflict replace,
+                );";
 
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText =
-            $@"create table if not exists {Table}(
-                {Id} text not null,
-                {PasswordHash} text not null,
-                {Data} blob not null,
-                primary key({Id}) on conflict replace,
-            );";
-
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery();
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task Set(string key, DataEntry data)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
-
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"insert into {Table} values(
+            try
+            {
+                string query = $@"insert into {Table} values(
                 @{Id}, @{PasswordHash}, @{Data});";
 
-            command.Parameters.Add($"@{Id}",           DbType.String).Value = key;
-            command.Parameters.Add($"@{PasswordHash}", DbType.String).Value = data.passwordHash;
-            command.Parameters.Add($"@{Data}",         DbType.Binary).Value = data.data;
+                Parameter id           = new($"@{Id}",           DbType.String) { Value = key };
+                Parameter passwordHash = new($"@{PasswordHash}", DbType.String) { Value = data.passwordHash };
+                Parameter _data        = new($"@{Data}",         DbType.Binary) { Value = data.data };
 
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery(id, passwordHash, _data);
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task<DataEntry> ReadData(string key)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
-
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"select {Id}, {PasswordHash}, {Data}
+            try
+            {
+                string query = $@"select {Id}, {PasswordHash}, {Data}
                 from {Table} where {Id} = @{Id};";
 
-            command.Parameters.Add($"@{Id}", DbType.String).Value = key;
+                Parameter id = new($"@{Id}", DbType.String) { Value = key };
 
-            using SqlDatabaseDataReader reader = await command.ExecuteReaderAsync() as SqlDatabaseDataReader;
+                databaseContext.CreateCommand(query);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader(id);
 
-            await reader.ReadAsync();
+                await reader.ReadAsync();
 
-            string passwordHash = await reader.GetFieldValueAsync<string>(PasswordHash);
-            byte[] data         = await reader.GetFieldValueAsync<byte[]>(Data);
+                string passwordHash = await reader.GetFieldValueAsync<string>(PasswordHash);
+                byte[] data = await reader.GetFieldValueAsync<byte[]>(Data);
 
-            DataEntry dataEntry = new(passwordHash, data);
+                DataEntry dataEntry = new(passwordHash, data);
 
-            await reader.CloseAsync();
-            await connection.CloseAsync();
-
-            return dataEntry;
+                await reader.CloseAsync();
+                return dataEntry;
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task<List<DescriptiveEntry>> ReadAll()
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
-
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $@"select {Id}, {PasswordHash} from {Table};";
-
-            using SqlDatabaseDataReader reader = await command.ExecuteReaderAsync() as SqlDatabaseDataReader;
-
-            List<DescriptiveEntry> descriptiveEntries = new();
-            while (await reader.ReadAsync())
+            try
             {
-                string id           = await reader.GetFieldValueAsync<string>(Id);
-                string passwordHash = await reader.GetFieldValueAsync<string>(PasswordHash);
+                string query = $@"select {Id}, {PasswordHash} from {Table};";
 
-                DescriptiveEntry currentDescriptiveEntry = new(id, passwordHash);
+                databaseContext.CreateCommand(query);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader();
 
-                descriptiveEntries.Add(currentDescriptiveEntry);
+                List<DescriptiveEntry> descriptiveEntries = new();
+                while (await reader.ReadAsync())
+                {
+                    string id = await reader.GetFieldValueAsync<string>(Id);
+                    string passwordHash = await reader.GetFieldValueAsync<string>(PasswordHash);
+
+                    DescriptiveEntry currentDescriptiveEntry = new(id, passwordHash);
+
+                    descriptiveEntries.Add(currentDescriptiveEntry);
+                }
+
+                await reader.CloseAsync();
+                return descriptiveEntries;
             }
-
-            await reader.CloseAsync();
-            await connection.CloseAsync();
-
-            return descriptiveEntries;
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public async Task Delete(string key)
         {
-            using SqlDatabaseConnection connection = new(DatabaseSettings.ConnectionString);
-            await connection.OpenAsync();
+            try
+            {
+                string query = $"delete from {Table} where {Id} = @{Id};";
+                Parameter id = new($"@{Id}", DbType.String) { Value = key };
 
-            using SqlDatabaseCommand command = connection.CreateCommand() as SqlDatabaseCommand;
-            command.CommandText = $"delete from {Table} where {Id} = @{Id};";
-            command.Parameters.Add($"@{Id}", DbType.Int32).Value = key;
-
-            await command.ExecuteNonQueryAsync();
-
-            await connection.CloseAsync();
+                databaseContext.CreateCommand(query);
+                await databaseContext.ExecuteNonQuery(id);
+            }
+            catch (Exception) { throw; }
+            finally { await databaseContext.CloseConnection(); }
         }
 
         public struct DataEntry

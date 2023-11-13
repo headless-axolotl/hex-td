@@ -23,13 +23,10 @@ namespace Lotl.Data
 
         private void Awake()
         {
-            towersetManager = new(new(), this, asyncHandler);
-            runManager      = new(new(), this, asyncHandler);
-            userManager     = new(new(), this, asyncHandler);
+            //towersetManager = new(new(), this, asyncHandler);
+            //runManager      = new(new(), this, asyncHandler);
+            //userManager     = new(new(), this, asyncHandler);
         }
-
-        // Coroutine that checks if the initialization was successful
-        // (try a couple of times? then crash? the program can't debug itself)
     }
 
 }
