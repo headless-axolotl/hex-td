@@ -37,8 +37,8 @@ namespace Lotl.Data
                     {TowersetUserId} text not null,
                     {Validity} integer not null,
                     {Data} blob not null,
-                    primary key({Name}, {TowersetUserId}) autoincrement on conflict replace,
-                    foreign key({TowersetUserId}) references {DatabaseSettings.UserTable} ({DatabaseSettings.UserId})
+                    primary key({Name}, {TowersetUserId}) on conflict replace,
+                    foreign key({TowersetUserId}) references {DatabaseSettings.UserTable}({DatabaseSettings.UserId})
                     on delete cascade on update no action
                 );";
                 databaseContext.CreateCommand(query);

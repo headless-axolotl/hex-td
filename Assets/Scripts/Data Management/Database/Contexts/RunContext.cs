@@ -36,7 +36,7 @@ namespace Lotl.Data
                     {RunUserId} text not null,
                     {Data} blob not null,
                     primary key ({Name}, {RunUserId}) on conflict replace,
-                    foreign key ({RunUserId}) references {DatabaseSettings.UserTable} ({DatabaseSettings.UserId})
+                    foreign key ({RunUserId}) references {DatabaseSettings.UserTable}({DatabaseSettings.UserId})
                     on delete cascade on update no action
                 );";
                 databaseContext.CreateCommand(query);

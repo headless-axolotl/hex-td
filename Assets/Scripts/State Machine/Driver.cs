@@ -9,6 +9,8 @@ namespace Lotl.StateMachine
     {
         [Header("Driver")]
         [SerializeField] private BrainBlueprint blueprint;
+
+        private float tickDelay;
         private State currentState = null;
 
         private Dictionary<State, List<Transition>> transitions = new();
@@ -22,14 +24,25 @@ namespace Lotl.StateMachine
             BuildBrain();
         }
 
-        private void FixedUpdate()
+        protected virtual void Start()
         {
-            Tick();
+            StartCoroutine(DoTicks());
+        }
+
+        IEnumerator DoTicks()
+        {
+            while (true)
+            {
+                Tick();
+                yield return new WaitForSeconds(tickDelay);
+            }
         }
 
         private void BuildBrain()
         {
             if (blueprint == null) return;
+
+            tickDelay = 1 / blueprint.TicksPerSecond;
 
             foreach (var anyTransition in blueprint.AnyTransitions)
                 anyTransitions.Add(anyTransition);
@@ -83,6 +96,5 @@ namespace Lotl.StateMachine
 
             return null;
         }
-
     }
 }

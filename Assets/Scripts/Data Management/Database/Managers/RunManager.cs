@@ -16,7 +16,7 @@ namespace Lotl.Data
     {
         private readonly RunContext context;
         private readonly DatabaseManager databaseManager;
-        private readonly AsyncTaskHandler asyncHandler;
+        private readonly AsyncTaskProcessor asyncProcessor;
 
         private HashSet<RunIdentity> trackedRuns;
         private Dictionary<RunIdentity, RunData> cachedRunData;
@@ -26,11 +26,11 @@ namespace Lotl.Data
         public RunManager(
             RunContext context,
             DatabaseManager databaseManager,
-            AsyncTaskHandler asyncHandler)
+            AsyncTaskProcessor asyncHandler)
         {
             this.context = context;
             this.databaseManager = databaseManager;
-            this.asyncHandler = asyncHandler;
+            this.asyncProcessor = asyncHandler;
 
             trackedRuns = null;
             cachedRunData = new();
@@ -46,7 +46,7 @@ namespace Lotl.Data
 
             var readAll = context.ReadAll();
 
-            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
             {
                 trackedRuns = new(entries);
                 Initialize();
@@ -77,7 +77,7 @@ namespace Lotl.Data
 
             Task set = context.Set(identity, data);
 
-            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
             {
                 trackedRuns.Add(identity);
                 cachedRunData[identity] = runData;
@@ -98,7 +98,7 @@ namespace Lotl.Data
 
             var readData = context.ReadData(identity);
 
-            asyncHandler.HandleTask(readData, onComplete, onSuccess: (data) =>
+            asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (data) =>
             {
                 RunData runData = RunData.Deserialize(
                     data,
@@ -118,7 +118,7 @@ namespace Lotl.Data
 
             Task delete = context.Delete(identity);
 
-            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
             {
                 trackedRuns.Remove(identity);
                 cachedRunData.Remove(identity);

@@ -17,7 +17,7 @@ namespace Lotl.Data
     {
         private readonly TowersetContext context;
         private readonly DatabaseManager databaseManager;
-        private readonly AsyncTaskHandler asyncHandler;
+        private readonly AsyncTaskProcessor asyncProcessor;
 
         private SortedDictionary<TowersetIdentity, bool> trackedTowersets;
         private Dictionary<TowersetIdentity, TowersetInfo> cachedTowersetInfos;
@@ -27,11 +27,11 @@ namespace Lotl.Data
         public TowersetManager(
             TowersetContext context,
             DatabaseManager databaseManager,
-            AsyncTaskHandler asyncHandler)
+            AsyncTaskProcessor asyncHandler)
         {
             this.context = context;
             this.databaseManager = databaseManager;
-            this.asyncHandler = asyncHandler;
+            this.asyncProcessor = asyncHandler;
 
             trackedTowersets = null;
             cachedTowersetInfos = new();
@@ -47,7 +47,7 @@ namespace Lotl.Data
 
             var readAll = context.ReadAll();
 
-            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
             {
                 trackedTowersets = new(entries.ToDictionary(
                         entry => entry.identity,
@@ -76,7 +76,7 @@ namespace Lotl.Data
 
             Task set = context.Set(identity, new(validity, data));
 
-            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>   
+            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>   
             {
                 trackedTowersets[identity] = validity;
                 cachedTowersetInfos[identity] = info;
@@ -97,7 +97,7 @@ namespace Lotl.Data
 
             var readData = context.ReadData(identity);
 
-            asyncHandler.HandleTask(readData, onComplete, onSuccess: (entry) =>
+            asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (entry) =>
             {
                 TowersetInfo info = TowersetInfo.Deserialize(
                     entry.data,
@@ -117,7 +117,7 @@ namespace Lotl.Data
 
             Task delete = context.Delete(identity);
 
-            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
             {
                 trackedTowersets.Remove(identity);
                 cachedTowersetInfos.Remove(identity);

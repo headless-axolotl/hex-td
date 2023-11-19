@@ -35,7 +35,7 @@ namespace Lotl.Data
                     {Id} text not null,
                     {PasswordHash} text not null,
                     {Data} blob not null,
-                    primary key({Id}) on conflict replace,
+                    primary key({Id}) on conflict replace
                 );";
 
                 databaseContext.CreateCommand(query);

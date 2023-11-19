@@ -18,7 +18,7 @@ namespace Lotl.Utility
             }
         }
 
-        public void Initialize()
+        protected void Initialize()
         {
             IsInitialized = true;
         }

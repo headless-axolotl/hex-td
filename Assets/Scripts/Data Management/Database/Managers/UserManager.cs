@@ -25,7 +25,7 @@ namespace Lotl.Data
 
         private readonly UserContext context;
         private readonly DatabaseManager databaseManager;
-        private readonly AsyncTaskHandler asyncHandler;
+        private readonly AsyncTaskProcessor asyncProcessor;
 
         private SortedDictionary<string, string> trackedUsers;
         private Dictionary<string, UserData> cachedUserDatas;
@@ -35,11 +35,11 @@ namespace Lotl.Data
         public UserManager(
             UserContext context,
             DatabaseManager databaseManager,
-            AsyncTaskHandler asyncHandler)
+            AsyncTaskProcessor asyncHandler)
         {
             this.context = context;
             this.databaseManager = databaseManager;
-            this.asyncHandler = asyncHandler;
+            this.asyncProcessor = asyncHandler;
 
             trackedUsers = null;
             cachedUserDatas = new();
@@ -55,7 +55,7 @@ namespace Lotl.Data
 
             var readAll = context.ReadAll();
 
-            asyncHandler.HandleTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
             {
                 trackedUsers = new(entries.ToDictionary(
                     entry => entry.id,
@@ -94,7 +94,7 @@ namespace Lotl.Data
 
             Task set = context.Set(userId, new(passwordHash, data));
 
-            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
             {
                 trackedUsers[userId] = passwordHash;
                 cachedUserDatas[userId] = baseData;
@@ -119,10 +119,10 @@ namespace Lotl.Data
 
             var readData = context.ReadData(userId);
 
-            asyncHandler.HandleTask(readData, null, onSuccess: (dataEntry) =>
+            asyncProcessor.ProcessTask(readData, null, onSuccess: (dataEntry) =>
             {
                 Task set = context.Set(userId, new(newPasswordHash, dataEntry.data));
-                asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+                asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
                 {
                     trackedUsers[userId] = newPasswordHash;
                 });
@@ -148,7 +148,7 @@ namespace Lotl.Data
 
             Task set = context.Set(userId, new(passwordHash, data));
 
-            asyncHandler.HandleTask(set, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
             {
                 cachedUserDatas[userId] = userData;
             });
@@ -168,7 +168,7 @@ namespace Lotl.Data
 
             var readData = context.ReadData(userId);
 
-            asyncHandler.HandleTask(readData, onComplete, onSuccess: (entry) =>
+            asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (entry) =>
             {
                 UserData userData = UserData.Deserialize(entry.data,
                     databaseManager.TowerTokenLibrary);
@@ -185,7 +185,7 @@ namespace Lotl.Data
 
             Task delete = context.Delete(userId);
 
-            asyncHandler.HandleTask(delete, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
             {
                 trackedUsers.Remove(userId);
                 cachedUserDatas.Remove(userId);

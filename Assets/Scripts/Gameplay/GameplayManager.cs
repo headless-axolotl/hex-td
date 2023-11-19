@@ -17,13 +17,14 @@ namespace Lotl.Gameplay
         [Header("Data")]
         [SerializeField] private RunState runState;
         [SerializeField] private RunDataObject crossSceneData;
-        [SerializeField] private RunTable runTableManager;
+#warning FIX THIS!
+        // [SerializeField] private RunTable runTableManager;
 
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
 
         public RunState RunState => runState;
-        public RunTable RunTableManager => runTableManager;
+        // public RunTable RunTableManager => runTableManager;
 
         [SerializeField] private bool readyFlag;
         public bool ReadyFlag { get => readyFlag; set => readyFlag = value; }
@@ -32,16 +33,17 @@ namespace Lotl.Gameplay
 
         #region Methods
 
-        /// <summary>
-        /// Loads the state of the game from the referenced RunDataManager before the state machine
-        /// has the chance to override it.
-        /// </summary>
         protected override void Awake()
         {
             towerBuilder = GetComponent<TowerBuilder>();
             LoadState();
 
             base.Awake();
+        }
+
+        public void TriggerReadyFlag()
+        {
+            ReadyFlag = true;
         }
 
         public void LoadState()
@@ -52,9 +54,10 @@ namespace Lotl.Gameplay
         public void SaveState()
         {
             runState.Save(crossSceneData.Data.RunInfo);
-            runTableManager.Set(
-                crossSceneData.Data.RunId,
-                RunData.Serialize(crossSceneData.Data));
+#warning HERE TOO!!!
+            //runTableManager.Set(
+            //    crossSceneData.Data.RunId,
+            //    RunData.Serialize(crossSceneData.Data));
         }
 
         #endregion
