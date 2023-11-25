@@ -7,7 +7,7 @@ namespace Lotl.Data.Menu
     public class MenuManager : MonoBehaviour
     {
         [Header("UI")]
-        [SerializeField] private List<MenuScreen> screens;
+        [SerializeField] private List<TabbedScreen> screens;
         [SerializeField] private int currentActiveScreen = -1;
 
         private void Awake()

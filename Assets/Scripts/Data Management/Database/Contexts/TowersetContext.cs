@@ -28,7 +28,7 @@ namespace Lotl.Data
             this.databaseContext = databaseContext;
         }
 
-        public async Task CreateTable()
+        public async Task CreateTableAsync()
         {
             try
             {
@@ -42,13 +42,13 @@ namespace Lotl.Data
                     on delete cascade on update no action
                 );";
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery();
+                await databaseContext.ExecuteNonQueryAsync();
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task Set(Identity key, DataEntry data)
+        public async Task SetAsync(Identity key, DataEntry data)
         {
             try
             {
@@ -61,13 +61,13 @@ namespace Lotl.Data
                 Parameter _data          = new($"@{Data}",           DbType.Binary) { Value = data.data };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery(name, towersetUserId, validity);
+                await databaseContext.ExecuteNonQueryAsync(name, towersetUserId, validity);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<DataEntry> ReadData(Identity key)
+        public async Task<DataEntry> ReadDataAsync(Identity key)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Lotl.Data
 
                 databaseContext.CreateCommand(query);
 
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader(name, towersetUserId);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync(name, towersetUserId);
                 await reader.ReadAsync();
 
                 bool isValid = await reader.GetFieldValueAsync<int>(Validity) != 0;
@@ -91,10 +91,10 @@ namespace Lotl.Data
                 return dataEntry;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<List<DescriptiveEntry>> ReadAll()
+        public async Task<List<DescriptiveEntry>> ReadAllAsync()
         {
 
             try
@@ -103,7 +103,7 @@ namespace Lotl.Data
 
                 databaseContext.CreateCommand(query);
 
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader();
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync();
 
                 List<DescriptiveEntry> descriptiveEntries = new();
                 while (await reader.ReadAsync())
@@ -122,11 +122,11 @@ namespace Lotl.Data
                 return descriptiveEntries;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
             
         }
 
-        public async Task Delete(Identity key)
+        public async Task DeleteAsync(Identity key)
         {
             try
             {
@@ -138,10 +138,10 @@ namespace Lotl.Data
 
                 databaseContext.CreateCommand(query);
 
-                await databaseContext.ExecuteNonQuery(name, towersetUserId);
+                await databaseContext.ExecuteNonQueryAsync(name, towersetUserId);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
         public struct Identity : IEquatable<Identity>

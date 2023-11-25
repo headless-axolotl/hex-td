@@ -45,17 +45,17 @@ namespace Lotl.Data
             cachedUserDatas = new();
         }
 
-        public void Initialize(Action<Result> onComplete)
+        public void Initialize(Action<Result> onCompleted)
         {
             if (IsInitialized)
             {
-                onComplete?.Invoke(Result.OK);
+                onCompleted?.Invoke(Result.OK);
                 return;
             }
 
-            var readAll = context.ReadAll();
+            var readAll = context.ReadAllAsync();
 
-            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onCompleted, onSuccess: (entries) =>
             {
                 trackedUsers = new(entries.ToDictionary(
                     entry => entry.id,
@@ -79,22 +79,22 @@ namespace Lotl.Data
             string userId,
             string password,
             UserData baseData,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             if (trackedUsers.ContainsKey(userId))
             {
-                onComplete?.Invoke(new Result(false, UserAlreadyExists));
+                onCompleted?.Invoke(new Result(false, UserAlreadyExists));
                 return;
             }
 
             string passwordHash = BCrypter.EnhancedHashPassword(password);
             byte[] data = UserData.Serialize(baseData);
 
-            Task set = context.Set(userId, new(passwordHash, data));
+            Task set = context.SetAsync(userId, new(passwordHash, data));
 
-            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(set, onCompleted, onSuccess: () =>
             {
                 trackedUsers[userId] = passwordHash;
                 cachedUserDatas[userId] = baseData;
@@ -105,28 +105,33 @@ namespace Lotl.Data
             string userId,
             string oldPassword,
             string newPassword,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             if (!Validate(userId, oldPassword))
             {
-                onComplete?.Invoke(new Result(false, IncorrectOldPassword));
+                onCompleted?.Invoke(new Result(false, IncorrectOldPassword));
                 return;
             }
 
             string newPasswordHash = BCrypter.EnhancedHashPassword(newPassword);
 
-            var readData = context.ReadData(userId);
+            var readDataAndSetPassword = ReadDataAndSetPasswordAsync(
+                userId, newPasswordHash);
 
-            asyncProcessor.ProcessTask(readData, null, onSuccess: (dataEntry) =>
+            asyncProcessor.ProcessTask(readDataAndSetPassword, onCompleted,
+            onSuccess: () =>
             {
-                Task set = context.Set(userId, new(newPasswordHash, dataEntry.data));
-                asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
-                {
-                    trackedUsers[userId] = newPasswordHash;
-                });
+                trackedUsers[userId] = newPasswordHash;
             });
+        }
+
+        private async Task ReadDataAndSetPasswordAsync(string userId, string newPasswordHash)
+        {
+            byte[] data = (await context.ReadDataAsync(userId)).data;
+
+            await context.SetAsync(userId, new(newPasswordHash, data));
         }
 
         public void UpdateUserData(
@@ -146,7 +151,7 @@ namespace Lotl.Data
             string passwordHash = trackedUsers[userId];
             byte[] data = UserData.Serialize(userData);
 
-            Task set = context.Set(userId, new(passwordHash, data));
+            Task set = context.SetAsync(userId, new(passwordHash, data));
 
             asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
             {
@@ -166,7 +171,7 @@ namespace Lotl.Data
                 return;
             }
 
-            var readData = context.ReadData(userId);
+            var readData = context.ReadDataAsync(userId);
 
             asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (entry) =>
             {
@@ -183,7 +188,7 @@ namespace Lotl.Data
         {
             if (!ProperlyInitialized(onComplete)) return;
 
-            Task delete = context.Delete(userId);
+            Task delete = context.DeleteAsync(userId);
 
             asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
             {

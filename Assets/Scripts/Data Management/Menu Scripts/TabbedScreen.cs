@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lotl.Data.Menu
 {
-    public class MenuScreen : MonoBehaviour
+    public class TabbedScreen : MonoBehaviour
     {
         [SerializeField] protected MenuManager dataManager;
 

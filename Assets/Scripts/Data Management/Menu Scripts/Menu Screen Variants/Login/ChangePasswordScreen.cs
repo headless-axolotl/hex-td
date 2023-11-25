@@ -29,13 +29,20 @@ namespace Lotl.Data.Menu
 
         public void Enter(string userId)
         {
+            userIdLabel.text =
             this.userId = userId;
-            userIdLabel.text = userId;
+        }
+
+        private void OnEnable()
+        {
             ResetState();
         }
 
-        public void Exit()
+        private void OnDisable()
         {
+            userIdLabel.text =
+            userId = string.Empty;
+            
             ResetState();
         }
 
@@ -77,12 +84,16 @@ namespace Lotl.Data.Menu
 
             databaseManager.UserManager.UpdatePassword(
                 userId, oldPassword,
-                newPassword, onComplete: (result) =>
+                newPassword, onCompleted: (result) =>
                 {
-                    if (result.WasSuccessful)
-                        return;
-
                     ResetState();
+                    
+                    if (result.WasSuccessful)
+                    {
+                        gameObject.SetActive(false);
+                        return;
+                    }
+
                     feedbackText.text = databaseError;
                 });
         }

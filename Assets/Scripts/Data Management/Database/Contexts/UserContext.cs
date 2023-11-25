@@ -27,7 +27,7 @@ namespace Lotl.Data
             this.databaseContext = databaseContext;
         }
 
-        public async Task CreateTable()
+        public async Task CreateTableAsync()
         {
             try
             {
@@ -39,13 +39,13 @@ namespace Lotl.Data
                 );";
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery();
+                await databaseContext.ExecuteNonQueryAsync();
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task Set(string key, DataEntry data)
+        public async Task SetAsync(string key, DataEntry data)
         {
             try
             {
@@ -57,13 +57,13 @@ namespace Lotl.Data
                 Parameter _data        = new($"@{Data}",         DbType.Binary) { Value = data.data };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery(id, passwordHash, _data);
+                await databaseContext.ExecuteNonQueryAsync(id, passwordHash, _data);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<DataEntry> ReadData(string key)
+        public async Task<DataEntry> ReadDataAsync(string key)
         {
             try
             {
@@ -73,7 +73,7 @@ namespace Lotl.Data
                 Parameter id = new($"@{Id}", DbType.String) { Value = key };
 
                 databaseContext.CreateCommand(query);
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader(id);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync(id);
 
                 await reader.ReadAsync();
 
@@ -86,17 +86,17 @@ namespace Lotl.Data
                 return dataEntry;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<List<DescriptiveEntry>> ReadAll()
+        public async Task<List<DescriptiveEntry>> ReadAllAsync()
         {
             try
             {
                 string query = $@"select {Id}, {PasswordHash} from {Table};";
 
                 databaseContext.CreateCommand(query);
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader();
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync();
 
                 List<DescriptiveEntry> descriptiveEntries = new();
                 while (await reader.ReadAsync())
@@ -113,10 +113,10 @@ namespace Lotl.Data
                 return descriptiveEntries;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task Delete(string key)
+        public async Task DeleteAsync(string key)
         {
             try
             {
@@ -124,10 +124,10 @@ namespace Lotl.Data
                 Parameter id = new($"@{Id}", DbType.String) { Value = key };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery(id);
+                await databaseContext.ExecuteNonQueryAsync(id);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
         public struct DataEntry

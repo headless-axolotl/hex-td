@@ -46,7 +46,7 @@ namespace Lotl.Data
         public TowersetManager TowersetManager => towersetManager;
         public RunManager RunManager => runManager;
 
-        private void Awake()
+        private void Start()
         {
             if(towerTokenLibrary == null)
             {
@@ -94,9 +94,9 @@ namespace Lotl.Data
 
         private async Task CreateTablesAsync()
         {
-            await userContext.CreateTable();
-            await towersetContext.CreateTable();
-            await runContext.CreateTable();
+            await userContext.CreateTableAsync();
+            await towersetContext.CreateTableAsync();
+            await runContext.CreateTableAsync();
         }
 
         private void OnTablesCreated(AsyncTaskResult result)

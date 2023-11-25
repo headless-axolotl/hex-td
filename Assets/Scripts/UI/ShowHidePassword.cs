@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Lotl.UI
 {
@@ -9,6 +10,8 @@ namespace Lotl.UI
     public class ShowHidePassword : MonoBehaviour
     {
         private TMP_InputField inputField;
+        [SerializeField] private Button showButton;
+        [SerializeField] private Button hideButton;
 
         private void Awake()
         {
@@ -17,14 +20,35 @@ namespace Lotl.UI
 
         public void Switch()
         {
-            TMP_InputField.ContentType content = inputField.contentType;
-            if (content == Standard) content = Password;
-            else content = Standard;
-            inputField.contentType = content;
-            inputField.ForceLabelUpdate();
+            TMP_InputField.ContentType contentType = inputField.contentType;
+            if (contentType == Standard) Hide();
+            else Show();
         }
 
-        private TMP_InputField.ContentType Standard = TMP_InputField.ContentType.Standard;
-        private TMP_InputField.ContentType Password = TMP_InputField.ContentType.Password;
+        public void Show()
+        {
+            inputField.contentType = Standard;
+            inputField.ForceLabelUpdate();
+            
+            if (showButton != null) showButton.gameObject.SetActive(false);
+            if (hideButton != null) hideButton.gameObject.SetActive(true);
+        }
+
+        public void Hide()
+        {
+            inputField.contentType = Password;
+            inputField.ForceLabelUpdate();
+            
+            if (showButton != null) showButton.gameObject.SetActive(true);
+            if (hideButton != null) hideButton.gameObject.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+            Hide();
+        }
+
+        private const TMP_InputField.ContentType Standard = TMP_InputField.ContentType.Standard;
+        private const TMP_InputField.ContentType Password = TMP_InputField.ContentType.Password;
     }
 }

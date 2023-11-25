@@ -12,7 +12,7 @@ using Lotl.Utility;
 
 namespace Lotl.Data.Menu
 {
-    public class TowersMenuScreen : MenuScreen
+    public class TowersMenuScreen : TabbedScreen
     {
         #region Properties
 

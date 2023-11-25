@@ -33,12 +33,12 @@ namespace Lotl.Data.Menu
         [SerializeField] private StringReference mismatchedPassword;
         [SerializeField] private StringReference databaseError;
 
-        public void Enter()
+        private void OnEnable()
         {
             ResetState();
         }
 
-        public void Exit()
+        private void OnDisable()
         {
             ResetState();
         }
@@ -55,10 +55,18 @@ namespace Lotl.Data.Menu
         public void OnUsernameChanged()
         {
             string userId = usernameInput.text;
+            bool userIdIsEmpty = string.IsNullOrEmpty(userId);
+            
+            if (userIdIsEmpty)
+            {
+                createButton.interactable = false;
+                return;
+            }
+
             bool userExists = databaseManager.UserManager.TrackedUsers.ContainsKey(userId);
 
             createButton.interactable = !userExists;
-
+            
             if (userExists)
             {
                 feedbackText.color = warningColor;
@@ -89,10 +97,13 @@ namespace Lotl.Data.Menu
 
             databaseManager.UserManager.CreateUser(
                 userId, password,
-                baseUserData, onComplete: (result) =>
+                baseUserData, onCompleted: (result) =>
                 {
                     if (result.WasSuccessful)
+                    {
+                        gameObject.SetActive(false);
                         return;
+                    }
 
                     ResetState();
                     feedbackText.color = errorColor;

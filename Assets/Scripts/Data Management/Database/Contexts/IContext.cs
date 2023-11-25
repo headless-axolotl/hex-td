@@ -7,10 +7,10 @@ namespace Lotl.Data
 {
     public interface IContext<TData, TDescriptive, K>
     {
-        Task CreateTable();
-        Task Set(K key, TData data);
-        Task<TData> ReadData(K key);
-        Task<List<TDescriptive>> ReadAll();
-        Task Delete(K key);
+        Task CreateTableAsync();
+        Task SetAsync(K key, TData data);
+        Task<TData> ReadDataAsync(K key);
+        Task<List<TDescriptive>> ReadAllAsync();
+        Task DeleteAsync(K key);
     }
 }

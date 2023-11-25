@@ -44,7 +44,7 @@ namespace Lotl.Data
                 return;
             }
 
-            var readAll = context.ReadAll();
+            var readAll = context.ReadAllAsync();
 
             asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
             {
@@ -75,7 +75,7 @@ namespace Lotl.Data
 
             byte[] data = RunData.Serialize(runData);
 
-            Task set = context.Set(identity, data);
+            Task set = context.SetAsync(identity, data);
 
             asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
             {
@@ -96,7 +96,7 @@ namespace Lotl.Data
                 return;
             }
 
-            var readData = context.ReadData(identity);
+            var readData = context.ReadDataAsync(identity);
 
             asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (data) =>
             {
@@ -116,7 +116,7 @@ namespace Lotl.Data
         {
             if (!ProperlyInitialized(onComplete)) return;
 
-            Task delete = context.Delete(identity);
+            Task delete = context.DeleteAsync(identity);
 
             asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
             {

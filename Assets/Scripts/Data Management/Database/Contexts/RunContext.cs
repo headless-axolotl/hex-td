@@ -27,7 +27,7 @@ namespace Lotl.Data
             this.databaseContext = databaseContext;
         }
 
-        public async Task CreateTable()
+        public async Task CreateTableAsync()
         {
             try
             {
@@ -40,13 +40,13 @@ namespace Lotl.Data
                     on delete cascade on update no action
                 );";
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery();
+                await databaseContext.ExecuteNonQueryAsync();
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task Set(Identity key, byte[] data)
+        public async Task SetAsync(Identity key, byte[] data)
         {
             try
             {
@@ -58,13 +58,13 @@ namespace Lotl.Data
                 Parameter _data     = new($"@{Data}",      DbType.Binary) { Value = data };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery(name, runUserId, _data);
+                await databaseContext.ExecuteNonQueryAsync(name, runUserId, _data);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<byte[]> ReadData(Identity key)
+        public async Task<byte[]> ReadDataAsync(Identity key)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Lotl.Data
 
                 databaseContext.CreateCommand(query);
 
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader(name, runUserId);
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync(name, runUserId);
                 await reader.ReadAsync();
 
                 byte[] data = await reader.GetFieldValueAsync<byte[]>(Data);
@@ -83,10 +83,10 @@ namespace Lotl.Data
                 return data;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task<List<Identity>> ReadAll()
+        public async Task<List<Identity>> ReadAllAsync()
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Lotl.Data
 
                 databaseContext.CreateCommand(query);
 
-                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReader();
+                using SqlDatabaseDataReader reader = await databaseContext.ExecuteReaderAsync();
 
                 List<Identity> descriptiveEntries = new();
 
@@ -112,10 +112,10 @@ namespace Lotl.Data
                 return descriptiveEntries;
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public async Task Delete(Identity key)
+        public async Task DeleteAsync(Identity key)
         {
             try
             {
@@ -125,10 +125,10 @@ namespace Lotl.Data
                 Parameter runUserId = new($"@{RunUserId}", DbType.String) { Value = key.userId };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQuery(name, runUserId);
+                await databaseContext.ExecuteNonQueryAsync(name, runUserId);
             }
             catch (Exception) { throw; }
-            finally { await databaseContext.CloseConnection(); }
+            finally { await databaseContext.CloseConnectionAsync(); }
         }
 
         public struct Identity : IEquatable<Identity>

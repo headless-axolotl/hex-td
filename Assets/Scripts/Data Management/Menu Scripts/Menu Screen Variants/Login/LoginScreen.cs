@@ -1,9 +1,11 @@
-using Lotl.Generic.Variables;
-using Lotl.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+
+using Lotl.Data.Users;
+using Lotl.Generic.Variables;
+using Lotl.SceneManagement;
 
 namespace Lotl.Data.Menu
 {
@@ -11,9 +13,12 @@ namespace Lotl.Data.Menu
     {
         [Header("Data")]
         [SerializeField] private DatabaseManager databaseManager;
-        [SerializeField] private StringVariable userCookie;
+        [SerializeField] private UserCookie userCookie;
         [SerializeField] private StringReference menuScene;
         [SerializeField] private SceneTransitionInitializer transitionInitializer;
+
+        [Header("Additional Screens")]
+        [SerializeField] private ChangePasswordScreen changePasswordScreen;
 
         [Header("UI")]
         [SerializeField] private TMP_InputField usernameInput;
@@ -44,12 +49,12 @@ namespace Lotl.Data.Menu
         /// </summary>
         public void Activate()
         {
-            userCookie.Value = string.Empty;
+            userCookie.Set(string.Empty, string.Empty);
 
             ResetState();
         }
 
-        private void ResetState()
+        public void ResetState()
         {
             usernameInput.text =
             passwordInput.text = string.Empty;
@@ -102,9 +107,37 @@ namespace Lotl.Data.Menu
                 return;
             }
 
-            userCookie.Value = userId;
+            userCookie.Set(userId, password);
 
             transitionInitializer.StartSceneTransition(menuScene);
+        }
+
+        public void OpenChangePasswordScreen()
+        {
+            if (string.IsNullOrEmpty(usernameInput.text))
+            {
+                feedbackText.color = errorColor;
+                feedbackText.text = unknownUser;
+                return;
+            }
+
+            string userId = usernameInput.text;
+            bool userExists = databaseManager.UserManager.TrackedUsers.ContainsKey(userId);
+
+            if (!userExists)
+            {
+                feedbackText.color = errorColor;
+                feedbackText.text = unknownUser;
+
+                usernameInput.text = string.Empty;
+
+                return;
+            }
+
+            changePasswordScreen.Enter(userId);
+            changePasswordScreen.gameObject.SetActive(true);
+
+            ResetState();
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Lotl.Data
             command = new SqlDatabaseCommand(query, connection);
         }
 
-        public async Task<object> ExecuteScalar(params Parameter[] parameters)
+        public async Task<object> ExecuteScalarAsync(params Parameter[] parameters)
         {
             AddParameters(parameters);
 
@@ -33,7 +33,7 @@ namespace Lotl.Data
             return result;
         }
 
-        public async Task<SqlDatabaseDataReader> ExecuteReader(params Parameter[] parameters)
+        public async Task<SqlDatabaseDataReader> ExecuteReaderAsync(params Parameter[] parameters)
         {
             AddParameters(parameters);
 
@@ -41,7 +41,7 @@ namespace Lotl.Data
             return await command.ExecuteReaderAsync() as SqlDatabaseDataReader;
         }
 
-        public async Task<int> ExecuteNonQuery(params Parameter[] parameters)
+        public async Task<int> ExecuteNonQueryAsync(params Parameter[] parameters)
         {
             AddParameters(parameters);
 
@@ -58,7 +58,7 @@ namespace Lotl.Data
             }
         }
 
-        public async Task CloseConnection()
+        public async Task CloseConnectionAsync()
         {
             command?.Dispose();
             await connection.CloseAsync();

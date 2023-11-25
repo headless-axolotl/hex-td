@@ -21,6 +21,7 @@ namespace Lotl.SceneManagement
             if(loadingBar == null)
             {
                 Debug.LogError("Missing loading bar!");
+                return;
             }
 
             StartCoroutine(FinalizeTransition());
@@ -28,10 +29,13 @@ namespace Lotl.SceneManagement
 
         IEnumerator FinalizeTransition()
         {
-            AsyncOperation transitionOperation = SceneManager.LoadSceneAsync(sceneTransitionData.TargetScene, LoadSceneMode.Single);
+            AsyncOperation transitionOperation = SceneManager.LoadSceneAsync(
+                sceneTransitionData.TargetScene,
+                LoadSceneMode.Single);
             
             while (!transitionOperation.isDone)
             {
+                #warning test this
                 float remappedProgress = transitionOperation.progress / DoneLoadingProgress;
                 loadingBar.value = remappedProgress;
                 yield return null;
