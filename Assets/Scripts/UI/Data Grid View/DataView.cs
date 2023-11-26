@@ -12,6 +12,8 @@ namespace Lotl.UI
 
         public event EventHandler OnSelect;
 
+        public event EventHandler OnDeselect;
+
         #endregion
 
         #region Properties
@@ -32,7 +34,17 @@ namespace Lotl.UI
 
         public void EntryWasSelected(DataEntryView entry)
         {
-            SelectedEntry?.Highlight(false);
+            if(entry == SelectedEntry)
+            {
+                Deselect();
+                return;
+            }
+
+            if(SelectedEntry != null)
+            {
+                SelectedEntry.Highlight(false);
+            }
+            
             SelectedEntry = entry;
             SelectedEntry.Highlight();
             OnSelect?.Invoke(this, null);
@@ -40,8 +52,13 @@ namespace Lotl.UI
 
         public void Deselect()
         {
-            SelectedEntry?.Highlight(false);
+            if (SelectedEntry != null)
+            {
+                SelectedEntry.Highlight(false);
+            }
+
             SelectedEntry = null;
+            OnDeselect?.Invoke(this, null);
         }
 
         public void AddEntry(object entry)
@@ -129,12 +146,15 @@ namespace Lotl.UI
 
         private void ResizeView(int count)
         {
-            float entryHeight = ((RectTransform)dataGridEntryViewPrefab.transform).rect.height;
+            RectTransform entryTransform = dataGridEntryViewPrefab.transform as RectTransform;
+            float entryHeight = entryTransform.rect.height;
+            
             float viewSize = entryParent.padding.top + entryParent.padding.bottom;
             viewSize += entryParent.spacing * (count - 1);
             viewSize += entryHeight * count;
-            ((RectTransform)entryParent.transform)
-                .SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, viewSize);
+            
+            RectTransform parentTransform = entryParent.transform as RectTransform;
+            parentTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, viewSize);
         }
 
         #endregion

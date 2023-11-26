@@ -20,17 +20,24 @@ namespace Lotl.Data.Menu
         [SerializeField] private TMP_Text feedbackText;
 
         [Header("Error Messages")]
+        [SerializeField] private Color errorColor;
         [SerializeField] private StringReference emptyPassword;
         [SerializeField] private StringReference mismatchedNewPassword;
         [SerializeField] private StringReference incorrectOldPassword;
         [SerializeField] private StringReference databaseError;
 
-        private string userId = string.Empty;
+        private string currentUserId = string.Empty;
 
-        public void Enter(string userId)
+        private void ErrorFeedback(string message)
+        {
+            feedbackText.color = errorColor;
+            feedbackText.text = message;
+        }
+
+        public void Activate(string userId)
         {
             userIdLabel.text =
-            this.userId = userId;
+            currentUserId = userId;
         }
 
         private void OnEnable()
@@ -41,7 +48,7 @@ namespace Lotl.Data.Menu
         private void OnDisable()
         {
             userIdLabel.text =
-            userId = string.Empty;
+            currentUserId = string.Empty;
             
             ResetState();
         }
@@ -61,41 +68,41 @@ namespace Lotl.Data.Menu
                 string.IsNullOrEmpty(newPasswordInput.text) ||
                 string.IsNullOrEmpty(repeatNewPasswordInput.text))
             {
-                feedbackText.text = emptyPassword;
+                ErrorFeedback(emptyPassword);
                 return;
             }
 
             if (newPasswordInput.text != repeatNewPasswordInput.text)
             {
-                feedbackText.text = mismatchedNewPassword;
+                ErrorFeedback(mismatchedNewPassword);
                 return;
             }
 
             string oldPassword = oldPasswordInput.text;
-            bool isOldPasswordValid = databaseManager.UserManager.Validate(userId, oldPassword);
+            bool isOldPasswordValid = databaseManager.UserManager.Validate(currentUserId, oldPassword);
 
             if (!isOldPasswordValid)
             {
-                feedbackText.text = incorrectOldPassword;
+                ErrorFeedback(incorrectOldPassword);
                 return;
             }
 
             string newPassword = newPasswordInput.text;
 
             databaseManager.UserManager.UpdatePassword(
-                userId, oldPassword,
-                newPassword, onCompleted: (result) =>
-                {
-                    ResetState();
-                    
-                    if (result.WasSuccessful)
-                    {
-                        gameObject.SetActive(false);
-                        return;
-                    }
+                currentUserId, oldPassword, newPassword,
+            onCompleted: (result) =>
+            {
+                ResetState();
 
-                    feedbackText.text = databaseError;
-                });
+                if (result.WasSuccessful)
+                {
+                    gameObject.SetActive(false);
+                    return;
+                }
+
+                ErrorFeedback(databaseError);
+            });
         }
     }
 }

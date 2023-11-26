@@ -44,6 +44,18 @@ namespace Lotl.Data.Menu
             }
         }
 
+        private void WarnFeedback(string message)
+        {
+            feedbackText.color = warningColor;
+            feedbackText.text = message;
+        }
+
+        private void ErrorFeedback(string message)
+        {
+            feedbackText.color = errorColor;
+            feedbackText.text = message;
+        }
+
         /// <summary>
         /// Called by an event when the DatabaseManager is initialized.
         /// </summary>
@@ -76,8 +88,7 @@ namespace Lotl.Data.Menu
             if (string.IsNullOrEmpty(usernameInput.text) ||
                 string.IsNullOrEmpty(passwordInput.text))
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = emptyField;
+                WarnFeedback(emptyField);
                 return;
             }
 
@@ -86,8 +97,7 @@ namespace Lotl.Data.Menu
 
             if (!userExists)
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = unknownUser;
+                ErrorFeedback(unknownUser);
 
                 usernameInput.text = string.Empty;
 
@@ -99,7 +109,7 @@ namespace Lotl.Data.Menu
 
             if(!isCorrectPassword)
             {
-                feedbackText.color = errorColor;
+                ErrorFeedback(wrongPassword);
                 feedbackText.text = wrongPassword;
 
                 passwordInput.text = string.Empty;
@@ -116,8 +126,7 @@ namespace Lotl.Data.Menu
         {
             if (string.IsNullOrEmpty(usernameInput.text))
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = unknownUser;
+                ErrorFeedback(unknownUser);
                 return;
             }
 
@@ -126,15 +135,12 @@ namespace Lotl.Data.Menu
 
             if (!userExists)
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = unknownUser;
-
+                ErrorFeedback(unknownUser);
                 usernameInput.text = string.Empty;
-
                 return;
             }
 
-            changePasswordScreen.Enter(userId);
+            changePasswordScreen.Activate(userId);
             changePasswordScreen.gameObject.SetActive(true);
 
             ResetState();

@@ -43,6 +43,18 @@ namespace Lotl.Data.Menu
             ResetState();
         }
 
+        private void WarnFeedback(string message)
+        {
+            feedbackText.color = warningColor;
+            feedbackText.text = message;
+        }
+
+        private void ErrorFeedback(string message)
+        {
+            feedbackText.color = errorColor;
+            feedbackText.text = message;
+        }
+
         private void ResetState()
         {
             usernameInput.text = 
@@ -69,8 +81,11 @@ namespace Lotl.Data.Menu
             
             if (userExists)
             {
-                feedbackText.color = warningColor;
-                feedbackText.text = userAlreadyExists;
+                WarnFeedback(userAlreadyExists);
+            }
+            else
+            {
+                feedbackText.text = string.Empty;
             }
         }
 
@@ -80,15 +95,13 @@ namespace Lotl.Data.Menu
                 string.IsNullOrEmpty(passwordInput.text) ||
                 string.IsNullOrEmpty(repeatPasswordInput.text))
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = emptyField;
+                ErrorFeedback(emptyField);
                 return;
             }
 
             if (passwordInput.text != repeatPasswordInput.text)
             {
-                feedbackText.color = errorColor;
-                feedbackText.text = mismatchedPassword;
+                ErrorFeedback(mismatchedPassword);
                 return;
             }
 
@@ -106,8 +119,7 @@ namespace Lotl.Data.Menu
                     }
 
                     ResetState();
-                    feedbackText.color = errorColor;
-                    feedbackText.text = databaseError;
+                    ErrorFeedback(databaseError);
                 });
         }
     }

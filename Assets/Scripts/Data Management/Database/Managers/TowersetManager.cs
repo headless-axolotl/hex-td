@@ -37,17 +37,17 @@ namespace Lotl.Data
             cachedTowersetInfos = new();
         }
 
-        public void Initialize(Action<Result> onComplete)
+        public void Initialize(Action<Result> onCompleted)
         {
             if(IsInitialized)
             {
-                onComplete?.Invoke(Result.OK);
+                onCompleted?.Invoke(Result.OK);
                 return;
             }
 
             var readAll = context.ReadAllAsync();
 
-            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onCompleted, onSuccess: (entries) =>
             {
                 trackedTowersets = new(entries.ToDictionary(
                         entry => entry.identity,
@@ -68,15 +68,15 @@ namespace Lotl.Data
             TowersetIdentity identity,
             TowersetInfo info,
             bool validity,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             byte[] data = TowersetInfo.Serialize(info);
 
             Task set = context.SetAsync(identity, new(validity, data));
 
-            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>   
+            asyncProcessor.ProcessTask(set, onCompleted, onSuccess: () =>   
             {
                 trackedTowersets[identity] = validity;
                 cachedTowersetInfos[identity] = info;
@@ -85,20 +85,25 @@ namespace Lotl.Data
 
         public void GetTowersetInfo(
             TowersetIdentity identity,
-            Action<Result, TowersetInfo> onComplete)
+            Action<Result, TowersetInfo> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             if (cachedTowersetInfos.TryGetValue(identity, out var info))
             {
-                onComplete?.Invoke(Result.OK, info);
+                onCompleted?.Invoke(Result.OK, info);
                 return;
             }
 
             var readData = context.ReadDataAsync(identity);
 
-            asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (entry) =>
+            asyncProcessor.ProcessTask(readData, onCompleted, onSuccess: (entry) =>
             {
+                if(entry.data == null)
+                {
+                    Debug.Log("read bytes were null");
+                }
+
                 TowersetInfo info = TowersetInfo.Deserialize(
                     entry.data,
                     databaseManager.TowerTokenLibrary);
@@ -111,13 +116,13 @@ namespace Lotl.Data
 
         public void Delete(
             TowersetIdentity identity,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             Task delete = context.DeleteAsync(identity);
 
-            asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(delete, onCompleted, onSuccess: () =>
             {
                 trackedTowersets.Remove(identity);
                 cachedTowersetInfos.Remove(identity);

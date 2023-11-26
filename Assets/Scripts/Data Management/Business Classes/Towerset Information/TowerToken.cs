@@ -13,6 +13,7 @@ namespace Lotl.Data.Towerset
         [SerializeField] private string towerName;
         [SerializeField] private PrefabReference prefab;
         [SerializeField] private IntReference resourceCost;
+        [SerializeField] private IntReference shopCost;
         [SerializeField] private Sprite icon;
 
         [SerializeField] private int libraryIndex;

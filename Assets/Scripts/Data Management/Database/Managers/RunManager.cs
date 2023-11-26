@@ -36,17 +36,17 @@ namespace Lotl.Data
             cachedRunData = new();
         }
 
-        public void Initialize(Action<Result> onComplete)
+        public void Initialize(Action<Result> onCompleted)
         {
             if(IsInitialized)
             {
-                onComplete?.Invoke(Result.OK);
+                onCompleted?.Invoke(Result.OK);
                 return;
             }
 
             var readAll = context.ReadAllAsync();
 
-            asyncProcessor.ProcessTask(readAll, onComplete, onSuccess: (entries) =>
+            asyncProcessor.ProcessTask(readAll, onCompleted, onSuccess: (entries) =>
             {
                 trackedRuns = new(entries);
                 Initialize();
@@ -63,13 +63,13 @@ namespace Lotl.Data
         public void Create(
             RunIdentity identity,
             RunData runData,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             if (RunExists(identity))
             {
-                onComplete?.Invoke(Result.OK);
+                onCompleted?.Invoke(Result.OK);
                 return;
             }
 
@@ -77,7 +77,7 @@ namespace Lotl.Data
 
             Task set = context.SetAsync(identity, data);
 
-            asyncProcessor.ProcessTask(set, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(set, onCompleted, onSuccess: () =>
             {
                 trackedRuns.Add(identity);
                 cachedRunData[identity] = runData;
@@ -86,19 +86,19 @@ namespace Lotl.Data
 
         public void GetRunData(
             RunIdentity identity,
-            Action<Result, RunData> onComplete)
+            Action<Result, RunData> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             if (cachedRunData.TryGetValue(identity, out var runData))
             {
-                onComplete?.Invoke(Result.OK, runData);
+                onCompleted?.Invoke(Result.OK, runData);
                 return;
             }
 
             var readData = context.ReadDataAsync(identity);
 
-            asyncProcessor.ProcessTask(readData, onComplete, onSuccess: (data) =>
+            asyncProcessor.ProcessTask(readData, onCompleted, onSuccess: (data) =>
             {
                 RunData runData = RunData.Deserialize(
                     data,
@@ -112,13 +112,13 @@ namespace Lotl.Data
 
         public void Delete(
             RunIdentity identity,
-            Action<Result> onComplete)
+            Action<Result> onCompleted)
         {
-            if (!ProperlyInitialized(onComplete)) return;
+            if (!ProperlyInitialized(onCompleted)) return;
 
             Task delete = context.DeleteAsync(identity);
 
-            asyncProcessor.ProcessTask(delete, onComplete, onSuccess: () =>
+            asyncProcessor.ProcessTask(delete, onCompleted, onSuccess: () =>
             {
                 trackedRuns.Remove(identity);
                 cachedRunData.Remove(identity);

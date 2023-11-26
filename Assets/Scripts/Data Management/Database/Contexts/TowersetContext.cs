@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SQLDatabase.Net.SQLDatabaseClient;
 using System;
+using UnityEngine;
 
 namespace Lotl.Data
 {
@@ -61,7 +62,7 @@ namespace Lotl.Data
                 Parameter _data          = new($"@{Data}",           DbType.Binary) { Value = data.data };
 
                 databaseContext.CreateCommand(query);
-                await databaseContext.ExecuteNonQueryAsync(name, towersetUserId, validity);
+                await databaseContext.ExecuteNonQueryAsync(name, towersetUserId, validity, _data);
             }
             catch (Exception) { throw; }
             finally { await databaseContext.CloseConnectionAsync(); }
@@ -96,7 +97,6 @@ namespace Lotl.Data
 
         public async Task<List<DescriptiveEntry>> ReadAllAsync()
         {
-
             try
             {
                 string query = $@"select {Name}, {TowersetUserId}, {Validity} from {Table};";
@@ -123,7 +123,6 @@ namespace Lotl.Data
             }
             catch (Exception) { throw; }
             finally { await databaseContext.CloseConnectionAsync(); }
-            
         }
 
         public async Task DeleteAsync(Identity key)
@@ -144,7 +143,7 @@ namespace Lotl.Data
             finally { await databaseContext.CloseConnectionAsync(); }
         }
 
-        public struct Identity : IEquatable<Identity>
+        public struct Identity : IEquatable<Identity>, IComparable<Identity>
         {
             public string name;
             public string userId;
@@ -153,6 +152,13 @@ namespace Lotl.Data
             {
                 this.name = name;
                 this.userId = userId;
+            }
+
+            public int CompareTo(Identity other)
+            {
+                int result = name.CompareTo(other.name);
+                if (result == 0) result = userId.CompareTo(other.userId);
+                return result;
             }
 
             public bool Equals(Identity other)
