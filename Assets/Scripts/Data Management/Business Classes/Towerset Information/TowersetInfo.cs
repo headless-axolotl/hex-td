@@ -19,9 +19,9 @@ namespace Lotl.Data.Towerset
             towerTokens = new();
         }
 
-        public TowersetInfo(List<TowerToken> towerTokens)
+        public TowersetInfo(IEnumerable<TowerToken> towerTokens)
         {
-            this.towerTokens = towerTokens;
+            this.towerTokens = new(towerTokens);
         }
 
         public static byte[] Serialize(TowersetInfo towersetInfo)

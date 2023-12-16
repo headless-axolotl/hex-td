@@ -189,26 +189,24 @@ namespace Lotl.Data.Menu
         private void UpdateAvailableTowersView(
             IEnumerable<TowerToken> data)
         {
-            List<object> castAvailableTowers = data
+            IEnumerable<object> availableTowersViewData = data
                 .OrderBy(token => token.IndexInLibrary)
-                .Cast<object>()
-                .ToList();
+                .Cast<object>();
 
             availableTowersView.SetData(
-                castAvailableTowers,
+                availableTowersViewData,
                 Conversions.ConvertTowerToken);
         }
 
         private void UpdateTowersInCurrentTowersetView(
             IEnumerable<TowerToken> data)
         {
-            List<object> castTowersInCurrentTowerset = data
+            IEnumerable<object> towersInCurrentTowersetViewData = data
                 .OrderBy(token => token.IndexInLibrary)
-                .Cast<object>()
-                .ToList();
+                .Cast<object>();
 
             towersInCurrentTowersetView.SetData(
-                castTowersInCurrentTowerset,
+                towersInCurrentTowersetViewData,
                 Conversions.ConvertTowerToken);
         }
 
@@ -232,6 +230,8 @@ namespace Lotl.Data.Menu
         {
             availableTowersView.Deselect();
             towersInCurrentTowersetView.Deselect();
+
+            gameObject.SetActive(false);
 
             availableTowersView.OnSelect -= OnAvailableTowerSelected;
             availableTowersView.OnDeselect -= OnAvailableTowerDeselected;
@@ -369,7 +369,7 @@ namespace Lotl.Data.Menu
             TowersetContext.Identity currentTowersetIdentity
                 = new(towersetName, userCookie.UserId);
 
-            TowersetInfo towersetInfo = new(towersInCurrentTowerset.ToList());
+            TowersetInfo towersetInfo = new(towersInCurrentTowerset);
 
             bool validity = towersetInfo.Validity();
 

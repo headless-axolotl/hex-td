@@ -27,6 +27,12 @@ namespace Lotl.Data.Menu
         [SerializeField] private Button deleteButton;
         [SerializeField] private TMP_Text feedbackText;
 
+        [Header("Prompts")]
+        [SerializeField] private Prompt prompt;
+        [SerializeField] private StringReference deletePromptQuestion;
+        [SerializeField] private StringReference deletePromptDescription;
+        [SerializeField] private StringReference selectedTowersetStringFormat;
+
         [Header("Additional Screens")]
         [SerializeField] private TowersetEditorScreen towersetEditorScreen;
 
@@ -40,16 +46,17 @@ namespace Lotl.Data.Menu
         
         private List<Identity> currentTowersets;
 
-        private string selectedTowerset;
+        private Identity selectedTowerset;
 
         private void Awake()
         {
             if (databaseManager == null)
             {
                 Debug.LogError("Missing database manager!");
+                return;
             }
 
-            selectedTowerset = string.Empty;
+            selectedTowerset.name = string.Empty;
         }
 
         private void WarnFeedback(string message)
@@ -79,12 +86,11 @@ namespace Lotl.Data.Menu
                 .Where(identity => identity.userId == userCookie.UserId)
                 .ToList();
 
-            List<object> castCurrentTowersets = currentTowersets
-                .Cast<object>()
-                .ToList();
+            IEnumerable<object> towersetViewData = currentTowersets
+                .Cast<object>();
 
             towersetsView.SetData(
-                castCurrentTowersets,
+                towersetViewData,
                 Conversions.ConvertTowersetIdentity);
         }
 
@@ -106,13 +112,15 @@ namespace Lotl.Data.Menu
 
         private void OnTowersetSelected(object _, EventArgs __)
         {
-            selectedTowerset = towersetsView.SelectedEntry.EntryName;
+            int selectedIndex = towersetsView.SelectedEntry.Index;
+            selectedTowerset = (Identity)towersetsView.Data[selectedIndex];
+
             SetButtonStates(false);
         }
 
         private void OnTowersetDeselected(object _, EventArgs __)
         {
-            selectedTowerset = string.Empty;
+            selectedTowerset.name = string.Empty;
             SetButtonStates(true);
         }
 
@@ -143,7 +151,7 @@ namespace Lotl.Data.Menu
 
         public void EditSelectedTowerset()
         {
-            if (string.IsNullOrEmpty(selectedTowerset))
+            if (string.IsNullOrEmpty(selectedTowerset.name))
             {
                 WarnFeedback(noSelectedTowerset);
                 return;
@@ -160,22 +168,33 @@ namespace Lotl.Data.Menu
 
                 towersetEditorScreen.gameObject.SetActive(true);
 
-            }, selectedTowerset);
+            }, selectedTowerset.name);
         }
 
-        public void DeleteSelectedTowerset()
+        public void PromptDeleteSelectedTowerset()
         {
-            if (string.IsNullOrEmpty(selectedTowerset))
+            if (string.IsNullOrEmpty(selectedTowerset.name))
             {
                 WarnFeedback(noSelectedTowerset);
                 return;
             }
 
-            Identity identity = new(selectedTowerset, userCookie.UserId);
+            string promptDescription =
+                deletePromptDescription + "\n" +
+                string.Format(selectedTowersetStringFormat, selectedTowerset.name);
 
-            databaseManager.TowersetManager.Delete(identity, onCompleted: (result) =>
+            prompt.Activate(
+                deletePromptQuestion,
+                promptDescription,
+                ConfirmDeleteSelectedTowerset,
+                null);
+        }
+
+        public void ConfirmDeleteSelectedTowerset()
+        {
+            databaseManager.TowersetManager.Delete(selectedTowerset, onCompleted: (result) =>
             {
-                if(!result.WasSuccessful)
+                if (!result.WasSuccessful)
                 {
                     Debug.LogWarning(result.Message);
                     ErrorFeedback(databaseError);
@@ -186,5 +205,6 @@ namespace Lotl.Data.Menu
                 towersetsView.RemoveEntry(selectedIndex);
             });
         }
+
     }
 }

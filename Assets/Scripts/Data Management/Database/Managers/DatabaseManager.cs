@@ -46,6 +46,8 @@ namespace Lotl.Data
         public TowersetManager TowersetManager => towersetManager;
         public RunManager RunManager => runManager;
 
+        public SceneTransitionInitializer SceneTransitionInitializer => sceneTransitionInitializer;
+
         private void Start()
         {
             if(towerTokenLibrary == null)

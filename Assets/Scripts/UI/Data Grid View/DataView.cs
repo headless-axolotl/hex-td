@@ -96,9 +96,10 @@ namespace Lotl.UI
             UpdateEntries();
         }
 
-        public void SetData(List<object> data, Func<object, Entry> visualizer)
+        public void SetData(IEnumerable<object> data, Func<object, Entry> visualizer)
         {
-            this.data = data;
+            this.data.Clear();
+            this.data.AddRange(data);
             this.visualizer = visualizer;
             UpdateEntries();
         }

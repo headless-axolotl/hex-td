@@ -11,6 +11,8 @@ namespace Lotl.Data.Towerset
     public class TowerToken : ScriptableObject
     {
         [SerializeField] private string towerName;
+        [TextArea]
+        [SerializeField] private string towerDescription;
         [SerializeField] private PrefabReference prefab;
         [SerializeField] private IntReference resourceCost;
         [SerializeField] private IntReference shopCost;
@@ -19,8 +21,10 @@ namespace Lotl.Data.Towerset
         [SerializeField] private int libraryIndex;
 
         public string TowerName => towerName;
+        public string TowerDescription => towerDescription;
         public PrefabReference Prefab => prefab;
         public int ResourceCost => resourceCost;
+        public int ShopCost => shopCost;
         public Sprite Icon => icon;
 
         public int IndexInLibrary { get => libraryIndex; set => libraryIndex = value; }

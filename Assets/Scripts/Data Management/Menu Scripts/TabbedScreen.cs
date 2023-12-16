@@ -6,11 +6,11 @@ namespace Lotl.Data.Menu
 {
     public class TabbedScreen : MonoBehaviour
     {
-        [SerializeField] protected MenuManager dataManager;
+        [SerializeField] protected MenuManager menuManager;
 
-        public void Initialize(MenuManager dataManager)
+        public void Initialize(MenuManager menuManager)
         {
-            this.dataManager = dataManager;
+            this.menuManager = menuManager;
         }
     }
 }

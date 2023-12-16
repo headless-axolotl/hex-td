@@ -21,18 +21,21 @@ namespace Lotl.Data.Runs
 
         public string TemplateName => templateName;
         public string TemplateDescription => templateDescription;
-        public RunInfo RunInfo
+        
+        public RunInfo CreateRunInfo()
         {
-            get => new(towersData
-                .Select(
-                    rti => new TowerInfo()
-                    {
-                        BookIndex = rti.reference.BookIndex,
-                        PrefabIndex = rti.reference.PrefabIndex,
-                        CurrentHealth = rti.currentHealth,
-                        Position = rti.position
-                    })
-                ) { Resources = resources };
+            var towerInfos = towersData.Select(
+                rti => new TowerInfo()
+                {
+                    BookIndex = rti.reference.BookIndex,
+                    PrefabIndex = rti.reference.PrefabIndex,
+                    CurrentHealth = rti.currentHealth,
+                    Position = rti.position
+                });
+
+            RunInfo runInfo = new(towerInfos) { Resources = resources };
+
+            return runInfo;
         }
 
         [System.Serializable]

@@ -67,7 +67,7 @@ namespace Lotl.Data
         {
             try
             {
-                string query = $@"select {Id}, {PasswordHash}, {Data}
+                string query = $@"select {PasswordHash}, {Data}
                 from {Table} where {Id} = @{Id};";
 
                 Parameter id = new($"@{Id}", DbType.String) { Value = key };

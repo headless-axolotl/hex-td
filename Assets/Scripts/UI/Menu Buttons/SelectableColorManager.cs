@@ -26,7 +26,7 @@ namespace Lotl.UI
         {
             if(selectedButton >= 0 && selectedButton <= selectableGraphics.Count)
                 selectableGraphics[selectedButton].color = unhighlighted;
-            if (index >= 0 && index <= selectableGraphics.Count)
+            if (index >= 0 && index < selectableGraphics.Count)
                 selectableGraphics[index].color = highlighted;
             selectedButton = index;
         }

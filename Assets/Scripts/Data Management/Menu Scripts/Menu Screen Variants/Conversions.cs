@@ -8,19 +8,38 @@ using Lotl.Data.Towerset;
 namespace Lotl.Data.Menu
 {
     using TowersetIdentity = TowersetContext.Identity;
+    using RunIdentity = RunContext.Identity;
 
     public static class Conversions
     {
         public static DataView.Entry ConvertTowerToken(object toConvert)
         {
             TowerToken towerToken = (TowerToken)toConvert;
-            return new(towerToken.TowerName, string.Empty);
+            string entryDescription =
+                $"[Resource cost: {towerToken.ResourceCost}#]\n" +
+                towerToken.TowerDescription;
+            return new(towerToken.TowerName, entryDescription);
+        }
+
+        public static DataView.Entry ConvertTowerTokenWtihShopCost(object toConvert)
+        {
+            TowerToken towerToken = (TowerToken)toConvert;
+            string entryDescription =
+                $"[Deed cost: {towerToken.ShopCost}€]\n" +
+                $"[Resource cost: {towerToken.ResourceCost}#]";
+            return new(towerToken.TowerName, entryDescription);
         }
 
         public static DataView.Entry ConvertTowersetIdentity(object toConvert)
         {
             TowersetIdentity towersetIdentity = (TowersetIdentity)toConvert;
             return new(towersetIdentity.name, string.Empty);
+        }
+
+        public static DataView.Entry ConvertRunIdentity(object toConvert)
+        {
+            RunIdentity runIdentity = (RunIdentity)toConvert;
+            return new(runIdentity.name, string.Empty);
         }
     }
 }
