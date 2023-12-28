@@ -105,12 +105,12 @@ namespace Lotl.Data.Menu
             lockedTowersView.OnDeselect -= OnLockedTowerDeselected;
         }
 
-        private void OnLockedTowerSelected(object _, EventArgs __)
+        private void OnLockedTowerSelected()
         {
             purchaseButton.interactable = true;
         }
 
-        private void OnLockedTowerDeselected(object _, EventArgs __)
+        private void OnLockedTowerDeselected()
         {
             purchaseButton.interactable = false;
         }

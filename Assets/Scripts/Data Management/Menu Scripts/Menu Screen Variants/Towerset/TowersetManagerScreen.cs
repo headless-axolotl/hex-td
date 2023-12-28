@@ -110,7 +110,7 @@ namespace Lotl.Data.Menu
             towersetsView.OnDeselect -= OnTowersetDeselected;
         }
 
-        private void OnTowersetSelected(object _, EventArgs __)
+        private void OnTowersetSelected()
         {
             int selectedIndex = towersetsView.SelectedEntry.Index;
             selectedTowerset = (Identity)towersetsView.Data[selectedIndex];
@@ -118,7 +118,7 @@ namespace Lotl.Data.Menu
             SetButtonStates(false);
         }
 
-        private void OnTowersetDeselected(object _, EventArgs __)
+        private void OnTowersetDeselected()
         {
             selectedTowerset.name = string.Empty;
             SetButtonStates(true);

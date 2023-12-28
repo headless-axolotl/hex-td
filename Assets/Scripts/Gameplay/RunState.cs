@@ -12,10 +12,10 @@ namespace Lotl.Gameplay
     public class RunState
     {
         [SerializeField] private IntVariable resources;
-        [SerializeField] private TowerRuntimeSet towers;
+        [SerializeField] private AutounitRuntimeSet towers;
 
         public int Resources => resources.Value;
-        public TowerRuntimeSet Towers => towers;
+        public AutounitRuntimeSet Towers => towers;
 
         public void Save(RunInfo into)
         {

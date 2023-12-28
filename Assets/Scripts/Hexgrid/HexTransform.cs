@@ -12,49 +12,71 @@ namespace Lotl.Hexgrid
         #region Properties
 
         [SerializeField] private FloatReference hexSize;
-        [SerializeField] private Hex position;
-        [SerializeField] private float yPosition;
+        [SerializeField] private Hex hexPosition;
+        [SerializeField] private float hexYPosition;
         private Vector3 worldPosition;
 
-        public Hex Position
+        public Hex HexPosition
         {
-            get => position;
-            set { position = value; UpdateWorldPosition(); }
+            get => hexPosition;
+            set
+            {
+                hexPosition = value;
+                UpdateTransformFromHex();
+            }
         }
 
-        public float YPosition
+        public float HexYPosition
         {
-            get => yPosition;
-            set { worldPosition.y = yPosition = value;; }
+            get => hexYPosition;
+            set { worldPosition.y = hexYPosition = value; }
+        }
+
+        public Vector3 WorldPosition
+        {
+            get => worldPosition;
+            set
+            {
+                transform.position = worldPosition = value;
+                hexYPosition = worldPosition.y;
+                UpdateHexFromTransform();
+            }
         }
 
         #endregion
 
         #region Methods
 
-        private void Awake()
+        private void OnEnable()
         {
-            SnapToGrid();
+            UpdateTransformFromHex();
         }
 
         private void FixedUpdate()
         {
-            UpdateTransform();
+            UpdateTransformFromWorld();
         }
 
-        private void SnapToGrid()
+        private void UpdateHexFromTransform()
         {
-            Position = Hex.PixelToHex(transform.position.xz(), hexSize);
-            YPosition = transform.position.y;
+            HexPosition = Hex.PixelToHex(transform.position.xz(), hexSize);
+            HexYPosition = transform.position.y;
+            worldPosition = transform.position;
         }
 
-        private void UpdateWorldPosition()
+        private void UpdateTransformFromHex()
         {
-            worldPosition = Hex.HexToPixel(position, hexSize).xz();
-            worldPosition.y = yPosition;
+            UpdateWorldFromHex();
+            UpdateTransformFromWorld();
         }
 
-        private void UpdateTransform()
+        private void UpdateWorldFromHex()
+        {
+            worldPosition = Hex.HexToPixel(hexPosition, hexSize).xz();
+            worldPosition.y = hexYPosition;
+        }
+
+        private void UpdateTransformFromWorld()
         {
             if (worldPosition != transform.position)
             {
@@ -66,7 +88,7 @@ namespace Lotl.Hexgrid
 
         private void OnValidate()
         {
-            UpdateWorldPosition();
+            UpdateWorldFromHex();
         }
 
 #endif

@@ -10,9 +10,9 @@ namespace Lotl.UI
     {
         #region Events
 
-        public event EventHandler OnSelect;
+        public event Action OnSelect;
 
-        public event EventHandler OnDeselect;
+        public event Action OnDeselect;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace Lotl.UI
             
             SelectedEntry = entry;
             SelectedEntry.Highlight();
-            OnSelect?.Invoke(this, null);
+            OnSelect?.Invoke();
         }
 
         public void Deselect()
@@ -58,7 +58,7 @@ namespace Lotl.UI
             }
 
             SelectedEntry = null;
-            OnDeselect?.Invoke(this, null);
+            OnDeselect?.Invoke();
         }
 
         public void AddEntry(object entry)

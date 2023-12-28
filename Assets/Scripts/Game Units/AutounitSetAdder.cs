@@ -2,16 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.Hexgrid;
 using Lotl.Runtime;
 using Lotl.Runtime.Generic;
 
 namespace Lotl.Units.Towers
 {
-    [RequireComponent(typeof(Unit), typeof(HexTransform))]
-    public class Tower : NotifyOnDestroy
+    public class AutounitSetAdder : NotifyOnDestroy
     {
-        [SerializeField] protected TowerRuntimeSet runtimeSet;
+        [SerializeField] protected AutounitRuntimeSet runtimeSet;
 
         private void Awake()
         {

@@ -7,11 +7,11 @@ namespace Lotl.Runtime.Generic
 {
     public class NotifyOnDestroy : MonoBehaviour
     {
-        public event EventHandler IsBeingDestroyed;
+        public event Action<NotifyOnDestroy> IsBeingDestroyed;
 
         private void OnDestroy()
         {
-            IsBeingDestroyed?.Invoke(this, null);
+            IsBeingDestroyed?.Invoke(this);
         }
     }
 }

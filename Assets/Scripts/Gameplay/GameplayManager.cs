@@ -5,7 +5,7 @@ using UnityEngine;
 using Lotl.StateMachine;
 using Lotl.Data;
 using Lotl.Data.Runs;
-using Lotl.Generic.Variables;
+using Lotl.Data.Users;
 
 namespace Lotl.Gameplay
 {
@@ -15,16 +15,15 @@ namespace Lotl.Gameplay
         #region Properties
 
         [Header("Data")]
+        [SerializeField] private DatabaseManager databaseManager;
+        [SerializeField] private UserCookie userCookie;
         [SerializeField] private RunState runState;
         [SerializeField] private RunDataObject crossSceneData;
-#warning FIX THIS!
-        // [SerializeField] private RunTable runTableManager;
 
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
 
         public RunState RunState => runState;
-        // public RunTable RunTableManager => runTableManager;
 
         [SerializeField] private bool readyFlag;
         public bool ReadyFlag { get => readyFlag; set => readyFlag = value; }
@@ -35,6 +34,11 @@ namespace Lotl.Gameplay
 
         protected override void Awake()
         {
+            if (databaseManager == null)
+            {
+                Debug.LogError("Missing database manager!");
+            }
+
             towerBuilder = GetComponent<TowerBuilder>();
             LoadState();
 
@@ -54,10 +58,18 @@ namespace Lotl.Gameplay
         public void SaveState()
         {
             runState.Save(crossSceneData.Data.RunInfo);
-#warning HERE TOO!!!
-            //runTableManager.Set(
-            //    crossSceneData.Data.RunId,
-            //    RunData.Serialize(crossSceneData.Data));
+
+            RunContext.Identity runIdentity = new(crossSceneData.Data.RunId, userCookie.UserId);
+
+            databaseManager.RunManager.Set(runIdentity, crossSceneData.Data,
+            onCompleted: (result) =>
+            {
+                if(!result.WasSuccessful)
+                {
+                    Debug.LogWarning(result.Message);
+                    #warning Some kind of warning that save was not successful
+                }
+            });
         }
 
         #endregion

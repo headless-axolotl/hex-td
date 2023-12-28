@@ -198,7 +198,7 @@ namespace Lotl.Data.Menu
                 TowersetInfo = selectedTowerset
             };
 
-            databaseManager.RunManager.Create(newRunIdentity, runData, onCompleted: (result) =>
+            databaseManager.RunManager.Set(newRunIdentity, runData, onCompleted: (result) =>
             {
                 if(!result.WasSuccessful)
                 {

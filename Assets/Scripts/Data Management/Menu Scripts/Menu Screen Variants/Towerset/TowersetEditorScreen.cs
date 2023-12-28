@@ -240,22 +240,22 @@ namespace Lotl.Data.Menu
             towersInCurrentTowersetView.OnDeselect -= OnTowerInCurrentTowersetDeselected;
         }
 
-        private void OnAvailableTowerSelected(object _, EventArgs __)
+        private void OnAvailableTowerSelected()
         {
             addTowerButton.interactable = true;
         }
 
-        private void OnAvailableTowerDeselected(object _, EventArgs __)
+        private void OnAvailableTowerDeselected()
         {
             addTowerButton.interactable = false;
         }
 
-        private void OnTowerInCurrentTowersetSelected(object _, EventArgs __)
+        private void OnTowerInCurrentTowersetSelected()
         {
             removeTowerButton.interactable = true;
         }
 
-        private void OnTowerInCurrentTowersetDeselected(object _, EventArgs __)
+        private void OnTowerInCurrentTowersetDeselected()
         {
             removeTowerButton.interactable = false;
         }

@@ -15,10 +15,10 @@ namespace Lotl.Units.Enemies
     {
         #region Events
 
-        public event EventHandler OnAttackAction;
+        public event Action OnAttackAction;
 
         public void TriggerAttackAction()
-            => OnAttackAction?.Invoke(this, null);
+            => OnAttackAction?.Invoke();
 
         #endregion
 

@@ -17,7 +17,7 @@ namespace Lotl.Units.Generic
 
         private void Start()
         {
-            unit.Died += (_, __) => Destroy(gameObject);
+            unit.Died += (_) => Destroy(gameObject);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Lotl.Runtime
             base.Remove(item);
         }
 
-        private void HandleItemDestruction(object item, EventArgs _)
+        private void HandleItemDestruction(NotifyOnDestroy item)
         {
             if(item is not T)
             {

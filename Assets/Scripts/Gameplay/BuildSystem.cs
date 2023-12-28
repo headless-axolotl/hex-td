@@ -8,7 +8,6 @@ using Lotl.UI;
 using Lotl.Data.Runs;
 using Lotl.Data.Towerset;
 using Lotl.Generic.Variables;
-using System.Linq.Expressions;
 using UnityEngine.EventSystems;
 
 namespace Lotl.Gameplay
@@ -32,7 +31,7 @@ namespace Lotl.Gameplay
             Initialize();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             HandleInput();
         }
@@ -49,7 +48,7 @@ namespace Lotl.Gameplay
             availableTowersView.OnSelect += OnTowerSelected;
         }
 
-        private void OnTowerSelected(object _, EventArgs __)
+        private void OnTowerSelected()
         {
             int selectedIndex = availableTowersView.SelectedEntry.Index;
             selectedTowerToken = crossSceneData.Data.TowersetInfo.TowerTokens[selectedIndex];
@@ -60,6 +59,11 @@ namespace Lotl.Gameplay
             if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
             {
                 AttemptToPlaceTower();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                DeselectTowerToken();
             }
         }
 
@@ -91,7 +95,9 @@ namespace Lotl.Gameplay
             }
 
             resources.Value -= selectedTowerToken.ResourceCost;
-            DeselectTowerToken();
+
+            bool shouldDeselect = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            if(shouldDeselect) DeselectTowerToken();
         }
 
         private void DeselectTowerToken()

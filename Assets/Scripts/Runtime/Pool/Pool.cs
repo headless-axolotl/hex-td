@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.AssetManagement;
+using Lotl.Runtime.Generic;
 
 namespace Lotl.Runtime
 {
@@ -84,20 +85,13 @@ namespace Lotl.Runtime
             return item;
         }
 
-        private void HandleItemDeactivation(object sender, EventArgs _)
+        private void HandleItemDeactivation(PoolMember poolMember)
         {
-            if(sender is not PoolMember poolMember)
-            {
-                Debug.LogError($"Pool [{name}] received a deactivation event with an incorrect sender!" +
-                    $"Sender was: {sender}.");
-                return;
-            }
-
             activeItems.Remove(poolMember.gameObject);
             inactiveItems.Add(poolMember.gameObject);
         }
 
-        private void HandleItemDestruction(object sender, EventArgs _)
+        private void HandleItemDestruction(NotifyOnDestroy sender)
         {
             if (sender is not PoolMember poolMember)
             {
@@ -110,7 +104,7 @@ namespace Lotl.Runtime
             inactiveItems.Remove(poolMember.gameObject);
 
             poolMember.OnDeactivate -= HandleItemDeactivation;
-            poolMember.IsBeingDestroyed -= HandleItemDeactivation;
+            poolMember.IsBeingDestroyed -= HandleItemDestruction;
         }
     }
 }

@@ -8,11 +8,11 @@ namespace Lotl.Runtime
 {
     public class PoolMember : NotifyOnDestroy
     {
-        public event EventHandler OnDeactivate;
+        public event Action<PoolMember> OnDeactivate;
 
         private void OnDisable()
         {
-            OnDeactivate?.Invoke(this, null);
+            OnDeactivate?.Invoke(this);
         }
     }
 }

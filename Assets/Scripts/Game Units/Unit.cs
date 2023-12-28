@@ -11,9 +11,9 @@ namespace Lotl.Units
     {
         #region Events
 
-        public event EventHandler WasDamaged;
-        public event EventHandler WasHealed;
-        public event EventHandler Died;
+        public event Action<Unit> WasDamaged;
+        public event Action<Unit> WasHealed;
+        public event Action<Unit> Died;
 
         #endregion
 
@@ -48,9 +48,9 @@ namespace Lotl.Units
             if (amount <= 0) return;
 
             health = Mathf.Max(health - amount, 0);
-            WasDamaged?.Invoke(this, null);
+            WasDamaged?.Invoke(this);
             
-            if (health <= 0) Died?.Invoke(this, null);
+            if (health <= 0) Died?.Invoke(this);
         }
 
         public virtual void Heal(float amount)
@@ -58,7 +58,7 @@ namespace Lotl.Units
             if (amount <= 0) return;
 
             health = Mathf.Min(health + amount, maxHealth);
-            WasHealed?.Invoke(this, null);
+            WasHealed?.Invoke(this);
         }
 
         public void SetCurrentHealth(float value)

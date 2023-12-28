@@ -7,7 +7,6 @@ using UnityEngine;
 
 using Lotl.Runtime;
 using Lotl.Units.Towers;
-using Unity.VisualScripting;
 
 namespace Lotl.Data.Runs
 {
@@ -15,9 +14,11 @@ namespace Lotl.Data.Runs
     public class RunInfo
     {
         [SerializeField] private int resources = 0;
+        [SerializeField] private int waveIndex = 1;
         [SerializeField] private List<TowerInfo> towersData;
 
         public int Resources { get => resources; set => resources = value; }
+        public int WaveIndex { get => waveIndex; set => waveIndex = value; }
         public IReadOnlyList<TowerInfo> TowersData => towersData;
 
         public RunInfo()
@@ -30,10 +31,10 @@ namespace Lotl.Data.Runs
             this.towersData = towersData.ToList();
         }
 
-        public static void ExtractTowerInfo(RunInfo into, TowerRuntimeSet towerRuntimeSet)
+        public static void ExtractTowerInfo(RunInfo into, AutounitRuntimeSet towerRuntimeSet)
         {
             into.towersData.Clear();
-            foreach (Tower tower in towerRuntimeSet.Items)
+            foreach (AutounitSetAdder tower in towerRuntimeSet.Items)
             {
                 if (TowerInfo.TryExtractInfo(tower.gameObject, out var towerInfo))
                     into.towersData.Add(towerInfo);
@@ -46,6 +47,7 @@ namespace Lotl.Data.Runs
             using BinaryWriter writer = new(memoryStream);
 
             writer.Write(runInfo.Resources);
+            writer.Write(runInfo.WaveIndex);
 
             writer.Write(runInfo.TowersData.Count);
             foreach (TowerInfo towerInfo in runInfo.TowersData)
@@ -67,6 +69,7 @@ namespace Lotl.Data.Runs
             using BinaryReader reader = new(memoryStream);
 
             runInfo.Resources = reader.ReadInt32();
+            runInfo.WaveIndex = reader.ReadInt32();
 
             int towerCount = reader.ReadInt32();
             for (int i = 0; i < towerCount; i++)
@@ -87,6 +90,7 @@ namespace Lotl.Data.Runs
         {
             StringBuilder stringBuilder = new();
             stringBuilder.Append($"Resources: {Resources}\n");
+            stringBuilder.Append($"Wave Index: {WaveIndex}\n");
             foreach (TowerInfo towerInfo in towersData)
                 stringBuilder.Append($"{towerInfo}\n");
             return stringBuilder.ToString();

@@ -36,7 +36,7 @@ namespace Lotl.Data.Runs
                 BookIndex = prefabIdentity.BookId,
                 PrefabIndex = prefabIdentity.Id,
                 CurrentHealth = unit.Health,
-                Position = hexTransform.Position,
+                Position = hexTransform.HexPosition,
             };
 
             return true;

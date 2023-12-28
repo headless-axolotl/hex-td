@@ -52,7 +52,7 @@ namespace Lotl.Units.Projectiles
             timer.Stop();
         }
 
-        private void LifetimeEnded(object _, EventArgs __)
+        private void LifetimeEnded()
         {
             gameObject.SetActive(false);
         }

@@ -48,22 +48,22 @@ namespace Lotl.Camera
         private void OnDrawGizmos()
         {
             DrawHex(Hex.HexToPixel(selectedHex.Value, hexSize).xz(), hexSize);
+        }
 
-            void DrawHex(Vector3 centre, float size)
+        static void DrawHex(Vector3 centre, float size)
+        {
+            Gizmos.color = Color.blue;
+            float root3 = Mathf.Sqrt(3);
+            Vector3[] points = new Vector3[6]
             {
-                float root3 = Mathf.Sqrt(3);
-                Vector3[] points = new Vector3[6]
-                {
-                    new(0, 0,  size), new( size * root3 / 2, 0,  size / 2), new( size * root3 / 2, 0, -size / 2),
-                    new(0, 0, -size), new(-size * root3 / 2, 0, -size / 2), new(-size * root3 / 2, 0,  size / 2),
-                };
-                for (int i = 0; i < 6; i++)
-                    points[i] += centre;
-                for (int i = 0; i < 6; i++)
-                    Gizmos.DrawLine(points[i], points[(i + 1) % 6]);
-            }
+                new(0, 0,  size), new( size * root3 / 2, 0,  size / 2), new( size * root3 / 2, 0, -size / 2),
+                new(0, 0, -size), new(-size * root3 / 2, 0, -size / 2), new(-size * root3 / 2, 0,  size / 2),
+            };
+            for (int i = 0; i < 6; i++)
+                points[i] += centre;
+            for (int i = 0; i < 6; i++)
+                Gizmos.DrawLine(points[i], points[(i + 1) % 6]);
         }
     }
-
 #endif
 }

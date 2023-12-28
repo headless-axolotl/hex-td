@@ -11,15 +11,15 @@ using Lotl.Units.Generic.StateMachine;
 
 namespace Lotl.Units.Towers
 {
-    [RequireComponent(typeof(Tower), typeof(Timer))]
+    [RequireComponent(typeof(AutounitSetAdder), typeof(Timer))]
     public class ProjectileClassTower : Driver, ISeeker
     {
         #region Events
 
-        public event EventHandler OnShootAction;
+        public event Action OnShootAction;
 
         public void TriggerShootAction()
-            => OnShootAction?.Invoke(this, null);
+            => OnShootAction?.Invoke();
 
         #endregion
 

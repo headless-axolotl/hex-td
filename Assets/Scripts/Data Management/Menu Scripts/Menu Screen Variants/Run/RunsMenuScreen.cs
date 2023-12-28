@@ -100,7 +100,7 @@ namespace Lotl.Data.Menu
             currentRunsView.OnDeselect -= OnRunDeselected;
         }
 
-        private void OnRunSelected(object _, EventArgs __)
+        private void OnRunSelected()
         {
             int index = currentRunsView.SelectedEntry.Index;
             selectedRun = (Identity)currentRunsView.Data[index];
@@ -109,7 +109,7 @@ namespace Lotl.Data.Menu
             SetButtonStates(toCreate: false);
         }
 
-        private void OnRunDeselected(object _, EventArgs __)
+        private void OnRunDeselected()
         {
             selectedRun.name = string.Empty;
             selectedRunTowersetPreview.ClearEntries();

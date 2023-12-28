@@ -60,18 +60,12 @@ namespace Lotl.Data
             return trackedRuns.Contains(identity);
         }
 
-        public void Create(
+        public void Set(
             RunIdentity identity,
             RunData runData,
             Action<Result> onCompleted)
         {
             if (!ProperlyInitialized(onCompleted)) return;
-
-            if (RunExists(identity))
-            {
-                onCompleted?.Invoke(Result.OK);
-                return;
-            }
 
             byte[] data = RunData.Serialize(runData);
 

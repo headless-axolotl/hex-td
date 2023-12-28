@@ -19,6 +19,14 @@ namespace Lotl.Gameplay
             return !occupiedPositions.Contains(position);
         }
 
+        private GameObject InstantiateInactive(GameObject prefab)
+        {
+            prefab.SetActive(false);
+            GameObject instance = Instantiate(prefab);
+            prefab.SetActive(true);
+            return instance;
+        }
+
         public bool TryCreate(TowerInfo towerInfo, out GameObject tower)
         {
             tower = null;
@@ -36,7 +44,8 @@ namespace Lotl.Gameplay
                 return false;
             }
 
-            tower = Instantiate(prefab);
+            tower = InstantiateInactive(prefab);
+
             return SetTowerInfo(tower, towerInfo.Position, towerInfo.CurrentHealth);
         }
 
@@ -57,7 +66,7 @@ namespace Lotl.Gameplay
                 return false;
             }
 
-            tower = Instantiate(prefab);
+            tower = InstantiateInactive(prefab);
 
             return SetTowerInfo(tower, position);
         }
@@ -74,9 +83,12 @@ namespace Lotl.Gameplay
             if(currentHealth != -1f) unit.SetCurrentHealth(currentHealth);
             
             occupiedPositions.Add(position);
-            unit.Died += (_, __) => { occupiedPositions.Remove(position); };
+#warning CHANGE THIS:
+            unit.Died += (_) => { occupiedPositions.Remove(position); };
             
-            hexTransform.Position = position;
+            hexTransform.HexPosition = position;
+
+            instantiatedTower.SetActive(true);
 
             return true;
         }

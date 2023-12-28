@@ -9,7 +9,7 @@ namespace Lotl.Runtime.Generic
 {
     public class Timer : MonoBehaviour
     {
-        public event EventHandler Done;
+        public event Action Done;
         
         [SerializeField] private FloatReference defaultDuration;
         private bool isTicking;
@@ -27,7 +27,7 @@ namespace Lotl.Runtime.Generic
             if (isTicking) return;
             isTicking = true;
             currentCoroutine = StartCoroutine(
-                Tick(duration == 0f ? this.defaultDuration : duration));
+                Tick(duration == 0f ? defaultDuration : duration));
         }
 
         public void Stop()
@@ -42,7 +42,7 @@ namespace Lotl.Runtime.Generic
             yield return new WaitForSeconds(duration);
             isTicking = false;
             currentCoroutine = null;
-            Done?.Invoke(this, null);
+            Done?.Invoke();
         }
     }
 
