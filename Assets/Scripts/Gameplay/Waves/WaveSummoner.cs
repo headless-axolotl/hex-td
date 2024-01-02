@@ -28,7 +28,7 @@ namespace Lotl.Gameplay.Waves
         [SerializeField] private GameEvent onWaveEnd;
 
         [Header("Wave Data")]
-        [SerializeField] private List<SquadronType> waveSquadrons;
+        [SerializeField] private SquadronInfoObject waveSquadrons;
 
         #region Internals
 
@@ -151,7 +151,7 @@ namespace Lotl.Gameplay.Waves
             if (cachedSquadronSollections.ContainsKey(difficulty))
                 return cachedSquadronSollections[difficulty];
 
-            SquadronType searchedSquadron = waveSquadrons
+            SquadronType searchedSquadron = waveSquadrons.SquadronInfo.SquadronTypes
                 .FirstOrDefault(squadron => squadron.Difficulty == difficulty);
 
             if (searchedSquadron == null) return null;
@@ -190,11 +190,11 @@ namespace Lotl.Gameplay.Waves
     }
 
     [System.Serializable]
-    internal class SquadronType
+    public class SquadronType
     {
         [SerializeField] private int difficulty;
         [SerializeField] private PrefabBook squadronCollection;
-        
+
         public int Difficulty => difficulty;
         public PrefabBook SquadronCollection => squadronCollection;
     }
