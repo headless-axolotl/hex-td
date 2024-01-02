@@ -6,25 +6,40 @@ using UnityEngine;
 using Lotl.AssetManagement;
 using Lotl.Runtime;
 using Lotl.Data.Runs;
+using Lotl.Hexgrid;
+using Lotl.Units;
+using Lotl.Generic.Variables;
+using Lotl.Utility;
+using Lotl.Generic.Events;
 
 namespace Lotl.Gameplay.Waves
 {
+    using AutounitSetShorthand = RuntimeSet<AutounitSetAdder>;
+
     [RequireComponent(typeof(WaveInfoGenerator))]
     public class WaveSummoner : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private RunDataObject crossSceneData;
         [SerializeField] private AutounitRuntimeSet enemyRuntimeSet;
+        [SerializeField] private FloatReference hexSize;
+        [SerializeField] private IntReference mapSize;
+        [SerializeField] private FloatReference subwaveDelay;
+        [SerializeField] private GameEvent onWaveEnd;
 
         [Header("Wave Data")]
         [SerializeField] private List<SquadronType> waveSquadrons;
 
         #region Internals
 
+        private Transform entryPointParent;
+        private List<Transform> entryPoints = new();
+
         private WaveInfoGenerator waveInfoGenerator;
 
         private Dictionary<int, PrefabBook> cachedSquadronSollections = new();
 
+        private Coroutine currentWaveCoroutine;
         private bool doneSummoningWave = true;
 
         #endregion
@@ -39,37 +54,92 @@ namespace Lotl.Gameplay.Waves
 
         private void InitializeEntryPoints()
         {
-            
+            entryPointParent = new GameObject($"Entry Points").transform;
+            entryPointParent.parent = transform;
+
+            List<Hex> entryPointDirections = Hex.GetNeighbourVectors();
+
+            int index = 0;
+            foreach(Hex direction in entryPointDirections)
+            {
+                Hex entryPointHex = direction * mapSize;
+                Vector3 entryPointPosition = Hex.HexToPixel(entryPointHex, hexSize).xz();
+
+                Transform entryPoint = new GameObject($"Entry Point [{index++}]").transform;
+                entryPoint.parent = entryPointParent;
+                entryPoint.position = entryPointPosition;
+                entryPoint.forward = -entryPoint.position;
+
+                entryPoints.Add(entryPoint);
+            }
         }
+
+        #endregion
 
         private void OnEnable()
         {
-            
+            enemyRuntimeSet.Changed += EnemyRuntimeSetChanged;
+            WaveEndCheck();
         }
 
         private void OnDisable()
         {
-            
+            enemyRuntimeSet.Changed -= EnemyRuntimeSetChanged;
         }
-
-        #endregion
 
         #region Wave Methods
 
         public void StartWave()
         {
-
-        }
-
-        IEnumerator SummonWave()
-        {
-            yield return null;
+            int waveToSummon = crossSceneData.Data.RunInfo.WaveIndex + 1;
+            
+            WaveInfo currentWave = waveInfoGenerator.GenerateWaveInfo(waveToSummon);
+            
             doneSummoningWave = false;
+            StartCoroutine(SummonWave(currentWave));
         }
 
-        private void TriggerWaveEnd()
+        private IEnumerator SummonWave(WaveInfo waveInfo)
         {
+            for (int i = 0; i < waveInfo.SubwaveDifficulties.Count; i++)
+            {
+                SummonSubwave(waveInfo.EntryPointIndeces, waveInfo.SubwaveDifficulties[i]);
+                yield return new WaitForSeconds(subwaveDelay);
+            }
+            doneSummoningWave = true;
+        }
 
+        private void SummonSubwave(List<int> entryPointIndeces, int difficulty)
+        {
+            for (int i = 0; i < entryPointIndeces.Count; i++)
+            {
+                Transform entryPoint = entryPoints[entryPointIndeces[i]];
+
+                InstantiateSquadron(entryPoint, difficulty);
+
+                difficulty = waveInfoGenerator.EvaluateSubwaveDifficultyFalloff(
+                    i, entryPointIndeces.Count,
+                    difficulty);
+            }
+        }
+
+        private void EnemyRuntimeSetChanged(AutounitSetShorthand enemyRuntimeSet)
+        {
+            WaveEndCheck();
+        }
+
+        private void WaveEndCheck()
+        {
+            if (doneSummoningWave && enemyRuntimeSet.Items.Count == 0)
+            {
+                OnWaveEnd();
+            }
+        }
+
+        private void OnWaveEnd()
+        {
+            crossSceneData.Data.RunInfo.WaveIndex++;
+            onWaveEnd.Raise();
         }
 
         #endregion
@@ -90,7 +160,7 @@ namespace Lotl.Gameplay.Waves
             return cachedSquadronSollections[difficulty];
         }
 
-        private GameObject GetRandomSquadron(int difficulty)
+        private GameObject GetRandomSquadronPrefab(int difficulty)
         {
             PrefabBook squadronCollection = GetSquadronCollection(difficulty);
             
@@ -102,13 +172,18 @@ namespace Lotl.Gameplay.Waves
             return randomSquadron;
         }
 
-        private void InstantiateSquadron(int entryPoint, int difficulty)
+        private void InstantiateSquadron(Transform entryPoint, int difficulty)
         {
-            GameObject randomSquadron = GetRandomSquadron(difficulty);
+            GameObject randomSquadronPrefab = GetRandomSquadronPrefab(difficulty);
             
-            if(randomSquadron == null) return;
+            if(randomSquadronPrefab == null) return;
 
+            GameObject squadron = Instantiate(randomSquadronPrefab,
+                entryPoint.position,
+                Quaternion.identity,
+                entryPoint);
 
+            squadron.transform.forward = entryPoint.forward;
         }
 
         #endregion

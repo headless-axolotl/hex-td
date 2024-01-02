@@ -20,8 +20,12 @@ namespace Lotl.Gameplay.Waves
         [SerializeField] private AnimationCurveReference currentWaveSubwaveCountFunction;
         [SerializeField] private AnimationCurveReference currentWaveMaxDifficultyFunction;
         [SerializeField] private AnimationCurveReference currentSubwaveDifficultyFunction;
+        [SerializeField] private AnimationCurveReference currentSubwaveDifficultyFalloffFunction;
 
         public int DefaultMaxWaveCount => maxWaveCount;
+
+        public WaveInfo GenerateWaveInfo(int currentWave)
+            => GenerateWaveInfo(currentWave, DefaultMaxWaveCount);
 
         public WaveInfo GenerateWaveInfo(int currentWave, int maxWave)
         {
@@ -88,6 +92,18 @@ namespace Lotl.Gameplay.Waves
             float time = currentSubwave / maxSubwave;
             if (time > 1) time = 1;
             float value = currentSubwaveDifficultyFunction.Value.Evaluate(time) * waveMaxDifficulty;
+            return Mathf.CeilToInt(value);
+        }
+
+        public int EvaluateSubwaveDifficultyFalloff(
+            float currentEntryPoint,
+            float totalEntryPoints,
+            float currentDifficulty)
+        {
+
+            float time = currentEntryPoint / totalEntryPoints;
+            if (time > 1) time = 1;
+            float value = currentSubwaveDifficultyFalloffFunction.Value.Evaluate(time) * currentDifficulty;
             return Mathf.CeilToInt(value);
         }
     }

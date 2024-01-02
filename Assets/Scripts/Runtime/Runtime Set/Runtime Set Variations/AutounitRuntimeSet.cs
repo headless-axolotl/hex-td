@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using Lotl.Units.Towers;
+using Lotl.Units;
 
 namespace Lotl.Runtime
 {

@@ -5,7 +5,7 @@ using UnityEngine;
 using Lotl.Runtime;
 using Lotl.Runtime.Generic;
 
-namespace Lotl.Units.Towers
+namespace Lotl.Units
 {
     public class AutounitSetAdder : NotifyOnDestroy
     {

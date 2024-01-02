@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.Runtime;
-using Lotl.Units.Towers;
+using Lotl.Units;
 
 namespace Lotl.Data.Runs
 {
