@@ -38,7 +38,7 @@ namespace Lotl.Gameplay
 
         private void Initialize()
         {
-            IEnumerable<object> availableTowersViewData =crossSceneData.Data
+            IEnumerable<object> availableTowersViewData = crossSceneData.Data
                 .TowersetInfo.TowerTokens.Cast<object>();
 
             availableTowersView.SetData(

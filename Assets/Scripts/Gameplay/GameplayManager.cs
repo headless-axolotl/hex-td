@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.StateMachine;
 using Lotl.Data;
 using Lotl.Data.Runs;
 using Lotl.Data.Users;
+using Lotl.Gameplay.Waves;
 
 namespace Lotl.Gameplay
 {
     [RequireComponent(typeof(TowerBuilder))]
-    public class GameplayManager : Driver
+    public class GameplayManager : MonoBehaviour
     {
         #region Properties
 
@@ -22,17 +22,13 @@ namespace Lotl.Gameplay
 
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
+        [SerializeField] private WaveSummoner waveSummoner;
 
         public RunState RunState => runState;
 
-        [SerializeField] private bool readyFlag;
-        public bool ReadyFlag { get => readyFlag; set => readyFlag = value; }
-
         #endregion
 
-        #region Methods
-
-        protected override void Awake()
+        protected void Awake()
         {
             if (databaseManager == null)
             {
@@ -41,16 +37,9 @@ namespace Lotl.Gameplay
 
             towerBuilder = GetComponent<TowerBuilder>();
             LoadState();
-
-            base.Awake();
         }
 
-        public void TriggerReadyFlag()
-        {
-            ReadyFlag = true;
-        }
-
-        public void LoadState()
+        private void LoadState()
         {
             runState.Load(crossSceneData.Data.RunInfo, towerBuilder);
         }
@@ -72,6 +61,15 @@ namespace Lotl.Gameplay
             });
         }
 
-        #endregion
+        public void BeginWave()
+        {
+            SaveState();
+            waveSummoner.StartWave();
+        }
+
+        public void OnEndWave()
+        {
+            SaveState();
+        }
     }
 }
