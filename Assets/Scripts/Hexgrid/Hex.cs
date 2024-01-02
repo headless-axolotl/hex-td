@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 #warning Incomplete implementation.
@@ -78,6 +79,9 @@ namespace Lotl.Hexgrid
         public static Hex GetNeighbourVector(Direction direction)
             => direction_vectors[(int)direction];
 
+        public static List<Hex> GetNeighbourVectors()
+            => direction_vectors.ToList();
+
         public static Hex GetNeighbouHex(Hex from, Direction direction)
             => from + GetNeighbourVector(direction);
         
@@ -92,6 +96,9 @@ namespace Lotl.Hexgrid
 
         public static Hex GetDiagonalVector(Diagonal diagonal)
             => diagonal_vectors[(int)diagonal];
+
+        public static List<Hex> GetDiagonalVectors()
+            => diagonal_vectors.ToList();
 
         public static Hex GetDiagonalHex(Hex from, Diagonal diagonal)
             => from + GetDiagonalVector(diagonal);

@@ -39,7 +39,7 @@ namespace Lotl.Gameplay.Waves
 
         private void InitializeEntryPoints()
         {
-
+            
         }
 
         private void OnEnable()
