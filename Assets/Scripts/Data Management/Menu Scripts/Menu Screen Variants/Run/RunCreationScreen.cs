@@ -168,7 +168,7 @@ namespace Lotl.Data.Menu
 
         private RunInfoTemplate GetSelectedRunTemplate()
         {
-            int selectedIndex = towersetDropdown.value;
+            int selectedIndex = runTemplateDropdown.value;
             return availableRunTemplates[selectedIndex];
         }
 

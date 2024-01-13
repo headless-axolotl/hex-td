@@ -59,7 +59,7 @@ namespace Lotl.Units.Enemies
 
         public void StopMoving()
         {
-            rigidbody.velocity = Vector3.zero;
+            // rigidbody.velocity = Vector3.zero;
             shouldMove = false;
         }
 

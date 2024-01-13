@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Lotl.Generic.Events
@@ -11,9 +12,10 @@ namespace Lotl.Generic.Events
 
         public void Raise()
         {
-            foreach(GameEventListener listener in listeners)
+            var enumeratedListeners = listeners.ToList();
+            for (int i = 0; i < enumeratedListeners.Count; i++)
             {
-                listener.OnEventRaised();
+                enumeratedListeners[i].OnEventRaised();
             }
         }
 

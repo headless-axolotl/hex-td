@@ -25,6 +25,7 @@ namespace Lotl.Gameplay.Waves
         [SerializeField] private FloatReference hexSize;
         [SerializeField] private IntReference mapSize;
         [SerializeField] private FloatReference subwaveDelay;
+        [SerializeField] private FloatReference extraEndCheckDelay;
         [SerializeField] private GameEvent onWaveEnd;
 
         [Header("Wave Data")]
@@ -39,8 +40,8 @@ namespace Lotl.Gameplay.Waves
 
         private Dictionary<int, PrefabBook> cachedSquadronSollections = new();
 
-        private Coroutine currentWaveCoroutine;
-        private bool doneSummoningWave = true;
+        private bool doneSummoningWave = false;
+        private bool triggeredWaveEnd = false;
 
         #endregion
 
@@ -95,7 +96,7 @@ namespace Lotl.Gameplay.Waves
             
             WaveInfo currentWave = waveInfoGenerator.GenerateWaveInfo(waveToSummon);
             
-            doneSummoningWave = false;
+            triggeredWaveEnd = doneSummoningWave = false;
             StartCoroutine(SummonWave(currentWave));
         }
 
@@ -107,6 +108,9 @@ namespace Lotl.Gameplay.Waves
                 yield return new WaitForSeconds(subwaveDelay);
             }
             doneSummoningWave = true;
+
+            yield return new WaitForSeconds(extraEndCheckDelay);
+            WaveEndCheck();
         }
 
         private void SummonSubwave(List<int> entryPointIndeces, int difficulty)
@@ -138,6 +142,9 @@ namespace Lotl.Gameplay.Waves
 
         private void OnWaveEnd()
         {
+            if (triggeredWaveEnd) return;
+            triggeredWaveEnd = true;
+
             crossSceneData.Data.RunInfo.WaveIndex++;
             onWaveEnd.Raise();
         }
@@ -178,12 +185,10 @@ namespace Lotl.Gameplay.Waves
             
             if(randomSquadronPrefab == null) return;
 
-            GameObject squadron = Instantiate(randomSquadronPrefab,
+            Instantiate(randomSquadronPrefab,
                 entryPoint.position,
-                Quaternion.identity,
+                entryPoint.rotation,
                 entryPoint);
-
-            squadron.transform.forward = entryPoint.forward;
         }
 
         #endregion

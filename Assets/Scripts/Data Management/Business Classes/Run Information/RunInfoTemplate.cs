@@ -17,6 +17,7 @@ namespace Lotl.Data.Runs
         [SerializeField] private string templateDescription;
         [Space]
         [SerializeField] private IntReference resources;
+        [SerializeField] private IntReference waveIndex;
         [SerializeField] private List<ReferencedTowerInfo> towersData;
 
         public string TemplateName => templateName;
@@ -33,7 +34,11 @@ namespace Lotl.Data.Runs
                     Position = rti.position
                 });
 
-            RunInfo runInfo = new(towerInfos) { Resources = resources };
+            RunInfo runInfo = new(towerInfos)
+            {
+                Resources = resources,
+                WaveIndex = waveIndex
+            };
 
             return runInfo;
         }

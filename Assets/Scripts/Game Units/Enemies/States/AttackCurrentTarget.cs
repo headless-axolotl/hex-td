@@ -6,7 +6,7 @@ using Lotl.StateMachine;
 
 namespace Lotl.Units.Enemies.States
 {
-    [CreateAssetMenu(fileName = "AttackCurrentTarget", menuName = "Lotl/Units/Enemies/Melee/States/Attack Current Target")]
+    [CreateAssetMenu(fileName = "AttackCurrentTarget", menuName = "Lotl/Units/Enemies/States/Attack Current Target")]
     public class AttackCurrentTarget : State
     {
         public override void OnEnter(Driver driver)
@@ -53,7 +53,7 @@ namespace Lotl.Units.Enemies.States
         {
             float sqrDistance = (enemy.transform.position - enemy.CurrentTarget.transform.position).sqrMagnitude;
             float range = enemy.MeleeRange;
-            if (sqrDistance >  range * range) return true;
+            if (sqrDistance > range * range) return true;
             return false;
         }
 

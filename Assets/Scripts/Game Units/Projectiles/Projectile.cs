@@ -5,7 +5,6 @@ using UnityEngine;
 using Lotl.Runtime.Generic;
 using Lotl.Generic.Variables;
 using System.Linq;
-using System;
 
 namespace Lotl.Units.Projectiles
 {

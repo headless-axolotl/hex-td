@@ -12,7 +12,7 @@ using Lotl.Units.Generic.StateMachine;
 namespace Lotl.Units.Towers
 {
     [RequireComponent(typeof(AutounitSetAdder), typeof(Timer))]
-    public class ProjectileClassTower : Driver, ISeeker
+    public class ProjectileTower : Driver, ISeeker
     {
         #region Events
 

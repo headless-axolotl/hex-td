@@ -38,7 +38,7 @@ namespace Lotl.Units.Generic.StateMachine
                 distance = (unit.transform.position - driver.transform.position).sqrMagnitude;
                 if (distance < minDistance)
                 {
-                    distance = minDistance;
+                    minDistance = distance;
                     targetToSet = unit;
                 }
             }

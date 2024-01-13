@@ -12,7 +12,7 @@ namespace Lotl.Units.Towers.States
     {
         public override void OnEnter(Driver driver)
         {
-            if (driver is not ProjectileClassTower)
+            if (driver is not ProjectileTower)
             {
                 Debug.LogError($"Driver [{driver.name}] entered incompatible State [{name}]!");
                 return;
@@ -21,22 +21,22 @@ namespace Lotl.Units.Towers.States
 
         public override void Tick(Driver driver)
         {
-            if (driver is not ProjectileClassTower tower) return;
+            if (driver is not ProjectileTower tower) return;
             
             if (!IsCurrentTargetValid(tower)) return;
 
             if (tower.Timer.IsTicking) return;
-            if (tower.State == ProjectileClassTower.ActionState.Cooldown)
+            if (tower.State == ProjectileTower.ActionState.Cooldown)
             {
                 tower.Timer.Trigger(tower.ActionDelay);
-                tower.State = ProjectileClassTower.ActionState.Delay;
+                tower.State = ProjectileTower.ActionState.Delay;
                 tower.TriggerShootAction();
                 return;
             }
             else
             {
                 tower.Timer.Trigger(tower.ActionCooldown);
-                tower.State = ProjectileClassTower.ActionState.Cooldown;
+                tower.State = ProjectileTower.ActionState.Cooldown;
             }
 
             if (!tower.ProjectilePool.GetObject().TryGetComponent<Projectile>(out var projectile))
@@ -50,7 +50,7 @@ namespace Lotl.Units.Towers.States
             projectile.gameObject.SetActive(true);
         }
 
-        private bool IsCurrentTargetValid(ProjectileClassTower tower)
+        private bool IsCurrentTargetValid(ProjectileTower tower)
         {
             if (tower.CurrentTarget == null) return false;
             float sqrDistance = (tower.transform.position - tower.CurrentTarget.transform.position).sqrMagnitude;
@@ -63,7 +63,7 @@ namespace Lotl.Units.Towers.States
             return true;
         }
 
-        private ProjectileInfo CreateProjectileInfo(ProjectileClassTower tower)
+        private ProjectileInfo CreateProjectileInfo(ProjectileTower tower)
         {
             return new(
                 tower.ProjectileSource.position,
