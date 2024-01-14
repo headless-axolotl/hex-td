@@ -20,7 +20,7 @@ namespace Lotl.AssetManagement
             UpdateBooks();
         }
 
-        private void UpdateBooks()
+        public void UpdateBooks()
         {
             books.ResetDuplicates();
             books.ShiftNonNull();
@@ -32,7 +32,10 @@ namespace Lotl.AssetManagement
             for(int i = 0; i < books.Count; i++)
             {
                 if (books[i] != null)
+                {
                     books[i].Id = i;
+                    books[i].UpdatePrefabs();
+                }
             }
         }
 

@@ -24,7 +24,7 @@ namespace Lotl.AssetManagement
             UpdatePrefabs();
         }
 
-        private void UpdatePrefabs()
+        public void UpdatePrefabs()
         {
             ResetInvalidPrefabs();
             prefabs.ResetDuplicates();

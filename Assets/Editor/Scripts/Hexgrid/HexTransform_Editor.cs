@@ -21,8 +21,6 @@ public class HexTransform_Editor : Editor
     {
         DrawDefaultInspector();
 
-        serializedObject.Update();
-
         if (GUILayout.Button("Set Transform From Hexgrid") && targetHexTransform != null)
         {
             targetHexTransform.HexPosition = targetHexTransform.HexPosition;
