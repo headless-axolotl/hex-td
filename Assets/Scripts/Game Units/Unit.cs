@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.Generic.Variables;
+using Lotl.Units.Damage;
 
 namespace Lotl.Units
 {
@@ -11,8 +12,8 @@ namespace Lotl.Units
     {
         #region Events
 
-        public event Action<Unit> WasDamaged;
-        public event Action<Unit> WasHealed;
+        public event Action<DamageInfo> WasDamaged;
+        public event Action<float> WasHealed;
         public event Action<Unit> Died;
 
         #endregion
@@ -22,7 +23,7 @@ namespace Lotl.Units
         [SerializeField] private FloatReference maxHealth;
         [SerializeField] private float health;
         [SerializeField] private UnitTribe tribe;
-        
+
         public float MaxHealth => maxHealth;
         public float Health => health;
         public UnitTribe Tribe {
@@ -43,12 +44,12 @@ namespace Lotl.Units
             health = maxHealth;
         }
 
-        public virtual void TakeDamage(float amount)
+        public virtual void TakeDamage(float amount, Vector3 source = new(), params DamageTrigger[] responseTypes)
         {
             if (amount <= 0) return;
 
             health = Mathf.Max(health - amount, 0);
-            WasDamaged?.Invoke(this);
+            WasDamaged?.Invoke(new(amount, source, responseTypes));
             
             if (health <= 0) Died?.Invoke(this);
         }
@@ -58,7 +59,7 @@ namespace Lotl.Units
             if (amount <= 0) return;
 
             health = Mathf.Min(health + amount, maxHealth);
-            WasHealed?.Invoke(this);
+            WasHealed?.Invoke(amount);
         }
 
         public void SetCurrentHealth(float value)

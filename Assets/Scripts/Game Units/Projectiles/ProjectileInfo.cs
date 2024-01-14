@@ -8,13 +8,19 @@ namespace Lotl.Units.Projectiles
     {
         public Vector3 source;
         public Vector3 target;
-        public UnitTribeMask mask;
+        public UnitTribeMask scanTribeMask;
+        public UnitTribeMask hitTribeMask;
 
-        public ProjectileInfo(Vector3 source, Vector3 target, UnitTribeMask mask)
+        public ProjectileInfo(
+            Vector3 source,
+            Vector3 target,
+            UnitTribeMask scanTribeMask,
+            UnitTribeMask hitTribeMask)
         {
             this.source = source;
-            this.mask = mask;
             this.target = target;
+            this.scanTribeMask = scanTribeMask;
+            this.hitTribeMask = hitTribeMask;
         }
     }
 }

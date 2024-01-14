@@ -68,6 +68,7 @@ namespace Lotl.Units.Towers.States
             return new(
                 tower.ProjectileSource.position,
                 tower.CurrentTarget.transform.position,
+                tower.ScanTribeMask,
                 tower.HitTribeMask);
         }
 

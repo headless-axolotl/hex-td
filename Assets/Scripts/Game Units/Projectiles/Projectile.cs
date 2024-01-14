@@ -1,10 +1,11 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.Runtime.Generic;
 using Lotl.Generic.Variables;
-using System.Linq;
+using Lotl.Units.Damage;
 
 namespace Lotl.Units.Projectiles
 {
@@ -15,12 +16,14 @@ namespace Lotl.Units.Projectiles
 
         [Header("Data")]
         [SerializeField] protected FloatReference damage;
+        [SerializeField] protected DamageTrigger[] damageTriggers;
         [SerializeField] protected FloatReference speed;
         [SerializeField] protected FloatReference hitRadius;
         [SerializeField] protected FloatReference lifetime;
 
         [SerializeField] protected LayerMask scanLayer;
-        [SerializeField] protected UnitTribeMask unitMask;
+        [SerializeField] protected UnitTribeMask scanTribeMask;
+        [SerializeField] protected UnitTribeMask hitTribeMask;
 
         [Header("Runtime")]
         [SerializeField] protected Timer timer;
@@ -32,7 +35,6 @@ namespace Lotl.Units.Projectiles
         private void Awake()
         {
             timer = GetComponent<Timer>();
-            timer.Done += LifetimeEnded;
         }
 
         protected virtual void FixedUpdate()
@@ -44,11 +46,13 @@ namespace Lotl.Units.Projectiles
         private void OnEnable()
         {
             timer.Trigger(lifetime);
+            timer.Done += LifetimeEnded;
         }
 
         private void OnDisable()
         {
             timer.Stop();
+            timer.Done -= LifetimeEnded;
         }
 
         private void LifetimeEnded()
@@ -59,8 +63,14 @@ namespace Lotl.Units.Projectiles
         public virtual void Initialize(ProjectileInfo projetileInfo)
         {
             transform.position = projetileInfo.source;
-            transform.forward = (projetileInfo.target - transform.position).normalized;
-            unitMask = projetileInfo.mask;
+            AlignTo(projetileInfo.target);
+            scanTribeMask = projetileInfo.scanTribeMask;
+            hitTribeMask = projetileInfo.hitTribeMask;
+        }
+
+        protected virtual void AlignTo(Vector3 target)
+        {
+            transform.forward = (target - transform.position).normalized;
         }
 
         protected virtual void Move()
@@ -70,7 +80,9 @@ namespace Lotl.Units.Projectiles
 
         protected virtual void HitCheck()
         {
-            List<Unit> hitUnits = Utility.Scan(transform.position, hitRadius, scanLayer, unitMask);
+            List<Unit> hitUnits = UnitScanner.Scan(
+                transform.position, hitRadius,
+                scanLayer, hitTribeMask);
             if (hitUnits.Count == 0) return;
             DealDamage(hitUnits);
         }
@@ -78,9 +90,13 @@ namespace Lotl.Units.Projectiles
         protected virtual void DealDamage(List<Unit> units)
         {
             Unit targetUnit = units.FirstOrDefault();
-            if (targetUnit != null)
-                targetUnit.TakeDamage(damage);
+            if (targetUnit != null) DealDamage(targetUnit);
             gameObject.SetActive(false);
+        }
+
+        protected virtual void DealDamage(Unit unit)
+        {
+            unit.TakeDamage(damage, transform.position, damageTriggers);
         }
 
         #endregion

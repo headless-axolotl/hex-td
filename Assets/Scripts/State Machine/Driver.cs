@@ -19,6 +19,8 @@ namespace Lotl.StateMachine
 
         private static readonly List<Transition> EmptyTransitions = new();
 
+        private bool isPaused = false;
+
         protected virtual void Awake()
         {
             BuildBrain();
@@ -62,12 +64,18 @@ namespace Lotl.StateMachine
 
         private void Tick()
         {
+            if (isPaused) return;
+
             var transition = GetTransition();
             if(transition != null)
                 SetState(transition.StateTo);
             if(currentState != null)
                 currentState.Tick(this);
         }
+
+        public void Pause() => isPaused = true;
+        
+        public void Unpause() => isPaused = false;
 
         private void SetState(State state)
         {

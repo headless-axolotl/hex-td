@@ -80,7 +80,7 @@ namespace Lotl.Units.Enemies
 
         private void ModifyDirection(ref Vector3 direction)
         {
-            List<Unit> unitsToAvoid = Utility.Scan(
+            List<Unit> unitsToAvoid = UnitScanner.Scan(
                 transform.position,
                 avoidanceRadius,
                 scanMask, scanTribeMask);
