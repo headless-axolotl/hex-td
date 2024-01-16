@@ -38,6 +38,9 @@ namespace Lotl.Units.Projectiles
             currentHitUnits.Add(unitToDamage);
             currentJumpCount--;
 
+            timer.Stop();
+            timer.Trigger(lifetime);
+
             if (currentJumpCount == 0)
             {
                 gameObject.SetActive(false);

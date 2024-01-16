@@ -7,10 +7,11 @@ using Lotl.StateMachine;
 using Lotl.Generic.Variables;
 using Lotl.Runtime.Generic;
 using Lotl.Units.Generic.StateMachine;
+using Lotl.Units.Locomotion;
 
 namespace Lotl.Units.Enemies
 {
-    [RequireComponent(typeof(Timer), typeof(EnemyLocomotion))]
+    [RequireComponent(typeof(Timer), typeof(UnitLocomotion))]
     public class MeleeEnemy : Driver, ISeeker
     {
         #region Events
@@ -32,7 +33,7 @@ namespace Lotl.Units.Enemies
         [Header("Action Data")]
         [SerializeField] private FloatReference meleeRange;
         [SerializeField] private FloatReference attackPower;
-        [SerializeField] private EnemyLocomotion locomotion;
+        [SerializeField] private UnitLocomotion locomotion;
 
         [Header("Timing")]
         [SerializeField] private Timer timer;
@@ -51,7 +52,7 @@ namespace Lotl.Units.Enemies
         
         public float MeleeRange => meleeRange;
         public float AttackPower => attackPower;
-        public EnemyLocomotion Locomotion => locomotion;
+        public UnitLocomotion Locomotion => locomotion;
         
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;

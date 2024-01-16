@@ -44,12 +44,12 @@ namespace Lotl.Units
             health = maxHealth;
         }
 
-        public virtual void TakeDamage(float amount, Vector3 source = new(), params DamageTrigger[] responseTypes)
+        public virtual void TakeDamage(float amount, Vector3 source = new(), params DamageTrigger[] damageTriggers)
         {
             if (amount <= 0) return;
 
             health = Mathf.Max(health - amount, 0);
-            WasDamaged?.Invoke(new(amount, source, responseTypes));
+            WasDamaged?.Invoke(new(amount, source, damageTriggers));
             
             if (health <= 0) Died?.Invoke(this);
         }

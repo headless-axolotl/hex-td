@@ -71,5 +71,11 @@ namespace Lotl.Gameplay
         {
             SaveState();
         }
+
+        public void EndRun()
+        {
+            // calculate reward
+            // delete current run
+        }
     }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 
 using Lotl.Generic.Variables;
 
-namespace Lotl.Units.Enemies
+namespace Lotl.Units.Locomotion
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class EnemyLocomotion : MonoBehaviour
+    public class UnitLocomotion : MonoBehaviour
     {
         #region Properties
 
