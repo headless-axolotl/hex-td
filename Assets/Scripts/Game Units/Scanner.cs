@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Lotl.Units
 {
-    public static class UnitScanner
+    public static class Scanner
     {
         public static List<TComponent> Scan<TComponent>(
             Vector3 position, float radius,

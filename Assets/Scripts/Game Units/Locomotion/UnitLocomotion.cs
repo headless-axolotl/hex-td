@@ -80,7 +80,7 @@ namespace Lotl.Units.Locomotion
 
         private void ModifyDirection(ref Vector3 direction)
         {
-            List<Unit> unitsToAvoid = UnitScanner.Scan(
+            List<Unit> unitsToAvoid = Scanner.Scan(
                 transform.position,
                 avoidanceRadius,
                 scanMask, scanTribeMask);

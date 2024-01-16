@@ -61,7 +61,7 @@ namespace Lotl.Units.Projectiles
 
         private Unit FindClosestNotHitUnit()
         {
-            List<Unit> units = UnitScanner.Scan(
+            List<Unit> units = Scanner.Scan(
                 transform.position, jumpRadius,
                 scanLayer, scanTribeMask);
             

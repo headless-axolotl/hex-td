@@ -60,7 +60,7 @@ namespace Lotl.Units.Aura
 
         protected virtual List<Unit> GetValidUnits()
         {
-            return UnitScanner.Scan(transform.position, auraRadius, scanMask, scanTribeMask);
+            return Scanner.Scan(transform.position, auraRadius, scanMask, scanTribeMask);
         }
 
         protected abstract void AuraTick(List<Unit> units);

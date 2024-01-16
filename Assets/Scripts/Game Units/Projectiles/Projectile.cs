@@ -80,7 +80,7 @@ namespace Lotl.Units.Projectiles
 
         protected virtual void HitCheck()
         {
-            List<Unit> hitUnits = UnitScanner.Scan(
+            List<Unit> hitUnits = Scanner.Scan(
                 transform.position, hitRadius,
                 scanLayer, hitTribeMask);
             if (hitUnits.Count == 0) return;

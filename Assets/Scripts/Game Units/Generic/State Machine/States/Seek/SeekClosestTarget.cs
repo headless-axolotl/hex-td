@@ -25,7 +25,7 @@ namespace Lotl.Units.Generic.StateMachine
             if (driver is not ISeeker seeker) return;
             if (seeker.CurrentTarget != null) return;
 
-            List<Unit> foundUnits = UnitScanner.Scan(
+            List<Unit> foundUnits = Scanner.Scan(
                 driver.transform.position,
                 seeker.SeekRange,
                 seeker.ScanMask,

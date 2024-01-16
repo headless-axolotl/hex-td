@@ -13,7 +13,7 @@ namespace Lotl.Units.Projectiles
         
         protected override void HitCheck()
         {
-            List<Unit> hitUnits = UnitScanner.Scan(
+            List<Unit> hitUnits = Scanner.Scan(
                 transform.position, hitRadius,
                 scanLayer, hitTribeMask);
 
@@ -24,7 +24,7 @@ namespace Lotl.Units.Projectiles
 
         private void Explode()
         {
-            List<Unit> hitUnitsFromExplosion = UnitScanner.Scan(
+            List<Unit> hitUnitsFromExplosion = Scanner.Scan(
                 transform.position, damageRadius,
                 scanLayer, scanTribeMask);
             DealDamage(hitUnitsFromExplosion);
