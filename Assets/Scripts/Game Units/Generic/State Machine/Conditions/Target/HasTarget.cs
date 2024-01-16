@@ -9,6 +9,8 @@ namespace Lotl.Units.Generic.StateMachine
     [CreateAssetMenu(fileName = "HasTarget", menuName = "Lotl/Units/Generic/Conditions/Target/Has Target")]
     public class HasTarget : Condition
     {
+        [SerializeField] private bool invert = false;
+
         public override bool IsMet(Driver driver)
         {
             if (driver is not IContainsTarget containsTarget)
@@ -16,7 +18,10 @@ namespace Lotl.Units.Generic.StateMachine
                 Debug.LogError($"Driver [{driver.name}] used incpomatible Condition [{name}]!");
                 return false;
             }
-            return containsTarget.CurrentTarget != null;
+            bool result = containsTarget.CurrentTarget != null;
+
+            if (!invert) return result;
+            return !result;
         }
     }
 }

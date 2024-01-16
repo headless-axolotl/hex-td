@@ -12,16 +12,9 @@ using Lotl.Units.Generic.StateMachine;
 namespace Lotl.Units.Towers
 {
     [RequireComponent(typeof(AutounitSetAdder), typeof(Timer))]
-    public class ProjectileTower : Driver, ISeeker
+    public class ProjectileTower : Driver, IRangedAttacker
     {
-        #region Events
-
         public event Action OnShootAction;
-
-        public void TriggerShootAction()
-            => OnShootAction?.Invoke();
-
-        #endregion
 
         #region Properties
 
@@ -40,19 +33,20 @@ namespace Lotl.Units.Towers
         [SerializeField] private FloatReference actionCooldown;
         [SerializeField] private FloatReference actionDelay;
         [SerializeField] private ActionState state = ActionState.Cooldown;
-        public enum ActionState { Cooldown, Delay }
 
         [Header("Runtime")]
         [SerializeField] private Unit currentTarget;
         
         public float SeekRange => seekRange;
+        public float AttackRange => SeekRange;
         public UnitTribeMask ScanTribeMask => scanTribeMask;
         public LayerMask ScanMask => scanMask;
-        
+        public Vector3 CurrentPosition => transform.position;
+
         public UnitTribeMask HitTribeMask => hitTribeMask;
         public Pool ProjectilePool => projectilePool;
-        public Transform ProjectileSource => projectileSource;
-        
+        public Vector3 ProjectileSource => projectileSource.transform.position;
+
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;
         public float ActionDelay => actionDelay;
@@ -79,6 +73,11 @@ namespace Lotl.Units.Towers
             timer = GetComponent<Timer>();
             
             base.Awake();
+        }
+
+        public void TriggerAttackEvent()
+        {
+            OnShootAction?.Invoke();
         }
 
 #if UNITY_EDITOR

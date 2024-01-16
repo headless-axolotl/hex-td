@@ -8,20 +8,14 @@ using Lotl.Generic.Variables;
 using Lotl.Runtime.Generic;
 using Lotl.Units.Generic.StateMachine;
 using Lotl.Units.Locomotion;
+using Lotl.Units.Damage;
 
 namespace Lotl.Units.Enemies
 {
     [RequireComponent(typeof(Timer), typeof(UnitLocomotion))]
-    public class MeleeEnemy : Driver, ISeeker
+    public class MeleeEnemy : Driver, IMeleeAttacker, IMobileSeeker
     {
-        #region Events
-
         public event Action OnAttackAction;
-
-        public void TriggerAttackAction()
-            => OnAttackAction?.Invoke();
-
-        #endregion
 
         #region Properties
 
@@ -31,8 +25,8 @@ namespace Lotl.Units.Enemies
         [SerializeField] private LayerMask scanMask;
         
         [Header("Action Data")]
-        [SerializeField] private FloatReference meleeRange;
-        [SerializeField] private FloatReference attackPower;
+        [SerializeField] private FloatReference attackRange;
+        [SerializeField] private FloatReference damage;
         [SerializeField] private UnitLocomotion locomotion;
 
         [Header("Timing")]
@@ -41,19 +35,21 @@ namespace Lotl.Units.Enemies
         [SerializeField] private FloatReference actionDelay;
         [SerializeField] private ActionState state;
 
-        public enum ActionState { Cooldown, Delay }
-
         [Header("Runtime")]
         [SerializeField] private Unit currentTarget;
 
         public float SeekRange => seekRange;
         public UnitTribeMask ScanTribeMask => scanTribeMask;
         public LayerMask ScanMask => scanMask;
+        public Vector3 CurrentPosition => transform.position;
         
-        public float MeleeRange => meleeRange;
-        public float AttackPower => attackPower;
+        public float AttackRange => attackRange;
+        public float Damage => damage;
+        public DamageTrigger[] DamageTriggers => null;
+
+        public float Range => attackRange;
         public UnitLocomotion Locomotion => locomotion;
-        
+
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;
         public float ActionDelay => actionDelay;
@@ -78,6 +74,11 @@ namespace Lotl.Units.Enemies
             base.Awake();
         }
 
+        public void TriggerAttackEvent()
+        {
+            OnAttackAction?.Invoke();
+        }
+
 #if UNITY_EDITOR
 
         private void OnDrawGizmosSelected()
@@ -85,7 +86,7 @@ namespace Lotl.Units.Enemies
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, SeekRange);
             Gizmos.color = Color.black;
-            Gizmos.DrawSphere(transform.position + MeleeRange * transform.forward, 0.2f);
+            Gizmos.DrawSphere(transform.position + AttackRange * transform.forward, 0.2f);
         }
 
 #endif
