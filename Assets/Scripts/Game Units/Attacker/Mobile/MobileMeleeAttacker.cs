@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using Lotl.Runtime;
-using Lotl.Runtime.Generic;
 using Lotl.StateMachine;
 using Lotl.Generic.Variables;
+using Lotl.Runtime.Generic;
 using Lotl.Units.Generic.StateMachine;
+using Lotl.Units.Locomotion;
+using Lotl.Units.Damage;
 
-namespace Lotl.Units.Towers
+namespace Lotl.Units.Attackers
 {
-    [RequireComponent(typeof(Timer))]
-    public class ProjectileTower : Driver, IRangedAttacker
+    [RequireComponent(typeof(Timer), typeof(MobileUnitLocomotion))]
+    public class MobileMeleeAttacker : Driver, IMeleeAttacker, IMobileSeeker
     {
-        public event Action OnShootAction;
+        public event Action OnAttackAction;
 
         #region Properties
 
@@ -24,28 +25,30 @@ namespace Lotl.Units.Towers
         [SerializeField] private LayerMask scanMask;
         
         [Header("Action Data")]
-        [SerializeField] private UnitTribeMask hitTribeMask;
-        [SerializeField] private Pool projectilePool;
-        [SerializeField] private Transform projectileSource;
+        [SerializeField] private FloatReference attackRange;
+        [SerializeField] private FloatReference damage;
+        [SerializeField] private MobileUnitLocomotion locomotion;
 
         [Header("Timing")]
         [SerializeField] private Timer timer;
         [SerializeField] private FloatReference actionCooldown;
         [SerializeField] private FloatReference actionDelay;
-        [SerializeField] private ActionState state = ActionState.Cooldown;
+        [SerializeField] private ActionState state;
 
         [Header("Runtime")]
         [SerializeField] private Unit currentTarget;
-        
+
         public float SeekRange => seekRange;
         public UnitTribeMask ScanTribeMask => scanTribeMask;
         public LayerMask ScanMask => scanMask;
         public Vector3 CurrentPosition => transform.position;
+        
+        public float AttackRange => attackRange;
+        public float Damage => damage;
+        public DamageTrigger[] DamageTriggers => null;
 
-        public float AttackRange => SeekRange;
-        public UnitTribeMask HitTribeMask => hitTribeMask;
-        public Pool ProjectilePool => projectilePool;
-        public Vector3 ProjectileSource => projectileSource.transform.position;
+        public float Reach => attackRange;
+        public MobileUnitLocomotion Locomotion => locomotion;
 
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;
@@ -66,26 +69,25 @@ namespace Lotl.Units.Towers
 
         protected override void Awake()
         {
-            if (projectilePool == null)
-                Debug.LogError($"{nameof(ProjectileTower)} [{name}] is missing a projectile pool!");
-            if (projectileSource == null)
-                Debug.LogError($"{nameof(ProjectileTower)} [{name}] is missing a projectile source!");
             timer = GetComponent<Timer>();
-            
+            locomotion = GetComponent<MobileUnitLocomotion>();
+
             base.Awake();
         }
 
         public void TriggerAttackEvent()
         {
-            OnShootAction?.Invoke();
+            OnAttackAction?.Invoke();
         }
 
 #if UNITY_EDITOR
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.color = Color.yellow;
+            Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, SeekRange);
+            Gizmos.color = Color.black;
+            Gizmos.DrawSphere(transform.position + AttackRange * transform.forward, 0.2f);
         }
 
 #endif

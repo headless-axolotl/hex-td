@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.StateMachine;
-using Lotl.Units.Towers;
+using Lotl.Units.Attackers;
 
 namespace Lotl.Units.Generic.StateMachine
 {
