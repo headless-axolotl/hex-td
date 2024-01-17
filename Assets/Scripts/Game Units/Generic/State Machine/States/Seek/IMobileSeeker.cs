@@ -7,9 +7,9 @@ namespace Lotl.Units.Generic.StateMachine
 {
     public interface IMobileSeeker : ISeeker, IContainsPosition
     {
-        float Range { get; }
+        float Reach { get; }
 
-        UnitLocomotion Locomotion { get; }
+        MobileUnitLocomotion Locomotion { get; }
 
         void UpdateMovement()
         {
@@ -25,7 +25,7 @@ namespace Lotl.Units.Generic.StateMachine
         bool ShouldGetCloserToTarget()
         {
             float sqrDistance = (CurrentPosition - CurrentTarget.transform.position).sqrMagnitude;
-            if (sqrDistance > Range * Range) return true;
+            if (sqrDistance > Reach * Reach) return true;
             return false;
         }
     }

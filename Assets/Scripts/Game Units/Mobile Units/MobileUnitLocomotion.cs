@@ -7,7 +7,7 @@ using Lotl.Generic.Variables;
 namespace Lotl.Units.Locomotion
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class UnitLocomotion : MonoBehaviour
+    public class MobileUnitLocomotion : MonoBehaviour
     {
         #region Properties
 

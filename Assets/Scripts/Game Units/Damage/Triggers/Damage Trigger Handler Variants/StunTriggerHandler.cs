@@ -8,7 +8,7 @@ using Lotl.Units.Locomotion;
 
 namespace Lotl.Units.Damage
 {
-    [RequireComponent(typeof(Driver), typeof(UnitLocomotion))]
+    [RequireComponent(typeof(Driver), typeof(MobileUnitLocomotion))]
     public class StunTriggerHandler : DamageTriggerHandler
     {
         [SerializeField] private FloatReference stunDuration;
@@ -16,12 +16,12 @@ namespace Lotl.Units.Damage
         private bool isStunned = false;
         
         private Driver driver;
-        private UnitLocomotion locomotion;
+        private MobileUnitLocomotion locomotion;
 
         private void Start()
         {
             driver = GetComponent<Driver>();
-            locomotion = GetComponent<UnitLocomotion>();
+            locomotion = GetComponent<MobileUnitLocomotion>();
         }
 
         protected override void RespondToTrigger(DamageInfo damageInfo)
