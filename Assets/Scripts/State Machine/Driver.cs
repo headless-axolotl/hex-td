@@ -73,6 +73,8 @@ namespace Lotl.StateMachine
                 currentState.Tick(this);
         }
 
+        public bool IsPaused => isPaused;
+
         public void Pause() => isPaused = true;
         
         public void Unpause() => isPaused = false;

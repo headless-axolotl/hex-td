@@ -18,6 +18,11 @@ namespace Lotl.Gameplay
         {
             return !occupiedPositions.Contains(position);
         }
+        
+        public void FreePosition(Hex position)
+        {
+            occupiedPositions.Remove(position);
+        }
 
         private GameObject InstantiateInactive(GameObject prefab)
         {
@@ -83,14 +88,27 @@ namespace Lotl.Gameplay
             if(currentHealth != -1f) unit.SetCurrentHealth(currentHealth);
             
             occupiedPositions.Add(position);
-#warning CHANGE THIS:
-            unit.Died += (_) => { occupiedPositions.Remove(position); };
+
+            unit.Died += FreePositionFromTowerDeath;
             
             hexTransform.HexPosition = position;
 
             instantiatedTower.SetActive(true);
 
             return true;
+        }
+
+        private void FreePositionFromTowerDeath(Unit unit)
+        {
+            if (!unit.TryGetComponent<HexTransform>(out var hexTransform))
+            {
+                Debug.LogWarning("Tried to free position of a unit that is missing a HexTransform.");
+                return;
+            }
+
+            occupiedPositions.Remove(hexTransform.HexPosition);
+
+            unit.Died -= FreePositionFromTowerDeath;
         }
     }
 }

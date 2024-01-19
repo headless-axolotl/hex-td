@@ -12,9 +12,18 @@ namespace Lotl.Data.Users
         [SerializeField] private int metaCurrencyAmount;
         [SerializeField] private TowersetInfo unlockedTowers;
 
-        public int MetaCurrencyAmount => metaCurrencyAmount;
-        public TowersetInfo UnlockedTowers => unlockedTowers;
-        
+        public int MetaCurrencyAmount
+        {
+            get => metaCurrencyAmount;
+            set => metaCurrencyAmount = value;
+        }
+
+        public TowersetInfo UnlockedTowers
+        {
+            get => unlockedTowers;
+            set => unlockedTowers = value;
+        }
+
         public UserData(int metaCurrencyAmount, TowersetInfo unlockedTowers)
         {
             this.metaCurrencyAmount = metaCurrencyAmount;
