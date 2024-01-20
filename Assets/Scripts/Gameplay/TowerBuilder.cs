@@ -12,11 +12,13 @@ namespace Lotl.Gameplay
     public class TowerBuilder : MonoBehaviour
     {
         [SerializeField] private PrefabLibrary prefabLibrary;
-        private HashSet<Hex> occupiedPositions = new();
+        private Dictionary<Hex, Unit> occupiedPositions = new();
+
+        public IReadOnlyDictionary<Hex, Unit> OccupiedPositions => occupiedPositions;
 
         public bool IsValidPosition(Hex position)
         {
-            return !occupiedPositions.Contains(position);
+            return !occupiedPositions.ContainsKey(position);
         }
         
         public void FreePosition(Hex position)
@@ -78,7 +80,7 @@ namespace Lotl.Gameplay
 
         public bool SetTowerInfo(GameObject instantiatedTower, Hex position, float currentHealth = -1f)
         {
-            if (!instantiatedTower.TryGetComponent<Units.Unit>(out var unit)
+            if (!instantiatedTower.TryGetComponent<Unit>(out var unit)
                 || !instantiatedTower.TryGetComponent<HexTransform>(out var hexTransform))
             {
                 Debug.LogError("Instantiated tower is missing needed Unit and/or HexTransform components!");
@@ -87,7 +89,7 @@ namespace Lotl.Gameplay
 
             if(currentHealth != -1f) unit.SetCurrentHealth(currentHealth);
             
-            occupiedPositions.Add(position);
+            occupiedPositions.Add(position, unit);
 
             unit.Died += FreePositionFromTowerDeath;
             
@@ -98,7 +100,7 @@ namespace Lotl.Gameplay
             return true;
         }
 
-        private void FreePositionFromTowerDeath(Units.Unit unit)
+        private void FreePositionFromTowerDeath(Unit unit)
         {
             if (!unit.TryGetComponent<HexTransform>(out var hexTransform))
             {

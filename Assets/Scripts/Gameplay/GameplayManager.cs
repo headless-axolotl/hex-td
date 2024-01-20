@@ -29,6 +29,7 @@ namespace Lotl.Gameplay
         public RunState RunState => runState;
 
         private bool runHasEnded = false;
+        private bool waveIsInProgress = false;
 
         #endregion
 
@@ -45,6 +46,7 @@ namespace Lotl.Gameplay
 
             LoadState();
             runHasEnded = false;
+            waveIsInProgress = false;
         }
 
         private void LoadState()
@@ -54,7 +56,7 @@ namespace Lotl.Gameplay
 
         public void SaveState()
         {
-            if (runHasEnded) return;
+            if (runHasEnded || waveIsInProgress) return;
 
             runState.Save(crossSceneData.Data.RunInfo);
 
@@ -74,11 +76,13 @@ namespace Lotl.Gameplay
         public void BeginWave()
         {
             SaveState();
+            waveIsInProgress = true;
             waveSummoner.StartWave();
         }
 
         public void OnEndWave()
         {
+            waveIsInProgress = false;
             SaveState();
         }
 

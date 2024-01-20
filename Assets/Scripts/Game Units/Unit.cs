@@ -14,6 +14,7 @@ namespace Lotl.Units
 
         public event Action<DamageInfo> WasDamaged;
         public event Action<float> WasHealed;
+        public event Action<float> HealthChanged;
         public event Action<Unit> Died;
 
         #endregion
@@ -50,6 +51,7 @@ namespace Lotl.Units
 
             health = Mathf.Max(health - amount, 0);
             WasDamaged?.Invoke(new(amount, source, damageTriggers));
+            HealthChanged?.Invoke(health);
             
             if (health <= 0) Died?.Invoke(this);
         }
@@ -60,11 +62,13 @@ namespace Lotl.Units
 
             health = Mathf.Min(health + amount, maxHealth);
             WasHealed?.Invoke(amount);
+            HealthChanged?.Invoke(health);
         }
 
         public void SetCurrentHealth(float value)
         {
             health = Mathf.Clamp(value, 0, maxHealth);
+            HealthChanged?.Invoke(health);
         }
 
         #endregion
