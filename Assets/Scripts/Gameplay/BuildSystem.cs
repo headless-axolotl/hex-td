@@ -45,10 +45,10 @@ namespace Lotl.Gameplay
                 availableTowersViewData,
                 Data.Menu.Conversions.ConvertTowerToken);
 
-            availableTowersView.OnSelect += OnTowerSelected;
+            availableTowersView.OnSelect += OnTowerTokenSelected;
         }
 
-        private void OnTowerSelected()
+        private void OnTowerTokenSelected()
         {
             int selectedIndex = availableTowersView.SelectedEntry.Index;
             selectedTowerToken = crossSceneData.Data.TowersetInfo.TowerTokens[selectedIndex];
@@ -100,7 +100,7 @@ namespace Lotl.Gameplay
             if(shouldDeselect) DeselectTowerToken();
         }
 
-        private void DeselectTowerToken()
+        public void DeselectTowerToken()
         {
             availableTowersView.Deselect();
             selectedTowerToken = null;

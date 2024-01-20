@@ -71,7 +71,6 @@ namespace Lotl.Data
 
         private void StartInitialization()
         {
-            Debug.Log("Began initialization!");
             databaseContext = new();
 
             userContext     = new(databaseContext);
@@ -163,7 +162,6 @@ namespace Lotl.Data
                 return;
             }
 
-            Debug.Log("Initialization was successful!");
             readyEvent.Raise();
         }
 

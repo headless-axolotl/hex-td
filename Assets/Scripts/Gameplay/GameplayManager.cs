@@ -12,7 +12,6 @@ namespace Lotl.Gameplay
 {
     using Result = Utility.Async.AsyncTaskResult;
 
-    [RequireComponent(typeof(TowerBuilder))]
     public class GameplayManager : MonoBehaviour
     {
         #region Properties
@@ -29,6 +28,8 @@ namespace Lotl.Gameplay
 
         public RunState RunState => runState;
 
+        private bool runHasEnded = false;
+
         #endregion
 
         protected void Awake()
@@ -37,9 +38,13 @@ namespace Lotl.Gameplay
             {
                 Debug.LogError("Missing database manager!");
             }
+            if (towerBuilder == null)
+            {
+                Debug.LogError("Missing tower builder!");
+            }
 
-            towerBuilder = GetComponent<TowerBuilder>();
             LoadState();
+            runHasEnded = false;
         }
 
         private void LoadState()
@@ -49,6 +54,8 @@ namespace Lotl.Gameplay
 
         public void SaveState()
         {
+            if (runHasEnded) return;
+
             runState.Save(crossSceneData.Data.RunInfo);
 
             RunContext.Identity runIdentity = new(crossSceneData.Data.RunId, userCookie.UserId);
@@ -85,15 +92,15 @@ namespace Lotl.Gameplay
                     return;
                 }
 
+                runHasEnded = true;
                 DeleteEndedRun();
-
-                #warning Do end run sequence!
             });
         }
 
         private void AddRewardToUser(Action<Result> onCompleted)
         {
-            int reward = crossSceneData.Data.RunInfo.WaveIndex;
+            int reward = Mathf.Max(crossSceneData.Data.RunInfo.WaveIndex - 1, 0);
+            
             databaseManager.UserManager.GetUserData(userCookie.UserId,
             onCompleted: (result, data) =>
             {

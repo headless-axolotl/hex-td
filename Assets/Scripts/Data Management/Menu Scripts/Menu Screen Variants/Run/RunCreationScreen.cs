@@ -114,8 +114,9 @@ namespace Lotl.Data.Menu
         {
             validTowersets = databaseManager
                 .TowersetManager.TrackedTowersets
-                .Where(keyValuePair => keyValuePair.Value)
-                .Select(keyValuePair => keyValuePair.Key)
+                .Where(towerset => towerset.Value)
+                .Where(towerset => towerset.Key.userId == userCookie.UserId)
+                .Select(towerset => towerset.Key)
                 .ToList();
             
             towersetDropdown.ClearOptions();

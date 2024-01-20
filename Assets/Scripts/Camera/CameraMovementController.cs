@@ -23,7 +23,7 @@ namespace Lotl.Camera
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(KeyCode.F))
                 mouseMovementMode = !mouseMovementMode;
             Move();
         }

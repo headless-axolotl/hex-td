@@ -169,7 +169,9 @@ namespace Lotl.Data.Menu
         private void UpdateOpenSubmenuButtonState()
         {
             var validTowersets = databaseManager.TowersetManager
-                .TrackedTowersets.Where(keyValuePair => keyValuePair.Value)
+                .TrackedTowersets
+                .Where(towerset => towerset.Value)
+                .Where(towerset => towerset.Key.userId == userCookie.UserId)
                 .ToList();
 
             bool validTowersetExists = validTowersets.Count != 0;

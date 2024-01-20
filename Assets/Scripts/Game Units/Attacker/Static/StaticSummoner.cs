@@ -5,8 +5,6 @@ using UnityEngine;
 
 using Lotl.Generic.Variables;
 using Lotl.StateMachine;
-using Lotl.Units.Generic.StateMachine;
-using Lotl.Units.Locomotion;
 
 namespace Lotl.Units.Attackers
 {
@@ -91,8 +89,7 @@ namespace Lotl.Units.Attackers
         private void RemoveSummonedUnitOnDeath(Unit unit)
         {
             summonedUnits.Remove(unit);
-            // unit.Died -= RemoveSummonedUnitOnDeath;
-            // System.Diagnostics.Debug.WriteLine("here?");
+            unit.Died -= RemoveSummonedUnitOnDeath;
         }
 
         public void InvokeSummonAction()

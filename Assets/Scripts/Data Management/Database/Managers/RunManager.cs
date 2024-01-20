@@ -97,6 +97,7 @@ namespace Lotl.Data
                 RunData runData = RunData.Deserialize(
                     data,
                     databaseManager.TowerTokenLibrary);
+                runData.RunId = identity.name;
                 
                 cachedRunData[identity] = runData;
 

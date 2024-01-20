@@ -78,7 +78,7 @@ namespace Lotl.Gameplay
 
         public bool SetTowerInfo(GameObject instantiatedTower, Hex position, float currentHealth = -1f)
         {
-            if (!instantiatedTower.TryGetComponent<Unit>(out var unit)
+            if (!instantiatedTower.TryGetComponent<Units.Unit>(out var unit)
                 || !instantiatedTower.TryGetComponent<HexTransform>(out var hexTransform))
             {
                 Debug.LogError("Instantiated tower is missing needed Unit and/or HexTransform components!");
@@ -98,7 +98,7 @@ namespace Lotl.Gameplay
             return true;
         }
 
-        private void FreePositionFromTowerDeath(Unit unit)
+        private void FreePositionFromTowerDeath(Units.Unit unit)
         {
             if (!unit.TryGetComponent<HexTransform>(out var hexTransform))
             {
