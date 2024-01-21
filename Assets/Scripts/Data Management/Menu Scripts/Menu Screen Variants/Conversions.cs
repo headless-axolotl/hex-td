@@ -41,5 +41,15 @@ namespace Lotl.Data.Menu
             RunIdentity runIdentity = (RunIdentity)toConvert;
             return new(runIdentity.name, string.Empty);
         }
+
+        public static DataView.Entry ConvertTowerUpgradeOption(object toConvert)
+        {
+            TowerUpgradeOption upgradeOption = (TowerUpgradeOption)toConvert;
+            TowerIdentity towerIdentity = upgradeOption.Identity;
+            string entryDescription =
+                $"[Upgrade cost: {upgradeOption.UpgradeCost}#]\n" + 
+                $"[Description]: {towerIdentity.TowerDescription}";
+            return new(towerIdentity.TowerName, entryDescription);
+        }
     }
 }

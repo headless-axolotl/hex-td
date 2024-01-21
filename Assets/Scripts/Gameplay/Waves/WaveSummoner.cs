@@ -23,9 +23,10 @@ namespace Lotl.Gameplay.Waves
         [SerializeField] private RunDataObject crossSceneData;
         [SerializeField] private AutounitRuntimeSet enemyRuntimeSet;
         [SerializeField] private FloatReference hexSize;
-        [SerializeField] private IntReference mapSize;
+        [SerializeField] private IntReference entryPointDistance;
         [SerializeField] private FloatReference subwaveDelay;
         [SerializeField] private FloatReference extraEndCheckDelay;
+        [SerializeField] private GameEvent onWaveBegin;
         [SerializeField] private GameEvent onWaveEnd;
 
         [Header("Wave Data")]
@@ -63,7 +64,7 @@ namespace Lotl.Gameplay.Waves
             int index = 0;
             foreach(Hex direction in entryPointDirections)
             {
-                Hex entryPointHex = direction * mapSize;
+                Hex entryPointHex = direction * entryPointDistance;
                 Vector3 entryPointPosition = Hex.HexToPixel(entryPointHex, hexSize).xz();
 
                 Transform entryPoint = new GameObject($"Entry Point [{index++}]").transform;
@@ -97,6 +98,9 @@ namespace Lotl.Gameplay.Waves
             WaveInfo currentWave = waveInfoGenerator.GenerateWaveInfo(waveToSummon);
             
             triggeredWaveEnd = doneSummoningWave = false;
+            
+            onWaveBegin.Raise();
+            
             StartCoroutine(SummonWave(currentWave));
         }
 

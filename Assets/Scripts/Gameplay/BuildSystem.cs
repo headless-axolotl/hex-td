@@ -9,6 +9,7 @@ using Lotl.Data.Runs;
 using Lotl.Data.Towerset;
 using Lotl.Generic.Variables;
 using UnityEngine.EventSystems;
+using Lotl.Hexgrid;
 
 namespace Lotl.Gameplay
 {
@@ -16,6 +17,7 @@ namespace Lotl.Gameplay
     {
         [Header("Data")]
         [SerializeField] private RunDataObject crossSceneData;
+        [SerializeField] private IntReference mapSize;
         [Header("Runtime")]
         [SerializeField] private TowerBuilder towerBuilder;
         [SerializeField] private TowerToken selectedTowerToken = null;
@@ -69,6 +71,11 @@ namespace Lotl.Gameplay
 
         private void AttemptToPlaceTower()
         {
+            if(Hex.Distance(Hex.Zero, selectedHex) > mapSize)
+            {
+                return;
+            }
+
             if (!towerBuilder.IsValidPosition(selectedHex))
             {
                 Debug.Log("Invalid position to build a tower.");

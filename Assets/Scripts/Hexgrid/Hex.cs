@@ -195,5 +195,7 @@ namespace Lotl.Hexgrid
         }
 
         #endregion
+
+        public static readonly Hex Zero = new(0, 0);
     }
 }

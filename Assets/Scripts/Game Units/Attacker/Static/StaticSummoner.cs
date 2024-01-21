@@ -74,7 +74,7 @@ namespace Lotl.Units.Attackers
                 unitPrefab,
                 summonPoint.position,
                 summonPoint.rotation,
-                summonPoint);
+                transform.parent);
 
             if(!unitGameObject.TryGetComponent(out Unit unit))
             {

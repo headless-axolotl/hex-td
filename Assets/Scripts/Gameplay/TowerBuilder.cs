@@ -6,6 +6,8 @@ using Lotl.Hexgrid;
 using Lotl.Units;
 using Lotl.AssetManagement;
 using Lotl.Data.Runs;
+using Lotl.Generic.Variables;
+using UnityEngine.UIElements;
 
 namespace Lotl.Gameplay
 {
@@ -23,7 +25,15 @@ namespace Lotl.Gameplay
         
         public void FreePosition(Hex position)
         {
+            if (!occupiedPositions.ContainsKey(position)) return;
+            occupiedPositions[position].Died -= FreePositionFromTowerDeath;
             occupiedPositions.Remove(position);
+        }
+
+        public void SetPosition(Hex position, Unit unit)
+        {
+            if (occupiedPositions.ContainsKey(position)) return;
+            occupiedPositions.Add(position, unit);
         }
 
         private GameObject InstantiateInactive(GameObject prefab)
@@ -67,6 +77,21 @@ namespace Lotl.Gameplay
             }
 
             GameObject prefab = prefabReference.GetPrefab();
+            if (prefab == null)
+            {
+                Debug.LogError("Given prefab reference is not valid!");
+                return false;
+            }
+
+            tower = InstantiateInactive(prefab);
+
+            return SetTowerInfo(tower, position);
+        }
+
+        public bool TryCreate(GameObject prefab, Hex position, out GameObject tower)
+        {
+            tower = null;
+
             if (prefab == null)
             {
                 Debug.LogError("Given prefab reference is not valid!");
