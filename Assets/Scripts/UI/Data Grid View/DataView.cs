@@ -32,6 +32,12 @@ namespace Lotl.UI
 
         #region Methods
 
+        public void Select(int index)
+        {
+            if (index >= entryViews.Count) return;
+            entryViews[index].Select();
+        }
+
         public void EntryWasSelected(DataEntryView entry)
         {
             if(entry == SelectedEntry)

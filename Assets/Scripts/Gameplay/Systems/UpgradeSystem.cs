@@ -14,7 +14,7 @@ using Lotl.Hexgrid;
 
 namespace Lotl.Gameplay
 {
-    public class TowerInspector : MonoBehaviour
+    public class UpgradeSystem : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private TowerBuilder towerBuilder;
@@ -26,7 +26,6 @@ namespace Lotl.Gameplay
         [SerializeField] private TMP_Text towerDescription;
         [SerializeField] private Slider healthbar;
         [SerializeField] private GameObject upgradeSubinspector;
-        [SerializeField] private Button openUpgradeOptionPickerButton;
         [SerializeField] private DataView upgradeOptionPicker;
         [SerializeField] private Button confirmUpgradeButton;
 
@@ -57,11 +56,20 @@ namespace Lotl.Gameplay
 
         private void Update()
         {
+            HandleInput();
+        }
+
+        private void HandleInput()
+        {
             if (Input.GetMouseButtonDown(1))
                 InspectPosition(selectedHex);
 
-            if(Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.Space))
                 UntrackTower(selectedTower);
+
+            bool tryUpgrade = Input.GetKeyDown(KeyCode.E)
+                || Input.GetKeyDown(KeyCode.U);
+            if (tryUpgrade) UpgradeTower();
         }
 
         private void InspectPosition(Hex position)
@@ -126,10 +134,8 @@ namespace Lotl.Gameplay
 
         private void UpdateUpgradeOptionsUI(TowerIdentifier identifier)
         {
-            upgradeSubinspector.SetActive(false);
-
             bool hasUpgrades = identifier.Upgrades.Count != 0;
-            openUpgradeOptionPickerButton.gameObject.SetActive(hasUpgrades);
+            upgradeSubinspector.SetActive(hasUpgrades);
 
             if (!hasUpgrades) return;
 

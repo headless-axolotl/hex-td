@@ -15,6 +15,6 @@ namespace Lotl.Data.Towerset
         }
 
         private const int MinTowersetTowerCount = 3;
-        private const int MaxTowersetTowerCount = 5;
+        private const int MaxTowersetTowerCount = 4;
     }
 }

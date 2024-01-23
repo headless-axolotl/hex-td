@@ -25,6 +25,7 @@ namespace Lotl.Gameplay
         [SerializeField] private IntVariable resources;
         [Header("UI")]
         [SerializeField] private DataView availableTowersView;
+        [SerializeField] private GameObject availableTowersContent;
         
         public TowerToken SelectedTowerToken => selectedTowerToken;
 
@@ -54,6 +55,7 @@ namespace Lotl.Gameplay
         {
             int selectedIndex = availableTowersView.SelectedEntry.Index;
             selectedTowerToken = crossSceneData.Data.TowersetInfo.TowerTokens[selectedIndex];
+            availableTowersContent.SetActive(true);
         }
 
         private void HandleInput()
@@ -66,6 +68,7 @@ namespace Lotl.Gameplay
             if (Input.GetKeyDown(KeyCode.Q))
             {
                 DeselectTowerToken();
+                availableTowersContent.SetActive(false);
             }
         }
 
@@ -79,7 +82,6 @@ namespace Lotl.Gameplay
             if (!towerBuilder.IsValidPosition(selectedHex))
             {
                 Debug.Log("Invalid position to build a tower.");
-                DeselectTowerToken();
                 return;
             }
             

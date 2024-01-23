@@ -44,7 +44,6 @@ namespace Lotl.Camera
         }
 
 #if UNITY_EDITOR
-
         private void OnDrawGizmos()
         {
             DrawHex(Hex.HexToPixel(selectedHex.Value, hexSize).xz(), hexSize);
@@ -64,6 +63,6 @@ namespace Lotl.Camera
             for (int i = 0; i < 6; i++)
                 Gizmos.DrawLine(points[i], points[(i + 1) % 6]);
         }
-    }
 #endif
+    }
 }
