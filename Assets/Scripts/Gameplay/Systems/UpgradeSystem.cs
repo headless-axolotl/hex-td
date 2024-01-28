@@ -11,6 +11,7 @@ using Lotl.UI;
 using System.Linq;
 using Lotl.Data.Menu;
 using Lotl.Hexgrid;
+using Lotl.Generic.Events;
 
 namespace Lotl.Gameplay
 {
@@ -28,6 +29,10 @@ namespace Lotl.Gameplay
         [SerializeField] private GameObject upgradeSubinspector;
         [SerializeField] private DataView upgradeOptionPicker;
         [SerializeField] private Button confirmUpgradeButton;
+        [Header("Events")]
+        [SerializeField] private GameEvent OnTrackTower;
+        [SerializeField] private GameEvent OnUntrackTower;
+        [SerializeField] private HexVariable trackedTowerPosition;
 
         private Unit selectedTower = null;
         private TowerUpgradeOption selectedUpgradeOption = null;
@@ -84,10 +89,10 @@ namespace Lotl.Gameplay
             Unit tower = towerBuilder.OccupiedPositions[position];
 
             UpdateUI(tower);
-            TrackTower(tower);
+            TrackTower(tower, position);
         }
 
-        private void TrackTower(Unit tower)
+        private void TrackTower(Unit tower, Hex position)
         {
             if (selectedTower != null)
             {
@@ -103,6 +108,9 @@ namespace Lotl.Gameplay
             UpdateHealthbar(selectedTower.Health);
 
             towerInspector.SetActive(true);
+
+            trackedTowerPosition.Value = position;
+            OnTrackTower.Raise();
         }
 
         private void UntrackTower(Unit tower)
@@ -113,6 +121,8 @@ namespace Lotl.Gameplay
             tower.Died -= UntrackTower;
 
             towerInspector.SetActive(false);
+
+            OnUntrackTower.Raise();
         }
 
         private void UpdateUI(Unit tower)

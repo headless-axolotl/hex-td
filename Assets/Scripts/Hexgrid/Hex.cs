@@ -72,8 +72,8 @@ namespace Lotl.Hexgrid
 
         private static readonly Hex[] direction_vectors = new Hex[6]
         {
-            new(+1, 0), new(+1, -1), new(0, +1),
-            new(-1, 0), new(-1, +1), new(0, -1),
+            new(+1, 0), new( 0, +1), new(-1, +1),
+            new(-1, 0), new( 0, -1), new(+1, -1),
         };
 
         public static Hex GetNeighbourVector(Direction direction)
@@ -84,14 +84,20 @@ namespace Lotl.Hexgrid
 
         public static Hex GetNeighbouHex(Hex from, Direction direction)
             => from + GetNeighbourVector(direction);
-        
+
+        public static Direction Offset(Direction direction, int amount)
+        {
+            if (amount < 0) amount = 6 - ((-amount) % 6);
+            return (Direction)(((int)direction + amount) % 6);
+        }
+
         public enum Direction { R = 0, UR = 1, UL = 2, L = 3, DL = 4, DR = 5 };
 
         
         private static readonly Hex[] diagonal_vectors = new Hex[6]
         {
-            new(+2, -1), new(-1, +2), new(+1, +1),
-            new(-2, +1), new(+1, -2), new(-1, -1),
+            new(+1, +1), new(-1, +2), new(-2, +1),
+            new(-1, -1), new(+1, -2), new(+2, -1),
         };
 
         public static Hex GetDiagonalVector(Diagonal diagonal)
@@ -103,6 +109,12 @@ namespace Lotl.Hexgrid
         public static Hex GetDiagonalHex(Hex from, Diagonal diagonal)
             => from + GetDiagonalVector(diagonal);
 
+        public static Diagonal Offset(Diagonal diagonal, int amount)
+        {
+            if (amount < 0) amount = 6 - ((-amount) % 6);
+            return (Diagonal)(((int)diagonal + amount) % 6);
+        }
+
         public enum Diagonal { UR = 0, U = 1, UL = 2, DL = 3, D = 4, DR = 5 };
 
         #endregion
@@ -111,6 +123,13 @@ namespace Lotl.Hexgrid
 
         private static readonly float root3 = Mathf.Sqrt(3);
         private const float epsilon = 1e-5f;
+        private const int DirectionOffsetForClockwiseRotation = 2;
+        private const int DirectionOffsetForAnticlockwiseRotation = 4;
+
+        public static int SubhexagonCount(int radius)
+        {
+            return 1 + 3 * radius * (radius + 1);
+        }
 
         public static int Distance(Hex from, Hex to)
         {
@@ -192,6 +211,61 @@ namespace Lotl.Hexgrid
             }
 
             return hexes;
+        }
+
+        /// <summary>
+        /// Returns a ring of hexes. Radius must be > 0.
+        /// </summary>
+        public static List<Hex> Ring(
+            Hex center, int radius,
+            Direction startingDirection = Direction.R,
+            bool clockwise = false)
+        {
+            List<Hex> results = new();
+
+            if (radius <= 0) return results;
+
+            Direction offsetDirection = clockwise
+                ? Offset(startingDirection, DirectionOffsetForClockwiseRotation)
+                : Offset(startingDirection, DirectionOffsetForAnticlockwiseRotation);
+            Debug.Log(startingDirection.ToString() + " " + offsetDirection.ToString());
+
+            Hex currentHex = center + GetNeighbourVector(offsetDirection) * radius;
+
+            string debug = string.Empty;
+            for(int loopDirectionIndex = 0; loopDirectionIndex < 6; loopDirectionIndex++)
+            {
+                Direction currentLoopDirection = clockwise
+                    ? Offset(startingDirection, -loopDirectionIndex)
+                    : Offset(startingDirection, loopDirectionIndex);
+
+                debug += currentLoopDirection.ToString() + " ";
+                
+                for (int i = 0; i < radius; i++)
+                {
+                    results.Add(currentHex);
+                    currentHex = GetNeighbouHex(currentHex, currentLoopDirection);
+                }
+            }
+
+            Debug.Log(debug);
+
+            return results;
+        }
+
+        public static List<Hex> Spiral(
+            Hex center, int radius,
+            Direction startingDirection = Direction.R,
+            bool clockwise = false)
+        {
+            List<Hex> results = new() { center };
+
+            for(int i = 1; i <= radius; i++)
+            {
+                results.AddRange(Ring(center, i, startingDirection, clockwise));
+            }
+
+            return results;
         }
 
         #endregion

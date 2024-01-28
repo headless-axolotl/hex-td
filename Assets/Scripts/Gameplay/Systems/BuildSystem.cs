@@ -28,6 +28,7 @@ namespace Lotl.Gameplay
         [SerializeField] private GameObject availableTowersContent;
         
         public TowerToken SelectedTowerToken => selectedTowerToken;
+        public int MapSize => mapSize;
 
         private void Awake()
         {
@@ -39,6 +40,18 @@ namespace Lotl.Gameplay
             HandleInput();
         }
 
+        private void OnEnable()
+        {
+            availableTowersView.OnSelect += OnTowerTokenSelected;
+            availableTowersView.OnDeselect += OnTowerTokenDeselected;
+        }
+
+        private void OnDisable()
+        {
+            availableTowersView.OnSelect -= OnTowerTokenSelected;
+            availableTowersView.OnDeselect -= OnTowerTokenDeselected;
+        }
+
         private void Initialize()
         {
             IEnumerable<object> availableTowersViewData = crossSceneData.Data
@@ -47,8 +60,6 @@ namespace Lotl.Gameplay
             availableTowersView.SetData(
                 availableTowersViewData,
                 Data.Menu.Conversions.ConvertTowerToken);
-
-            availableTowersView.OnSelect += OnTowerTokenSelected;
         }
 
         private void OnTowerTokenSelected()
@@ -56,6 +67,11 @@ namespace Lotl.Gameplay
             int selectedIndex = availableTowersView.SelectedEntry.Index;
             selectedTowerToken = crossSceneData.Data.TowersetInfo.TowerTokens[selectedIndex];
             availableTowersContent.SetActive(true);
+        }
+
+        private void OnTowerTokenDeselected()
+        {
+            selectedTowerToken = null;
         }
 
         private void HandleInput()
@@ -72,14 +88,16 @@ namespace Lotl.Gameplay
             }
         }
 
+        private bool PositionIsValid()
+        {
+            if (Hex.Distance(Hex.Zero, selectedHex) > mapSize) return false;
+            if (!towerBuilder.IsValidPosition(selectedHex)) return false;
+            return true;
+        }
+
         private void AttemptToPlaceTower()
         {
-            if(Hex.Distance(Hex.Zero, selectedHex) > mapSize)
-            {
-                return;
-            }
-
-            if (!towerBuilder.IsValidPosition(selectedHex))
+            if (!PositionIsValid())
             {
                 Debug.Log("Invalid position to build a tower.");
                 return;
@@ -112,7 +130,6 @@ namespace Lotl.Gameplay
         public void DeselectTowerToken()
         {
             availableTowersView.Deselect();
-            selectedTowerToken = null;
         }
     }
 }

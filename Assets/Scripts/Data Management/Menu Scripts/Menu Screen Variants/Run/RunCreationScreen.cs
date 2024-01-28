@@ -36,6 +36,7 @@ namespace Lotl.Data.Menu
 
         [Header("Warning Messages")]
         [SerializeField] private Color warningColor;
+        [SerializeField] private StringReference runNameMustNotBeBlank;
         [SerializeField] private StringReference runAlreadyExists;
 
         [Header("Error Messages")]
@@ -68,6 +69,7 @@ namespace Lotl.Data.Menu
 
         private void Activate()
         {
+            runNameInput.text = string.Empty;
             feedbackText.text = string.Empty;
             
             UpdateTowersetDropdown();
@@ -188,6 +190,12 @@ namespace Lotl.Data.Menu
         public void CreateRun()
         {
             string runId = runNameInput.text;
+
+            if(string.IsNullOrEmpty(runId))
+            {
+                WarnFeedback(runNameMustNotBeBlank);
+                return;
+            }
 
             RunIdentity newRunIdentity = new(runId, userCookie.UserId);
 

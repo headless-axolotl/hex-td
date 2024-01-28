@@ -16,8 +16,14 @@ namespace Lotl.UI
         private void Update()
         {
             if (PauseSystem.IsGamePaused) return;
+            PerformCheck();
+        }
+
+        private void PerformCheck()
+        {
             if (!PrefixesAreValid()) return;
-            CheckShortcuts();
+            if (!CheckShortcuts(out int index)) return;
+            dataView.Select(index);
         }
 
         private bool PrefixesAreValid()
@@ -34,16 +40,18 @@ namespace Lotl.UI
             return isValid;
         }
 
-        private void CheckShortcuts()
+        private bool CheckShortcuts(out int index)
         {
             for(int i = 0; i < shortcuts.Count; i++)
             {
                 if (Input.GetKeyDown(shortcuts[i]))
                 {
-                    dataView.Select(i);
-                    return;
+                    index = i;
+                    return true;
                 }
             }
+            index = 0;
+            return false;
         }
 
         [System.Serializable]

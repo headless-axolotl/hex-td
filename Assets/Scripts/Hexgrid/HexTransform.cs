@@ -84,6 +84,8 @@ namespace Lotl.Hexgrid
             }
         }
 
+        public void SetHexPosition(HexVariable hex) => HexPosition = hex.Value;
+
 #if UNITY_EDITOR
 
         private void OnValidate()
