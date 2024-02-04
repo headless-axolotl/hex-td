@@ -228,7 +228,6 @@ namespace Lotl.Hexgrid
             Direction offsetDirection = clockwise
                 ? Offset(startingDirection, DirectionOffsetForClockwiseRotation)
                 : Offset(startingDirection, DirectionOffsetForAnticlockwiseRotation);
-            Debug.Log(startingDirection.ToString() + " " + offsetDirection.ToString());
 
             Hex currentHex = center + GetNeighbourVector(offsetDirection) * radius;
 
@@ -247,8 +246,6 @@ namespace Lotl.Hexgrid
                     currentHex = GetNeighbouHex(currentHex, currentLoopDirection);
                 }
             }
-
-            Debug.Log(debug);
 
             return results;
         }

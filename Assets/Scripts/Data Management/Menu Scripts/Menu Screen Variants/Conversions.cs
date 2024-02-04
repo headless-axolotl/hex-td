@@ -26,7 +26,8 @@ namespace Lotl.Data.Menu
             TowerToken towerToken = (TowerToken)toConvert;
             string entryDescription =
                 $"[Deed cost: {towerToken.ShopCost}€]\n" +
-                $"[Resource cost: {towerToken.ResourceCost}#]";
+                $"[Resource cost: {towerToken.ResourceCost}#]\n" +
+                towerToken.TowerDescription;
             return new(towerToken.TowerName, entryDescription);
         }
 

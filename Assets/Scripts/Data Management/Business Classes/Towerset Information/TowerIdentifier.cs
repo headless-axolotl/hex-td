@@ -10,9 +10,11 @@ namespace Lotl.Data.Towerset
     {
         [SerializeField] private TowerIdentity identity;
         [SerializeField] private List<TowerUpgradeOption> upgrades;
-        
+        [SerializeField] private bool removable;
+
         public TowerIdentity Identity => identity;
         public IReadOnlyList<TowerUpgradeOption> Upgrades => upgrades;
+        public bool Removable => removable;
     }
 
     [System.Serializable]

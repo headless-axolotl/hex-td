@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -10,7 +11,6 @@ using Lotl.UI;
 using Lotl.Data.Users;
 using Lotl.Generic.Variables;
 using Lotl.Data.Towerset;
-using System.Linq;
 
 namespace Lotl.Data.Menu
 {
@@ -369,7 +369,9 @@ namespace Lotl.Data.Menu
             TowersetContext.Identity currentTowersetIdentity
                 = new(towersetName, userCookie.UserId);
 
-            TowersetInfo towersetInfo = new(towersInCurrentTowerset);
+            TowersetInfo towersetInfo = new(
+                towersInCurrentTowerset
+                .OrderBy(token => token.IndexInLibrary));
 
             bool validity = towersetInfo.Validity();
 

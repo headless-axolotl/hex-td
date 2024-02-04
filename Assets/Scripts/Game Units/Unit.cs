@@ -69,6 +69,8 @@ namespace Lotl.Units
         {
             health = Mathf.Clamp(value, 0, maxHealth);
             HealthChanged?.Invoke(health);
+
+            if (health <= 0) Died?.Invoke(this);
         }
 
         #endregion
