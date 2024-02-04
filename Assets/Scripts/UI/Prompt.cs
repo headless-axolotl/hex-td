@@ -11,9 +11,26 @@ namespace Lotl.UI
         [Header("UI")]
         [SerializeField] private TMP_Text promptQuestion;
         [SerializeField] private TMP_Text promptDescription;
+        [Header("Input")]
+        [SerializeField] private KeyCode confirmKey;
+        [SerializeField] private KeyCode cancelKey;
 
         private Action confirmAction = null;
         private Action cancelAction = null;
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(confirmKey))
+            {
+                Confirm();
+                return;
+            }
+            if (Input.GetKeyDown(cancelKey))
+            {
+                Cancel();
+                return;
+            }
+        }
 
         public void Activate(string question, string description, Action confirm, Action cancel)
         {
