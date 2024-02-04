@@ -29,7 +29,7 @@ namespace Lotl.Camera
             scanCamera = GetComponent<UnityEngine.Camera>();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             SelectHex();
         }

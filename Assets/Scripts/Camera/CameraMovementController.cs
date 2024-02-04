@@ -3,14 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Lotl.Generic.Variables;
+using Lotl.Utility;
 
 namespace Lotl.Camera
 {
     public class CameraMovementController : MonoBehaviour
     {
+        [Header("Data")]
         [SerializeField] private FloatReference speedMultiplier;
         [SerializeField] private FloatReference maxSpeed;
         [SerializeField] private FloatReference minMagnitude;
+
+        [Header("Circle Constraint")]
+        [SerializeField] private Vector2 constraintCenter;
+        [SerializeField] private float constraintRadius;
 
         private Vector3 baseRight, baseForward;
         private bool mouseMovementMode;
@@ -40,6 +46,7 @@ namespace Lotl.Camera
         {
             if (mouseMovementMode) MouseMove();
             else KeyboardMove();
+            ApplyConstraint();
         }
 
         private Vector2 CalculateDirection()
@@ -73,7 +80,20 @@ namespace Lotl.Camera
             float vertical   = Input.GetAxis("Vertical");
 
             transform.position += Time.deltaTime * speedMultiplier *
-                (horizontal * baseRight + vertical * baseForward);
+                (horizontal * baseRight + vertical * baseForward).normalized;
+        }
+
+        private void ApplyConstraint()
+        {
+            Vector2 constraintDirection = transform.position.xz() - constraintCenter;
+            float sqrDistanceFromCenter = constraintDirection.sqrMagnitude;
+            float sqrMaxDistance = constraintRadius * constraintRadius;
+            
+            if (sqrDistanceFromCenter < sqrMaxDistance) return;
+
+            Vector3 constrainedPosition = (constraintDirection.normalized * constraintRadius).xz();
+            constrainedPosition.y = transform.position.y;
+            transform.position = constrainedPosition;
         }
     }
 }
