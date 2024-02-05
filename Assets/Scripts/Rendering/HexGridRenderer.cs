@@ -17,9 +17,11 @@ namespace Lotl.Rendering
         [SerializeField] private int gridRaduis;
 
         [Header("Configuration")]
+        [SerializeField] private FloatReference gridSize;
         [SerializeField] private FloatReference outerRadius;
         [SerializeField] private FloatReference innerRadius;
         [SerializeField] private FloatReference height;
+        [SerializeField] private bool modifyEdgeSize;
         [SerializeField] private Material material;
 
         private Mesh mesh;
@@ -65,18 +67,16 @@ namespace Lotl.Rendering
 
             for (int i = 0; i < innerHexesCount; i++)
             {
-                Vector3 offset = Hex.HexToPixel(hexes[i], outerRadius).xz();
-                DrawHexFaces(offset, outerRadius);
+                Vector3 offset = Hex.HexToPixel(hexes[i], gridSize).xz();
+                bool drawOuterFaces = outerRadius < gridSize;
+                DrawHexFaces(offset, outerRadius, drawOuterFaces);
             }
 
             for (int i = innerHexesCount; i < hexes.Count; i++)
             {
-                Vector3 offset = Hex.HexToPixel(hexes[i], outerRadius).xz();
-                
-                DrawHexFaces(
-                    offset,
-                    outerRadius: 2*outerRadius-innerRadius,
-                    drawOuterFaces: true);
+                Vector3 offset = Hex.HexToPixel(hexes[i], gridSize).xz();
+                float modifiedOuterRadius = modifyEdgeSize ? 2 * outerRadius - innerRadius : outerRadius;
+                DrawHexFaces(offset, modifiedOuterRadius, drawOuterFaces: true);
             }
         }
 

@@ -27,6 +27,8 @@ namespace Lotl.Gameplay
 
         private void HandleInput()
         {
+            if (PauseSystem.IsGamePaused) return;
+
             if (Input.GetKeyDown(KeyCode.R))
                 StartRemoveTower();
         }

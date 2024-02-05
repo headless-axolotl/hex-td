@@ -42,6 +42,8 @@ namespace Lotl.Gameplay
 
         private void HandleInput()
         {
+            if (PauseSystem.IsGamePaused) return;
+
             bool tryUpgrade = Input.GetKeyDown(KeyCode.E)
                 || Input.GetKeyDown(KeyCode.U);
             if (tryUpgrade) UpgradeTower();

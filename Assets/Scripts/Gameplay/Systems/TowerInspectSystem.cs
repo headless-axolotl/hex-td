@@ -42,6 +42,8 @@ namespace Lotl.Gameplay
 
         private void HandleInput()
         {
+            if (PauseSystem.IsGamePaused) return;
+
             if (Input.GetMouseButtonDown(1))
                 InspectPosition(selectedHex);
 
