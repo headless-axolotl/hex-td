@@ -25,9 +25,17 @@ namespace Lotl.Units.Projectiles
 
         protected override void DealDamage(List<Unit> units)
         {
-            Unit unitToDamage = units.FirstOrDefault(unit => !currentHitUnits.Contains(unit));
-            
-            if(unitToDamage == null)
+            Unit unitToDamage = null;
+            for (int i = 0; i < units.Count; i++)
+            {
+                if (!currentHitUnits.Contains(units[i]))
+                {
+                    unitToDamage = units[i];
+                    break;
+                }
+            }
+
+            if (unitToDamage == null)
             {
                 currentJumpCount = 0;
                 gameObject.SetActive(false);
