@@ -99,6 +99,7 @@ namespace Lotl.Units.Attackers
 
         private void OnValidate()
         {
+            if (unitPrefab == null) return;
             if (unitPrefab.GetComponent<Unit>() == null)
             {
                 Debug.LogWarning("Prefab does not have Unit component.");
