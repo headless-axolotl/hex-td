@@ -5,6 +5,8 @@ using UnityEngine;
 using Lotl.Units.Projectiles;
 using Lotl.Runtime.Generic;
 using Lotl.Runtime;
+using Lotl.Units.Damage;
+using Lotl.Generic.Variables;
 
 namespace Lotl.Units.Generic.StateMachine
 {
@@ -13,7 +15,9 @@ namespace Lotl.Units.Generic.StateMachine
         UnitTribeMask HitTribeMask { get; }
         Pool ProjectilePool { get; }
         Vector3 ProjectileSource { get; }
-        
+        DamageTrigger[] DamageTriggers { get; }
+        IdentityDictionary IdentityDictionary { get; }
+
         void Attack()
         {
             if (!ProjectilePool.GetObject().TryGetComponent<Projectile>(out var projectile))
@@ -33,7 +37,9 @@ namespace Lotl.Units.Generic.StateMachine
                 ProjectileSource,
                 CurrentTarget.transform.position,
                 ScanTribeMask,
-                HitTribeMask);
+                HitTribeMask,
+                DamageTriggers,
+                IdentityDictionary);
         }
     }
 }

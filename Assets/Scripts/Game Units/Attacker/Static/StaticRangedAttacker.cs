@@ -8,6 +8,7 @@ using Lotl.Runtime.Generic;
 using Lotl.StateMachine;
 using Lotl.Generic.Variables;
 using Lotl.Units.Generic.StateMachine;
+using Lotl.Units.Damage;
 
 namespace Lotl.Units.Attackers
 {
@@ -25,6 +26,8 @@ namespace Lotl.Units.Attackers
         [SerializeField] protected UnitTribeMask hitTribeMask;
         [SerializeField] protected Pool projectilePool;
         [SerializeField] protected Transform projectileSource;
+        [SerializeField] protected DamageTrigger[] damageTriggers;
+        [SerializeField] protected IdentityDictionary identityDictionary;
 
         [Header("Timing")]
         [SerializeField] protected Timer timer;
@@ -44,6 +47,8 @@ namespace Lotl.Units.Attackers
         public UnitTribeMask HitTribeMask => hitTribeMask;
         public Pool ProjectilePool => projectilePool;
         public Vector3 ProjectileSource => projectileSource.transform.position;
+        public DamageTrigger[] DamageTriggers => damageTriggers;
+        public IdentityDictionary IdentityDictionary => identityDictionary;
 
         public Timer Timer => timer;
         public float ActionCooldown => actionCooldown;

@@ -10,17 +10,20 @@ namespace Lotl.Units.Projectiles
     public class LightningProjectile : Projectile
     {
         [Header("Additional Data")]
-        [SerializeField] private FloatReference jumpRadius;
-        [SerializeField] private IntReference maxJumpCount;
+        [SerializeField] private Identity jumpRadiusId;
+        [SerializeField] private Identity jumpCountId;
 
         private HashSet<Unit> currentHitUnits = new();
+        private float jumpRadius = 0;
         private int currentJumpCount = 0;
 
         public override void Initialize(ProjectileInfo projetileInfo)
         {
             base.Initialize(projetileInfo);
+
             currentHitUnits.Clear();
-            currentJumpCount = maxJumpCount;
+            jumpRadius       = currentConfiguration.GetValue<float>(jumpRadiusId);
+            currentJumpCount = currentConfiguration.GetValue<int>(jumpCountId);
         }
 
         protected override void DealDamage(List<Unit> units)

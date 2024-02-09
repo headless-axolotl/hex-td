@@ -15,20 +15,31 @@ namespace Lotl.Units.Projectiles
         #region Properties
 
         [Header("Data")]
-        [SerializeField] protected FloatReference damage;
-        [SerializeField] protected DamageTrigger[] damageTriggers;
-        [SerializeField] protected FloatReference speed;
-        [SerializeField] protected FloatReference hitRadius;
-        [SerializeField] protected FloatReference lifetime;
+        [SerializeField] protected Identity damageId;
+        [SerializeField] protected Identity speedId;
+        [SerializeField] protected Identity hitRadiusId;
+        [SerializeField] protected Identity lifetimeId;
+        
+        protected float damage;
+        protected DamageTrigger[] damageTriggers;
 
+        protected float speed;
+        protected float hitRadius;
+        protected float lifetime;
+        
         [SerializeField] protected LayerMask scanLayer;
-        [SerializeField] protected UnitTribeMask scanTribeMask;
-        [SerializeField] protected UnitTribeMask hitTribeMask;
+        protected UnitTribeMask scanTribeMask;
+        protected UnitTribeMask hitTribeMask;
 
         [Header("Runtime")]
         [SerializeField] protected Timer timer;
 
+        protected IdentityDictionary currentConfiguration;
+
+        public IdentityDictionary CurrentConfiguration => currentConfiguration;
+
         #endregion
+
 
         #region Methods
 
@@ -60,12 +71,21 @@ namespace Lotl.Units.Projectiles
             gameObject.SetActive(false);
         }
 
-        public virtual void Initialize(ProjectileInfo projetileInfo)
+        public virtual void Initialize(ProjectileInfo projectileInfo)
         {
-            transform.position = projetileInfo.source;
-            AlignTo(projetileInfo.target);
-            scanTribeMask = projetileInfo.scanTribeMask;
-            hitTribeMask = projetileInfo.hitTribeMask;
+            transform.position = projectileInfo.source;
+            AlignTo(projectileInfo.target);
+
+            currentConfiguration = projectileInfo.identityDictionary;
+            
+            damageTriggers = projectileInfo.damageTriggers;
+            damage    = currentConfiguration.GetValue<float>(damageId);
+            speed     = currentConfiguration.GetValue<float>(speedId);
+            hitRadius = currentConfiguration.GetValue<float>(hitRadiusId);
+            lifetime  = currentConfiguration.GetValue<float>(lifetimeId);
+
+            scanTribeMask = projectileInfo.scanTribeMask;
+            hitTribeMask = projectileInfo.hitTribeMask;
         }
 
         protected virtual void AlignTo(Vector3 target)

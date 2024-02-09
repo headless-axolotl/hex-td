@@ -11,7 +11,7 @@ namespace Lotl.Units.Damage
     [RequireComponent(typeof(Driver), typeof(MobileUnitLocomotion))]
     public class StunTriggerHandler : DamageTriggerHandler
     {
-        [SerializeField] private Identity stunDuration;
+        [SerializeField] private Identity stunDurationId;
         private bool isStunned = false;
         
         private Driver driver;
@@ -26,7 +26,7 @@ namespace Lotl.Units.Damage
         protected override void RespondToTrigger(DamageInfo damageInfo, DamageTrigger trigger)
         {
             if (isStunned) return;
-            float stunDuration = trigger.GetValue<float>(this.stunDuration);
+            float stunDuration = trigger.Dictionary.GetValue<float>(stunDurationId);
             StartCoroutine(PauseDriver(stunDuration));
         }
 

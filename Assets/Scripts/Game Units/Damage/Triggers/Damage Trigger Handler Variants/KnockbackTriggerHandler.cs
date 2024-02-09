@@ -9,8 +9,8 @@ namespace Lotl.Units.Damage
     [RequireComponent(typeof(Rigidbody))]
     public class KnockbackTriggerHandler : DamageTriggerHandler
     {
-        [SerializeField] private Identity explosionForce;
-        [SerializeField] private Identity explosionRadius;
+        [SerializeField] private Identity explosionForceId;
+        [SerializeField] private Identity explosionRadiusId;
 
         private Rigidbody rb;
 
@@ -21,8 +21,8 @@ namespace Lotl.Units.Damage
 
         protected override void RespondToTrigger(DamageInfo damageInfo, DamageTrigger trigger)
         {
-            float explosionForce = trigger.GetValue<float>(this.explosionForce);
-            float explosionRadius = trigger.GetValue<float>(this.explosionRadius);
+            float explosionForce = trigger.Dictionary.GetValue<float>(explosionForceId);
+            float explosionRadius = trigger.Dictionary.GetValue<float>(explosionRadiusId);
             rb.AddExplosionForce(explosionForce * damageInfo.Amount, damageInfo.Source, explosionRadius);
         }
     }

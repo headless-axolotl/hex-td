@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 using Lotl.Generic.Variables;
@@ -10,7 +9,7 @@ namespace Lotl.Units.Projectiles
     public class PierceProjectile : Projectile
     {
         [Header("Additional Data")]
-        [SerializeField] private IntReference maxPierceCount;
+        [SerializeField] private Identity pierceCountId;
 
         private HashSet<Unit> currentHitUnits = new();
         private int currentPierceCount;
@@ -18,8 +17,9 @@ namespace Lotl.Units.Projectiles
         public override void Initialize(ProjectileInfo projetileInfo)
         {
             base.Initialize(projetileInfo);
+
             currentHitUnits.Clear();
-            currentPierceCount = maxPierceCount;
+            currentPierceCount = currentConfiguration.GetValue<int>(pierceCountId);
         }
 
         protected override void DealDamage(List<Unit> units)

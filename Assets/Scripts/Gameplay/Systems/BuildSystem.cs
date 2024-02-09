@@ -30,7 +30,7 @@ namespace Lotl.Gameplay
         public TowerToken SelectedTowerToken => selectedTowerToken;
         public int MapSize => mapSize;
 
-        private void Awake()
+        private void Start()
         {
             Initialize();
         }

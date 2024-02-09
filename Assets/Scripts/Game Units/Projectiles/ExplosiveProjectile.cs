@@ -9,8 +9,16 @@ namespace Lotl.Units.Projectiles
     public class ExplosiveProjectile : Projectile
     {
         [Header("Additional Data")]
-        [SerializeField] private FloatReference damageRadius;
-        
+        [SerializeField] private Identity damageRadiusId;
+        private float damageRadius = 0f;
+
+        public override void Initialize(ProjectileInfo projectileInfo)
+        {
+            base.Initialize(projectileInfo);
+
+            damageRadius = currentConfiguration.GetValue<float>(damageRadiusId);
+        }
+
         protected override void HitCheck()
         {
             List<Unit> hitUnits = Scanner.Scan(
