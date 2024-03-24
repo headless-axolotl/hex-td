@@ -28,5 +28,8 @@ namespace Lotl.Units.Generic.StateMachine
             if (sqrDistance > Reach * Reach) return true;
             return false;
         }
+
+        void BeganMoving();
+        void StoppedMoving();
     }
 }

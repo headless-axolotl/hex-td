@@ -16,6 +16,8 @@ namespace Lotl.Units.Attackers
     public class MobileMeleeAttacker : Driver, IMeleeAttacker, IMobileSeeker
     {
         public event Action OnAttackAction;
+        public event Action OnStartMoving;
+        public event Action OnEndMoving;
 
         #region Properties
 
@@ -78,6 +80,16 @@ namespace Lotl.Units.Attackers
         public void TriggerAttackEvent()
         {
             OnAttackAction?.Invoke();
+        }
+
+        public void BeganMoving()
+        {
+            OnStartMoving?.Invoke();
+        }
+
+        public void StoppedMoving()
+        {
+            OnEndMoving?.Invoke();
         }
 
 #if UNITY_EDITOR

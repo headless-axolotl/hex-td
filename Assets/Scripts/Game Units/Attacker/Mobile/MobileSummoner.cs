@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,9 @@ namespace Lotl.Units.Attackers
     [RequireComponent(typeof(MobileUnitLocomotion))]
     public class MobileSummoner : StaticSummoner, IMobileSeeker
     {
+        public event Action OnStartMoving;
+        public event Action OnEndMoving;
+
         [Header("Seek Data")]
         [SerializeField] private FloatReference seekRange;
         [SerializeField] private UnitTribeMask scanTribeMask;
@@ -42,6 +46,16 @@ namespace Lotl.Units.Attackers
             locomotion = GetComponent<MobileUnitLocomotion>();
 
             base.Awake();
+        }
+
+        public void BeganMoving()
+        {
+            OnStartMoving?.Invoke();
+        }
+
+        public void StoppedMoving()
+        {
+            OnEndMoving?.Invoke();
         }
 
 #if UNITY_EDITOR

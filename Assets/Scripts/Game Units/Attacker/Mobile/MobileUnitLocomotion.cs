@@ -41,7 +41,7 @@ namespace Lotl.Units.Locomotion
 
         private void Initialize()
         {
-            turnSpeed = 180 / turnaroundTime;
+            turnSpeed = 180 / (turnaroundTime + float.Epsilon);
             movementRotation = transform.rotation;
             rigidbody = GetComponent<Rigidbody>();
         }

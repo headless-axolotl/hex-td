@@ -18,6 +18,7 @@ namespace Lotl.Units.Generic.StateMachine
                 return;
             }
             mobileSeeker.Locomotion.StopMoving();
+            mobileSeeker.BeganMoving();
         }
 
         public override void Tick(Driver driver)
@@ -32,6 +33,7 @@ namespace Lotl.Units.Generic.StateMachine
             if (driver is not IMobileSeeker mobileSeeker) return;
 
             mobileSeeker.Locomotion.StopMoving();
+            mobileSeeker.StoppedMoving();
         }
     }
 }

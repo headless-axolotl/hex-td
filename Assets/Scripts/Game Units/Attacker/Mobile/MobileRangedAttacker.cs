@@ -15,6 +15,9 @@ namespace Lotl.Units.Attackers
     [RequireComponent(typeof(Timer), typeof(MobileUnitLocomotion))]
     public class MobileRangedAttacker : StaticRangedAttacker, IMobileSeeker
     {
+        public event Action OnStartMoving;
+        public event Action OnEndMoving;
+
         [Header("Mobility Data")]
         [SerializeField] private FloatReference attackRange;
         [SerializeField] private MobileUnitLocomotion locomotion;
@@ -30,6 +33,16 @@ namespace Lotl.Units.Attackers
             locomotion = GetComponent<MobileUnitLocomotion>();
 
             base.Awake();
+        }
+
+        public void BeganMoving()
+        {
+            OnStartMoving?.Invoke();
+        }
+
+        public void StoppedMoving()
+        {
+            OnEndMoving?.Invoke();
         }
 
 #if UNITY_EDITOR
