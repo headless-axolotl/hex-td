@@ -19,6 +19,7 @@
 /Assets/Plugins/
 /Assets/Scripts/Unautomated Testing/
 /Assets/Packages/
+/Assets/Animation/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -78,3 +79,4 @@ crashlytics-build.properties
 /Assets/Plugins.meta
 /Assets/Scripts/Unautomated Testing.meta
 /Assets/Packages.meta
+/Assets/Animation.meta

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Lotl.Units.Attackers;
 using Lotl.Generic.Variables;
+using Lotl.Units.Generic.StateMachine;
 
 namespace Lotl.Animation
 {
-    [RequireComponent(typeof(StaticRangedAttacker))]
     public class PointAtTarget : MonoBehaviour
     {
-        private StaticRangedAttacker driver;
+        private IContainsTarget driver;
         [SerializeField] private FloatReference turnaroundTime;
         [SerializeField] private Transform arrow;
 
@@ -17,7 +17,9 @@ namespace Lotl.Animation
 
         private void Start()
         {
-            driver = GetComponent<StaticRangedAttacker>();
+            if(!TryGetComponent(out driver))
+                Debug.LogWarning("Missing IContainsTarget!");
+            
             turnSpeed = 180f / (turnaroundTime + float.Epsilon);
         }
 

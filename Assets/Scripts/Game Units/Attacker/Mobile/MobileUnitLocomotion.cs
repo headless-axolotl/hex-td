@@ -30,6 +30,10 @@ namespace Lotl.Units.Locomotion
         private bool shouldMove = false;
         private Vector3 target = Vector3.zero;
 
+        public Quaternion MovementRotation => movementRotation;
+
+        public bool IsMoving => shouldMove;
+
         #endregion
 
         #region Methods
