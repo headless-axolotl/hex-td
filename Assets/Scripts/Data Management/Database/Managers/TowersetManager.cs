@@ -27,11 +27,11 @@ namespace Lotl.Data
         public TowersetManager(
             TowersetContext context,
             DatabaseManager databaseManager,
-            AsyncTaskProcessor asyncHandler)
+            AsyncTaskProcessor asyncProcessor)
         {
             this.context = context;
             this.databaseManager = databaseManager;
-            this.asyncProcessor = asyncHandler;
+            this.asyncProcessor = asyncProcessor;
 
             trackedTowersets = null;
             cachedTowersetInfos = new();

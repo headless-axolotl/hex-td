@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Lotl.Units.Generic
 {
     [RequireComponent(typeof(Unit))]
-    public class DestroyOnDie : MonoBehaviour
+    public class DestroyOnDeath : MonoBehaviour
     {
         private Unit unit;
 

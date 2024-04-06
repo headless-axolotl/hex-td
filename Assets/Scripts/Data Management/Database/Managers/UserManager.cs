@@ -35,11 +35,11 @@ namespace Lotl.Data
         public UserManager(
             UserContext context,
             DatabaseManager databaseManager,
-            AsyncTaskProcessor asyncHandler)
+            AsyncTaskProcessor asyncProcessor)
         {
             this.context = context;
             this.databaseManager = databaseManager;
-            this.asyncProcessor = asyncHandler;
+            this.asyncProcessor = asyncProcessor;
 
             trackedUsers = null;
             cachedUserDatas = new();

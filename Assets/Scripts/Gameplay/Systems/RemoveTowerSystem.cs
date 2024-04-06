@@ -35,7 +35,8 @@ namespace Lotl.Gameplay
 
         public void StartRemoveTower()
         {
-            bool shouldPrompt = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            bool shouldPrompt = !(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                && towerInspector.SelectedTower != null;
             
             if (shouldPrompt)
             {
@@ -53,7 +54,10 @@ namespace Lotl.Gameplay
 
         private void RemoveTower()
         {
-            bool towerIsRemovable = towerInspector.SelectedTowerIdentifier.Removable;
+            bool towerIsRemovable =
+                towerInspector.SelectedTower != null
+                && towerInspector.SelectedTowerIdentifier.Removable;
+
             if (!towerIsRemovable) return;
 
             towerInspector.SelectedTower.SetCurrentHealth(0f);
