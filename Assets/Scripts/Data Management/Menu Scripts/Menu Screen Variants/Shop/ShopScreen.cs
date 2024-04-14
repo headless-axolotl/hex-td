@@ -14,7 +14,7 @@ using Lotl.Data.Towerset;
 
 namespace Lotl.Data.Menu
 {
-    public class ShopScreen : TabbedScreen
+    public class ShopScreen : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private DatabaseManager databaseManager;

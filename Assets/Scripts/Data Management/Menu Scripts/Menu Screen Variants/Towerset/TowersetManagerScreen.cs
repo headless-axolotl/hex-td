@@ -14,7 +14,7 @@ namespace Lotl.Data.Menu
 {
     using Identity = TowersetContext.Identity;
 
-    public class TowersetManagerScreen : TabbedScreen
+    public class TowersetManagerScreen : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private DatabaseManager databaseManager;

@@ -40,7 +40,6 @@ namespace Lotl.Units.Damage
             
             isStunned = false;
             driver.Unpause();
-            
         }
     }
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-#warning Incomplete implementation.
-
 namespace Lotl.Hexgrid
 {
     /// <summary>
@@ -213,9 +211,6 @@ namespace Lotl.Hexgrid
             return hexes;
         }
 
-        /// <summary>
-        /// Returns a ring of hexes. Radius must be > 0.
-        /// </summary>
         public static List<Hex> Ring(
             Hex center, int radius,
             Direction startingDirection = Direction.R,

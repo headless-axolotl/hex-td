@@ -7,21 +7,16 @@ namespace Lotl.Data.Menu
     public class MenuManager : MonoBehaviour
     {
         [Header("UI")]
-        [SerializeField] private List<TabbedScreen> screens;
+        [SerializeField] private List<GameObject> screens;
         [SerializeField] private int currentActiveScreen = -1;
-
-        private void Awake()
-        {
-            
-        }
 
         public void SetActiveScreen(int screenIndex)
         {
             if (screenIndex < 0 || screenIndex >= screens.Count) return;
             if (currentActiveScreen >= 0 && currentActiveScreen < screens.Count)
-                screens[currentActiveScreen].gameObject.SetActive(false);
+                screens[currentActiveScreen].SetActive(false);
             currentActiveScreen = screenIndex;
-            screens[currentActiveScreen].gameObject.SetActive(true);
+            screens[currentActiveScreen].SetActive(true);
         }
     }
 }

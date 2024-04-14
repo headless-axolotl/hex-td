@@ -57,9 +57,9 @@ namespace Lotl.Gameplay.Waves
             float currentWave,
             float maxWave)
         {
-            float time = currentWave / maxWave;
-            if (time > 1) time = 1;
-            float value = currentWaveEntryPointCountFunction.Value.Evaluate(time) * EntryPointIndeces.Length;
+            float proportion = currentWave / maxWave;
+            if (proportion > 1) proportion = 1;
+            float value = currentWaveEntryPointCountFunction.Value.Evaluate(proportion) * EntryPointIndeces.Length;
             value = Mathf.Max(minEntryPointCount, value);
             return Mathf.CeilToInt(value);
         }
@@ -68,9 +68,9 @@ namespace Lotl.Gameplay.Waves
             float currentWave,
             float maxWave)
         {
-            float time = currentWave / maxWave;
-            if (time > 1) time = 1;
-            float value = currentWaveSubwaveCountFunction.Value.Evaluate(time) * maxSubwaveCount;
+            float proportion = currentWave / maxWave;
+            if (proportion > 1) proportion = 1;
+            float value = currentWaveSubwaveCountFunction.Value.Evaluate(proportion) * maxSubwaveCount;
             return Mathf.CeilToInt(value);
         }
 
@@ -78,9 +78,9 @@ namespace Lotl.Gameplay.Waves
             float currentWave,
             float maxWave)
         {
-            float time = currentWave / maxWave;
-            if (time > 1) time = 1;
-            float value = currentWaveMaxDifficultyFunction.Value.Evaluate(time) * maxWaveDifficulty;
+            float proportion = currentWave / maxWave;
+            if (proportion > 1) proportion = 1;
+            float value = currentWaveMaxDifficultyFunction.Value.Evaluate(proportion) * maxWaveDifficulty;
             return Mathf.CeilToInt(value);
         }
 
@@ -89,9 +89,9 @@ namespace Lotl.Gameplay.Waves
             float maxSubwave,
             float waveMaxDifficulty)
         {
-            float time = currentSubwave / maxSubwave;
-            if (time > 1) time = 1;
-            float value = currentSubwaveDifficultyFunction.Value.Evaluate(time) * waveMaxDifficulty;
+            float proportion = currentSubwave / maxSubwave;
+            if (proportion > 1) proportion = 1;
+            float value = currentSubwaveDifficultyFunction.Value.Evaluate(proportion) * waveMaxDifficulty;
             return Mathf.CeilToInt(value);
         }
 
@@ -101,9 +101,9 @@ namespace Lotl.Gameplay.Waves
             float currentDifficulty)
         {
 
-            float time = currentEntryPoint / totalEntryPoints;
-            if (time > 1) time = 1;
-            float value = currentSubwaveDifficultyFalloffFunction.Value.Evaluate(time) * currentDifficulty;
+            float proportion = currentEntryPoint / totalEntryPoints;
+            if (proportion > 1) proportion = 1;
+            float value = currentSubwaveDifficultyFalloffFunction.Value.Evaluate(proportion) * currentDifficulty;
             return Mathf.CeilToInt(value);
         }
     }

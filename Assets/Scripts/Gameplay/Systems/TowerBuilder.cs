@@ -6,8 +6,6 @@ using Lotl.Hexgrid;
 using Lotl.Units;
 using Lotl.AssetManagement;
 using Lotl.Data.Runs;
-using Lotl.Generic.Variables;
-using UnityEngine.UIElements;
 
 namespace Lotl.Gameplay
 {
@@ -91,6 +89,12 @@ namespace Lotl.Gameplay
         public bool TryCreate(GameObject prefab, Hex position, out GameObject tower)
         {
             tower = null;
+            
+            if (!IsValidPosition(position))
+            {
+                Debug.LogError("Tried placing a tower from game object in an occupied position!");
+                return false;
+            }
 
             if (prefab == null)
             {

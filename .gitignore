@@ -17,7 +17,7 @@
 /Assets/Sprites/
 /Assets/Prefabs/
 /Assets/Plugins/
-/Assets/Scripts/Unautomated Testing/
+/Assets/Scripts/Testing/
 /Assets/Packages/
 /Assets/Animation/
 
@@ -77,6 +77,6 @@ crashlytics-build.properties
 /Assets/Sprites.meta
 /Assets/Prefabs.meta
 /Assets/Plugins.meta
-/Assets/Scripts/Unautomated Testing.meta
+/Assets/Scripts/Testing.meta
 /Assets/Packages.meta
 /Assets/Animation.meta

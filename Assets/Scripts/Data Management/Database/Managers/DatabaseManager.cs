@@ -8,6 +8,7 @@ using Lotl.Utility.Async;
 using Lotl.Data.Towerset;
 using Lotl.SceneManagement;
 using Lotl.Generic.Events;
+using System.IO;
 
 namespace Lotl.Data
 {
@@ -71,6 +72,11 @@ namespace Lotl.Data
 
         private void StartInitialization()
         {
+            if(!Directory.Exists(DatabaseSettings.Directory))
+            {
+                Directory.CreateDirectory(DatabaseSettings.Directory);
+            }
+
             databaseContext = new();
 
             userContext     = new(databaseContext);
@@ -170,7 +176,7 @@ namespace Lotl.Data
         private void ExitScene()
         {
             Debug.LogError("Aborting operation!");
-            // sceneTransitionInitializer.ReturnToPreviousScene();
+            sceneTransitionInitializer.ReturnToPreviousScene();
         }
 
         private void OnDestroy()

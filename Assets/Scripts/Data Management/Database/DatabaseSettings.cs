@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +8,10 @@ namespace Lotl.Data
     public class DatabaseSettings
     {
         public static string Schema => "Hexdefence";
-        public static string FileName => "storage.data";
-        public static string FilePath => Application.persistentDataPath + "/" + FileName;
+        public static string FileName => "hexdefence.data";
+        // public static string Directory => Application.persistentDataPath;
+        public static string Directory => Environment.CurrentDirectory + "/Data";
+        public static string FilePath => Directory + "/" + FileName;
         public static string ConnectionString => $"SchemaName={Schema};URI=file://{FilePath}";
 
         #region User Table

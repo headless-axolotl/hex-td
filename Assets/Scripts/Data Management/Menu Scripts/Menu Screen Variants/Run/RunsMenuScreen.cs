@@ -16,7 +16,7 @@ namespace Lotl.Data.Menu
 {
     using Identity = RunContext.Identity;
 
-    public class RunsMenuScreen : TabbedScreen
+    public class RunsMenuScreen : MonoBehaviour
     {
         [Header("Data")]
         [SerializeField] private DatabaseManager databaseManager;

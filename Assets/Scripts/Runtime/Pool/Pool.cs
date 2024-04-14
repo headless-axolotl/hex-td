@@ -66,16 +66,17 @@ namespace Lotl.Runtime
                 return item;
             }
 
-            item = Instantiate(prefabReference.GetPrefab(), poolParent);
-            
-            if(!item.TryGetComponent<PoolMember>(out var poolMember))
+            GameObject prefab = prefabReference.GetPrefab();
+            prefab.SetActive(false);
+            item = Instantiate(prefab, poolParent);
+            prefab.SetActive(true);
+
+            if (!item.TryGetComponent<PoolMember>(out var poolMember))
             {
                 Debug.LogError($"Pool [{name}] PrefabReference prefab is missing PoolMember component!");
                 Destroy(item);
                 return null;
             }
-
-            item.SetActive(false);
 
             poolMember.OnDeactivate += HandleItemDeactivation;
             poolMember.IsBeingDestroyed += HandleItemDestruction;

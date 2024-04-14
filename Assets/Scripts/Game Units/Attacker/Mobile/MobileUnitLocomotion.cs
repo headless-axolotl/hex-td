@@ -63,7 +63,6 @@ namespace Lotl.Units.Locomotion
 
         public void StopMoving()
         {
-            // rigidbody.velocity = Vector3.zero;
             shouldMove = false;
         }
 
@@ -78,7 +77,7 @@ namespace Lotl.Units.Locomotion
             Turn(direction);
             
             rigidbody.velocity =
-                speed // * Time.fixedDeltaTime
+                speed
                 * (movementRotation * Vector3.forward);
         }
 
@@ -109,7 +108,6 @@ namespace Lotl.Units.Locomotion
         private void ModifyNudge(ref Vector3 nudge)
         {
             Vector3 normalized = nudge.normalized;
-            // (+1) to avoid big spike with values close to zero.
             nudge = nudge / (nudge.sqrMagnitude + 1) * avoidanceMagnitude
                 + normalized * avoidanceBaseMagnitude;
         }

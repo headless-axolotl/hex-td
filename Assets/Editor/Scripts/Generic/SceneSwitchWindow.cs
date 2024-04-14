@@ -1,40 +1,19 @@
-// --------------------------------
-// <copyright file="SceneSwitchWindow.cs" company="Rumor Games">
-//     Copyright (C) Rumor Games, LLC.  All rights reserved.
-// </copyright>
-// --------------------------------
-
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-/// <summary>
-/// SceneSwitchWindow class.
-/// </summary>
 public class SceneSwitchWindow : EditorWindow
 {
-    /// <summary>
-    /// Tracks scroll position.
-    /// </summary>
     private Vector2 scrollPos;
 
-    /// <summary>
-    /// Initialize window state.
-    /// </summary>
     [MenuItem("Tools/Scene Switch Window")]
     internal static void Init()
     {
-        // EditorWindow.GetWindow() will return the open instance of the specified window or create a new
-        // instance if it can't find one. The second parameter is a flag for creating the window as a
-        // Utility window; Utility windows cannot be docked like the Scene and Game view windows.
         var window = (SceneSwitchWindow)GetWindow(typeof(SceneSwitchWindow), false, "Scene Switch");
         window.position = new Rect(window.position.xMin + 100f, window.position.yMin + 100f, 200f, 400f);
     }
 
-    /// <summary>
-    /// Called on GUI events.
-    /// </summary>
     internal void OnGUI()
     {
         EditorGUILayout.BeginVertical();

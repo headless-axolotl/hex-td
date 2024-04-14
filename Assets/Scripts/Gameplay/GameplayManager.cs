@@ -68,7 +68,6 @@ namespace Lotl.Gameplay
                 if(!result.WasSuccessful)
                 {
                     Debug.LogWarning(result.Message);
-                    #warning Some kind of warning that save was not successful
                 }
             });
         }

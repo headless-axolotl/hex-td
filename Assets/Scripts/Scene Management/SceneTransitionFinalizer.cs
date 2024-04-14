@@ -35,7 +35,6 @@ namespace Lotl.SceneManagement
             
             while (!transitionOperation.isDone)
             {
-                #warning test this
                 float remappedProgress = transitionOperation.progress / DoneLoadingProgress;
                 loadingBar.value = remappedProgress;
                 yield return null;
